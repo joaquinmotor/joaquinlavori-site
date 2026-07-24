@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Joaquin Lavori — Branding &amp; Illustration</title>
+<meta name="description" content="Joaquin Lavori is a graphic designer and illustrator working across branding, art direction and hand-drawn illustration." />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Mobile-only top bar: nav tabs -->
+  <header class="tabbar" id="tabbar">
+    <button class="tab active" data-tab="all">All</button>
+    <button class="tab" data-tab="work">Work</button>
+    <button class="tab" data-tab="about">About</button>
+  </header>
+
+  <!-- Mobile-only mini header: studio wordmark -->
+  <div class="mini-header">
+    <a href="#/" class="mini-header-name">JOAQUIN LAVORI</a>
+  </div>
+
+  <div class="layout">
+
+    <!-- Sidebar: desktop only, own independent scroll -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <a href="#/" class="wordmark">JOAQUIN<br />LAVORI</a>
+        <p class="tagline">Branding &amp; Illustration</p>
+      </div>
+
+      <div class="sidebar-block" id="sidebar-about-short">
+        <h3>About</h3>
+        <p id="about-short-text"></p>
+      </div>
+
+      <div class="sidebar-block">
+        <div class="sidebar-row">
+          <span>Consultation</span>
+          <a id="book-link" href="#" class="sidebar-link">book a call</a>
+        </div>
+        <div class="sidebar-row">
+          <span>Email</span>
+          <a id="email-link" href="#" class="sidebar-link"></a>
+        </div>
+        <div class="sidebar-row">
+          <span>Instagram</span>
+          <a id="ig-link" href="#" target="_blank" rel="noopener" class="sidebar-link">follow</a>
+        </div>
+      </div>
+
+      <div class="sidebar-block" id="featured-in-block">
+        <h3>Featured in</h3>
+        <ul id="featured-in-list" class="plain-list"></ul>
+      </div>
+
+      <div class="sidebar-block" id="awards-block">
+        <h3>Awards</h3>
+        <ul id="awards-list" class="plain-list"></ul>
+      </div>
+    </aside>
+
+    <!-- Main content: grid / project detail / about -->
+    <main class="main" id="main">
+      <div class="grid" id="grid"></div>
+      <div class="project-view" id="project-view" hidden></div>
+      <div class="about-view" id="about-view" hidden></div>
+    </main>
+
+  </div>
+
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
