@@ -269,6 +269,14 @@ function slideTag(media) {
 // .project-gallery-item via slideTag(), same as before.
 function galleryItemHTML(entry) {
   if (Array.isArray(entry)) return marqueeHTML(entry);
+  // {type:"carrusel", items:[...], height:N} — same marquee as a plain
+  // array (see above), but with an explicit height override instead of the
+  // default 220px (2026-08-12, user request: 3 of Ceremonia's 1-item
+  // carrusel groups needed to sit at 70px instead of the usual 220px).
+  // Plain-array carrusel groups elsewhere (the-movement, afends, and
+  // Ceremonia's own carrusel4) are untouched by this — they keep the
+  // default height from .project-marquee in styles.css.
+  if (entry && entry.type === "carrusel") return marqueeHTML(entry.items, entry.height);
   if (entry && entry.type === "slideshow") return slideshowHTML(entry.items);
   return `<div class="project-gallery-item">${slideTag(entry)}</div>`;
 }
@@ -359,9 +367,10 @@ function initSlideshows(root) {
 // therefore where the -50% loop point lands — depends on every image's
 // intrinsic size being known immediately, not resolved gradually as the
 // user scrolls into each one.
-function marqueeHTML(items) {
+function marqueeHTML(items, height) {
   const itemsHTML = items.map((src) => `<div class="project-marquee-item"><img src="${src}" alt="" /></div>`).join("");
-  return `<div class="project-marquee"><div class="project-marquee-track">${itemsHTML}${itemsHTML}</div></div>`;
+  const style = height ? ` style="height:${height}px"` : "";
+  return `<div class="project-marquee"${style}><div class="project-marquee-track">${itemsHTML}${itemsHTML}</div></div>`;
 }
 
 function carouselHTML(slides, { max } = {}) {
@@ -911,6 +920,12 @@ const PROJECT_DESKTOP_GALLERY_HEIGHTS = [240, 200, 230, 190, 260, 210, 220, 180,
 function renderDesktopGalleryCell(item) {
   if (Array.isArray(item.src)) {
     return `<div class="project-desktop-photo project-desktop-photo--marquee">${marqueeHTML(item.src)}</div>`;
+  }
+  // {type:"carrusel", items, height} — same override as galleryItemHTML()
+  // above, mirrored here so Desktop's masonry respects the custom height too
+  // instead of falling back to the fixed 220px (2026-08-12, Ceremonia).
+  if (item.src && item.src.type === "carrusel") {
+    return `<div class="project-desktop-photo project-desktop-photo--marquee">${marqueeHTML(item.src.items, item.src.height)}</div>`;
   }
   if (item.src && item.src.type === "slideshow") {
     return `<div class="project-desktop-photo project-desktop-photo--slideshow">${slideshowHTML(item.src.items)}</div>`;
