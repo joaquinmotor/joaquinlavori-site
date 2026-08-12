@@ -448,10 +448,15 @@ button{ font-family: inherit; }
    box doesn't jump size on every cut; object-fit:cover (unlike the
    marquee's natural-aspect no-crop images) since every slide must fill the
    exact same box. */
-.project-slideshow{ position:relative; height:220px; overflow:hidden; border-radius:4px; background: var(--border); }
-.project-slideshow-slide{ position:absolute; inset:0; opacity:0; }
-.project-slideshow-slide.is-active{ opacity:1; }
-.project-slideshow-slide img, .project-slideshow-slide video{ width:100%; height:100%; object-fit:contain; }
+.project-slideshow{ position:relative; border-radius:4px; }
+/* display:none/block (not absolute+opacity/height:220px, see 2026-08-12
+   revision) so the visible slide's own natural size drives the box height
+   — full photo, full width, no crop, no fixed "mockup rectangle" box (the
+   220px height was the old Pencil placeholder box size; the user
+   specifically didn't want the real photo confined to it). */
+.project-slideshow-slide{ display:none; }
+.project-slideshow-slide.is-active{ display:block; }
+.project-slideshow-slide img, .project-slideshow-slide video{ height:auto; object-fit:unset; }
 /* prefers-reduced-motion opt-out removed 2026-08-11 (user request) — the
    scroll is the content presentation here (a filmstrip), not a decorative
    flourish, and the user wants it moving unconditionally on every device.
