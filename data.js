@@ -131,7 +131,7 @@ const PROJECTS = [
     //    is already a wide composite photo, so it loops on itself rather
     //    than sitting statically.
     //  - {type:"slideshow", items:[...]}: a "slide-cut" group — one photo
-    //    at a time, hard cut (no fade) to the next every 1s, infinite loop,
+    //    at a time, hard cut (no fade) to the next every .5s, infinite loop,
     //    no nav/dots (2026-08-12, user request — see slideshowHTML() in
     //    script.js). Distinct from "carrusel": nothing scrolls, only one
     //    photo is ever visible.

@@ -275,7 +275,7 @@ function galleryItemHTML(entry) {
 
 // "Slide-cut" group (see data.js comment on PROJECTS[].gallery): one photo
 // at a time, hard cut (no fade — no transition on opacity) to the next
-// every 1s, infinite loop, no nav/dots (2026-08-12, user request). Distinct
+// every .5s, infinite loop, no nav/dots (2026-08-12, user request). Distinct
 // from a "carrusel" marquee: nothing scrolls, only one photo is ever
 // visible, all photos are stacked in the same box and shown/hidden via the
 // is-active class instead of laid out side by side.
@@ -307,7 +307,7 @@ function initSlideshows(root) {
         slides[i].classList.remove("is-active");
         i = (i + 1) % slides.length;
         slides[i].classList.add("is-active");
-      }, 1000)
+      }, 500)
     );
   });
 }
