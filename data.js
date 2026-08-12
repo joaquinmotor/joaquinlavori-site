@@ -234,13 +234,42 @@ const PROJECTS = [
     ],
     link: "https://weareceremonia.com/",
     linkLabel: "View site",
-    hero: "assets/img/ceremonia/01.webp",
+    hero: "assets/img/ceremonia/hero.webp",
+    // Gallery order follows assets/work/04-ceremonia/'s own numbering
+    // (00-15, set by hand 2026-08-12 after uploading real media — see
+    // notas.md). Same three entry shapes as the-movement/afends:
+    //  - plain string: a single static photo (.project-gallery-item).
+    //  - {type:"video", src, poster}: a real video.
+    //  - nested array: a "carrusel" group (auto-scrolling filmstrip). Here
+    //    carrusel1-01/carrusel2-01/carrusel3-01/carrusel4-01 are each a
+    //    single wide composite photo wrapped as their own 1-item carrusel
+    //    (user's own framing, 2026-08-12), same precedent as afends'
+    //    spread-01/spread-02 — loops on itself rather than sitting static.
+    //  - {type:"slideshow", items:[...]}: a "slide-cut" group — hard cut
+    //    to the next photo every .5s, infinite loop (slideshowHTML() in
+    //    script.js). User asked for a .5s interval specifically (2026-08-12).
     gallery: [
-      "assets/img/ceremonia/01.webp",
-      "assets/img/ceremonia/logo.png",
-      "assets/img/ceremonia/02.webp",
-      "assets/img/ceremonia/04.webp",
-      "assets/img/ceremonia/03.jpg",
+      { type: "video", src: "assets/img/ceremonia/hero.mp4", poster: "assets/img/ceremonia/hero-poster.jpg" },
+      "assets/img/ceremonia/foto-01.webp",
+      ["assets/img/ceremonia/carrusel1-01.webp"],
+      "assets/img/ceremonia/foto-02.webp",
+      "assets/img/ceremonia/foto-03.webp",
+      ["assets/img/ceremonia/carrusel2-01.webp"],
+      "assets/img/ceremonia/foto-04.webp",
+      "assets/img/ceremonia/foto-05.webp",
+      ["assets/img/ceremonia/carrusel3-01.webp"],
+      { type: "video", src: "assets/img/ceremonia/video-01.mp4", poster: "assets/img/ceremonia/video-01-poster.jpg" },
+      {
+        type: "slideshow",
+        items: [
+          "assets/img/ceremonia/slidecut-01.webp",
+          "assets/img/ceremonia/slidecut-02.webp",
+          "assets/img/ceremonia/slidecut-03.webp",
+          "assets/img/ceremonia/slidecut-04.webp",
+          "assets/img/ceremonia/slidecut-05.webp",
+        ],
+      },
+      ["assets/img/ceremonia/carrusel4-01.webp"],
     ],
   },
   {
