@@ -297,6 +297,44 @@ function clearSlideshows() {
   slideshowIntervals.forEach(clearInterval);
   slideshowIntervals = [];
 }
+// Marquee scroll SPEED, not duration: the CSS default (22s per loop, see
+// project-marquee-scroll in styles.css) scrolls a WIDER track (more/bigger
+// photos) faster in px/s than a narrower one, since every group shares the
+// same 22s regardless of its own total width — inconsistent perceived
+// speed across groups (user report 2026-08-12: "38-carrusel anda mas
+// rapido que los otros"). Once each track's images finish loading, this
+// measures its own one-cycle distance (half the track's width — the track
+// is the group rendered twice back to back, see marqueeHTML()) and sets an
+// explicit animation-duration so every marquee scrolls at the same
+// MARQUEE_PX_PER_SEC regardless of item count/width. The CSS's 22s stays
+// as the fallback for the brief window before images finish loading.
+const MARQUEE_PX_PER_SEC = 55;
+function initMarquees(root) {
+  root.querySelectorAll(".project-marquee-track").forEach((track) => {
+    const imgs = Array.from(track.querySelectorAll("img"));
+    const apply = () => {
+      const halfWidth = track.scrollWidth / 2;
+      if (halfWidth > 0) track.style.animationDuration = `${halfWidth / MARQUEE_PX_PER_SEC}s`;
+    };
+    if (imgs.every((img) => img.complete)) {
+      apply();
+      return;
+    }
+    let remaining = imgs.filter((img) => !img.complete).length;
+    imgs.forEach((img) => {
+      if (img.complete) return;
+      img.addEventListener(
+        "load",
+        () => {
+          remaining -= 1;
+          if (remaining === 0) apply();
+        },
+        { once: true }
+      );
+    });
+  });
+}
+
 function initSlideshows(root) {
   root.querySelectorAll("[data-slideshow]").forEach((el) => {
     const slides = el.querySelectorAll(".project-slideshow-slide");
@@ -849,6 +887,7 @@ function renderProject(slug) {
     <footer class="site-footer">${footerHTML()}</footer>
   `;
   initSlideshows(els.projectView);
+  initMarquees(els.projectView);
 }
 
 // Desktop project view — matches Pencil's Work selected Desktop (uDnON), NOT
@@ -905,6 +944,7 @@ function renderProjectDesktop(p) {
     <footer class="site-footer">${footerHTML()}</footer>
   `;
   initSlideshows(els.projectView);
+  initMarquees(els.projectView);
 }
 
 // Info page shows a Footer instance with the contact-links block removed

@@ -120,7 +120,7 @@ const PROJECTS = [
     linkLabel: "View project",
     hero: "assets/img/afends/hero.webp",
     // Gallery order follows assets/work/02-afends/'s own numbering
-    // (00-47, re-set by hand 2026-08-12 after a full reorg — see notas.md).
+    // (00-48, re-set by hand 2026-08-12 after a full reorg — see notas.md).
     // Three distinct entry shapes:
     //  - plain string: a single static photo (.project-gallery-item).
     //  - nested array: a "carrusel" group — auto-scrolling filmstrip, all
@@ -190,13 +190,15 @@ const PROJECTS = [
         "assets/img/afends/carrusel3-03.webp",
         "assets/img/afends/carrusel3-04.webp",
         "assets/img/afends/carrusel3-05.webp",
-        "assets/img/afends/carrusel3-06.webp",
+      ],
+      "assets/img/afends/foto-01.webp",
+      [
         "assets/img/afends/carrusel3-07.webp",
         "assets/img/afends/carrusel3-08.webp",
         "assets/img/afends/carrusel3-09.webp",
         "assets/img/afends/carrusel3-10.webp",
+        "assets/img/afends/carrusel3-06.webp",
       ],
-      "assets/img/afends/foto-01.webp",
     ],
   },
   {
