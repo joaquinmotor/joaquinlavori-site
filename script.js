@@ -2,11 +2,19 @@
 // No build step: plain DOM rendering driven by data.js + hash routing.
 // Mobile: 4 pages (home/work/info/sideb) live side by side in #pagesTrack
 // and are paged with a horizontal swipe; the sidebar is hidden. Desktop:
-// same content, one page shown at a time, no swipe, plus a persistent
-// left sidebar (About/Contact/Featured In/Awards). A single top pill nav
-// (logo + HOME/WORK/INFO/SIDE B) is shared across both breakpoints.
+// one page shown at a time, no swipe, plus a left sidebar rendered per-page
+// by renderSidebar() — Home/Work get a compact Photo+About/Contact/
+// Instagram card sidebar, Info adds 5 project cards, Side B has none (its
+// own content is a photo masonry, not sidebar+grid). Several pages also
+// render an entirely separate desktop-only DOM block (Home's 3rd tile
+// column, Work's masonry catalog, Info's 3-column content, Side B's
+// masonry, the project view's desktop layout) toggled by CSS media query
+// rather than mobile's structure just reflowing — Pencil's Desktop frames
+// are genuinely different layouts, not the same content restyled. A single
+// top pill nav (logo + HOME/WORK/INFO/SIDE B) is shared across both
+// breakpoints. See notas.md for the full audit/build history.
 
-/* global NAV, SITE, PROJECTS, INFO_CONTENT, SIDE_B, gsap */
+/* global NAV, SITE, PROJECTS, INFO_CONTENT, INFO_DESKTOP, SIDE_B, gsap */
 
 const MOBILE_BREAKPOINT = 860;
 const pageOrder = NAV.map((n) => n.key);
@@ -17,19 +25,20 @@ const els = {
   pagesTrack: document.getElementById("pagesTrack"),
   heroMedia: document.getElementById("heroMedia"),
   heroMediaCover: document.getElementById("heroMediaCover"),
-  sidebEyebrow: document.getElementById("sidebEyebrow"),
+  homeIntro: document.getElementById("homeIntro"),
   gridHome: document.getElementById("grid-home"),
+  gridHomeLeft: document.getElementById("grid-home-left"),
+  gridHomeRight: document.getElementById("grid-home-right"),
+  gridHomeThird: document.getElementById("grid-home-third"),
   gridWork: document.getElementById("grid-work"),
+  gridWorkDesktop: document.getElementById("grid-work-desktop"),
+  pageWork: document.getElementById("page-work"),
   infoContent: document.getElementById("infoContent"),
+  infoDesktop: document.getElementById("infoDesktop"),
   sidebContent: document.getElementById("sidebContent"),
+  sidebDesktop: document.getElementById("sidebDesktop"),
   projectView: document.getElementById("project-view"),
-  aboutText: document.getElementById("about-text"),
-  bookLink: document.getElementById("book-link"),
-  emailLink: document.getElementById("email-link"),
-  phoneLink: document.getElementById("phone-link"),
-  igLink: document.getElementById("ig-link"),
-  featuredInList: document.getElementById("featured-in-list"),
-  awardsList: document.getElementById("awards-list"),
+  sidebar: document.getElementById("sidebar"),
 };
 
 let currentPageIndex = 0;
@@ -44,15 +53,136 @@ function chevron(direction) {
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="${points}"></polyline></svg>`;
 }
 
+// Play badges removed site-wide (2026-08-11, user request) — videos autoplay
+// now (see realMediaTag()), so a "tap to play" affordance is misleading, and
+// static placeholders never needed one either. Kept as a no-op function
+// (rather than stripping every call site) so slideTag()'s isVideo branching
+// stays intact if badges ever need to come back for a specific case.
 function playBadge() {
-  return `<span class="play-badge" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><polygon points="6,4 20,12 6,20" fill="currentColor" /></svg></span>`;
+  return "";
 }
 
-function coverTag(item) {
-  if (item.video) {
-    return `<video src="${item.video}" poster="${item.cover || item.hero}" muted loop playsinline></video>`;
+// Real media only renders for projects listed here — every other project
+// still shows the gray placeholder box (structure-first pass, matches
+// Pencil) until its photos are reviewed and confirmed ready. Add a slug
+// once that project's assets/img/<slug>/ folder is final. See notas.md
+// "El sitio hoy NO renderiza fotos/videos reales" for the full context.
+const REAL_MEDIA_PROJECTS = new Set(["the-movement", "afends"]);
+
+function mediaSrc(media) {
+  if (!media) return null;
+  return typeof media === "string" ? media : media.src;
+}
+
+function hasRealMedia(media) {
+  const src = mediaSrc(media);
+  if (!src) return false;
+  for (const slug of REAL_MEDIA_PROJECTS) {
+    if (src.startsWith(`assets/img/${slug}/`)) return true;
   }
-  return `<img src="${item.cover || item.hero}" alt="${item.title || item.brand || ""}" loading="lazy" />`;
+  return false;
+}
+
+// Real <img>/<video> markup for a media entry already confirmed real by
+// hasRealMedia(). Videos autoplay muted + looped, no controls (2026-08-11,
+// per user feedback — a static poster read as broken/unfinished).
+function realMediaTag(media) {
+  if (media && typeof media === "object" && media.type === "video") {
+    return `<video class="media-real" src="${media.src}" poster="${media.poster}" muted autoplay loop playsinline preload="auto"></video>`;
+  }
+  return `<img class="media-real" src="${media}" alt="" loading="lazy" />`;
+}
+
+// The big Home hero (mobile) stays placeholder-only on purpose (2026-08-11,
+// user request) even for projects with real media unlocked elsewhere — it
+// doesn't take a media argument, matching its pre-2026-08-11 behavior.
+// 2026-08-12: fills with the JQ personal seal badge (see badgeTag()) instead
+// of the flat gray box.
+function coverTag() {
+  return badgeTag();
+}
+
+// Personal seal badge (JQ monogram, Est. 1987 / Buenos Aires) — a finished
+// asset, not a real-project photo, so it's kept separate from
+// slideTag()/hasRealMedia() and only wired into the three spots the user
+// asked for (2026-08-12): the Home hero (mobile, via coverTag above), the
+// Info hero (mobile, renderInfo's info-hero-media), and the shared desktop
+// sidebar photo (renderSidebar's page-sidebar-photo) — which by itself
+// repeats across Home Desktop, Work selected Desktop (project view keeps
+// the sidebar mounted, see renderProjectDesktop) and Info Desktop. Static
+// piece (2026-08-12: bounce removed per user request) with a soft contact
+// shadow and a periodic light glint that sweeps across the mark itself.
+//
+// The glint mechanism has gone through THREE architectures in one day
+// (2026-08-12) chasing two separate, confirmed rendering bugs — worth
+// recording in full since a future "it's not animating" report should
+// start from here, not from scratch:
+//   1) Original: CSS `-webkit-mask-image`/`mask-image` (masked to the
+//      badge's own alpha) on a div, with an animated `transform` on a
+//      child bar. Worked at first, then broke on iOS Safari specifically
+//      (confirmed live): first froze on one bright stuck frame, then after
+//      a GPU-layer-promotion attempt (translate3d/will-change/backface-
+//      visibility) it stopped rendering the animation at all. This is a
+//      known WebKit trigger: CSS masking of an HTML element + an animated
+//      transform on a descendant.
+//   2) Rewrite to an inline SVG with a native <mask> (from the badge PNG's
+//      alpha) and SMIL <animateTransform> on a gradient <rect> — a
+//      completely different rendering pipeline from (1), chosen to
+//      sidestep that WebKit bug class. It didn't: verified in this sandbox
+//      (Chromium only, no WebKit available) that the <animateTransform>
+//      genuinely progresses (getCTM() sampled across the full cycle showed
+//      real movement) and the mask/gradient both render correctly in
+//      total isolation, but INSIDE THE ACTUAL APP the gradient-filled rect
+//      never painted a single differing pixel across the whole 8s cycle —
+//      confirmed by sampling raw pixel color directly over the darkest ink
+//      stroke of the badge every 200-400ms for a full cycle: constant
+//      (20,11,0) the entire time, vs. a plain SOLID-color rect (no
+//      gradient) animating correctly in the exact same DOM position. So:
+//      solid SVG fills animate fine here, but a gradient fill on an
+//      animated/masked shape silently never repaints — a real Chromium
+//      bug specific to this app's compositing context (the page track
+//      this sits inside carries `will-change: transform` for the swipe
+//      gesture, which is suspected but not confirmed as the trigger).
+//      Static (non-animated) gradients DID paint, just proving the
+//      gradient definition itself was fine — only the animated case inside
+//      this DOM ever silently failed to paint.
+//   3) Current: back to plain CSS, but *without* any masking at all. A
+//      `background: linear-gradient(...)` bar on a div, moved by a CSS
+//      `@keyframes` transform, blended with `mix-blend-mode: screen`. No
+//      `-webkit-mask-image` (avoids bug #1's trigger) and no SVG animate/
+//      gradient combo (avoids bug #2). It doesn't need masking to the
+//      badge's silhouette to look right: `mix-blend-mode: screen` over a
+//      light backdrop is nearly a no-op by the blend math itself (screen
+//      of a light base stays close to that base regardless of the blend
+//      layer), so the sweep is only meaningfully visible where it crosses
+//      genuinely dark/saturated pixels — i.e. the ink strokes — which is
+//      exactly the same "only lights up the mark" look the mask used to
+//      provide on purpose, just achieved as a side effect of the blend
+//      math instead of an explicit clip. Containment to the badge's
+//      rectangular box (so the bar can't spill into neighboring layout)
+//      comes from `.jq-badge-wrap`'s own `overflow:hidden`, same as
+//      before. Verified in this sandbox (Chromium) by sampling the same
+//      dark-ink pixel across a full cycle: constant at rest, then a real,
+//      strong jump (from near-black to a mid-grey) exactly mid-sweep, and
+//      back to the original value after — a clean rest state on both ends
+//      of the cycle. Since this is plain CSS (no mask, no SVG SMIL), it's
+//      the simplest of the three approaches and, unlike (2), was actually
+//      confirmed working end-to-end in this exact app before shipping —
+//      but only in Chromium; iOS Safari still can't be verified locally
+//      (no WebKit browser in this sandbox), so it remains an informed bet
+//      that removing the CSS mask (the specific ingredient bug #1 needed)
+//      avoids that failure mode, not a confirmed fix on real hardware.
+function badgeTag() {
+  return `
+    <div class="jq-badge-wrap">
+      <div class="jq-badge-stage">
+        <div class="jq-badge-shine-wrap">
+          <img class="jq-badge-img" src="assets/img/badge/jq-seal.png" alt="Joaquin Lavori — personal seal, Est. 1987" />
+          <div class="jq-badge-shine"><div class="jq-badge-shine-bar"></div></div>
+        </div>
+        <div class="jq-badge-shadow"></div>
+      </div>
+    </div>`;
 }
 
 function renderHero() {
@@ -61,25 +191,139 @@ function renderHero() {
   els.heroMedia.href = `#/project/${featured.slug}`;
 }
 
-function initSidebar() {
-  els.aboutText.textContent = SITE.aboutShort;
-  els.bookLink.href = mailtoUrl("Project inquiry / consultation");
-  els.emailLink.href = mailtoUrl("Hello");
-  els.emailLink.textContent = SITE.email;
-  els.phoneLink.href = `tel:${SITE.phone.replace(/\s+/g, "")}`;
-  els.phoneLink.textContent = SITE.phone;
-  els.igLink.href = SITE.instagramUrl;
-  els.featuredInList.innerHTML = SITE.featuredIn.map((f) => `<li>${f}</li>`).join("");
-  els.awardsList.innerHTML = SITE.awards.map((a) => `<li>${a.title} — ${a.detail}</li>`).join("");
+function renderHomeIntro() {
+  if (els.homeIntro) els.homeIntro.textContent = SITE.aboutShort;
 }
 
-// A slide is either a plain image URL string, or { type: "video", src, poster }.
-function slideTag(slide) {
-  if (slide && typeof slide === "object" && slide.type === "video") {
-    return `<video src="${slide.src}" poster="${slide.poster || ""}" muted loop playsinline></video>${playBadge()}`;
+// Desktop sidebar (360px). Home Desktop (z2Lknd) and Work Desktop
+// (Ghq1t/uDnON) both use the same Photo + About/Contact/Instagram card
+// sidebar; Info Desktop (X8g8f) adds 5 project preview cards below it;
+// Side B Desktop (BI3ZW) has no persistent sidebar at all — its own body
+// is a 4-track photo masonry instead (see renderSideBDesktop). This
+// replaces the old single About/Contact/Featured-In/Awards sidebar that
+// used to show unconditionally on every desktop page.
+function sidebarCardsHTML() {
+  const aboutBody = INFO_CONTENT.bio.replace(/\n\n/g, " ");
+  const cards = [
+    { title: "About Joaquin", link: "Read more", href: "#/info", body: aboutBody },
+    { title: "Project inquiries", link: "Contact", href: mailtoUrl("Project inquiry / consultation"), body: SITE.email },
+    { title: "Instagram", link: "Follow", href: SITE.instagramUrl, external: true, body: SITE.instagram },
+  ];
+  return cards
+    .map(
+      (c) => `
+      <div class="page-sidebar-card">
+        <div class="page-sidebar-card-header">
+          <span>${c.title}</span>
+          <a href="${c.href}"${c.external ? ' target="_blank" rel="noopener"' : ""}>${c.link}</a>
+        </div>
+        <p>${c.body}</p>
+      </div>`
+    )
+    .join('<div class="page-sidebar-divider"></div>');
+}
+
+const SIDEBAR_PROJECT_HEIGHTS = [200, 170, 210, 180, 230];
+function sidebarProjectsHTML() {
+  return PROJECTS.slice(0, 5)
+    .map(
+      (p, i) => `
+      <div class="page-sidebar-project">
+        <div class="tile-cover" style="height:${SIDEBAR_PROJECT_HEIGHTS[i]}px">${slideTag(p.hero)}</div>
+        <p class="tile-caption-text">${fantasyCaptionHTML("tile-caption-title", "tile-caption-desc")}</p>
+      </div>`
+    )
+    .join("");
+}
+
+function renderSidebar(key) {
+  if (key === "sideb") {
+    els.sidebar.innerHTML = "";
+    return;
   }
-  const src = typeof slide === "string" ? slide : slide.src;
-  return `<img src="${src}" alt="" loading="lazy" />`;
+  els.sidebar.innerHTML = `
+    <div class="page-sidebar-photo">${badgeTag()}</div>
+    <div class="page-sidebar-divider"></div>
+    ${sidebarCardsHTML()}
+    ${key === "info" ? `<div class="page-sidebar-divider"></div>${sidebarProjectsHTML()}` : ""}
+  `;
+}
+
+// Real media (see coverTag/REAL_MEDIA_PROJECTS above) renders as a real
+// <img>/<video>, with the play badge kept only on videos (real photos don't
+// get one). Everything else still falls back to the gray placeholder box
+// with a badge, same as the generic media placeholders in Pencil.
+function slideTag(media) {
+  if (hasRealMedia(media)) {
+    const isVideo = media && typeof media === "object" && media.type === "video";
+    return `${realMediaTag(media)}${isVideo ? playBadge() : ""}`;
+  }
+  return `<div class="media-placeholder">${playBadge()}</div>`;
+}
+
+// A nested array inside a project's `gallery` (see data.js) is a "carrusel"
+// group — photos meant to render as one continuous horizontal filmstrip
+// instead of stacked full-width items (2026-08-11, user request: phone
+// photos side by side, auto-scrolling right-to-left, infinite loop). Plain
+// entries (string/video object) still render as a normal full-width
+// .project-gallery-item via slideTag(), same as before.
+function galleryItemHTML(entry) {
+  if (Array.isArray(entry)) return marqueeHTML(entry);
+  if (entry && entry.type === "slideshow") return slideshowHTML(entry.items);
+  return `<div class="project-gallery-item">${slideTag(entry)}</div>`;
+}
+
+// "Slide-cut" group (see data.js comment on PROJECTS[].gallery): one photo
+// at a time, hard cut (no fade — no transition on opacity) to the next
+// every 1s, infinite loop, no nav/dots (2026-08-12, user request). Distinct
+// from a "carrusel" marquee: nothing scrolls, only one photo is ever
+// visible, all photos are stacked in the same box and shown/hidden via the
+// is-active class instead of laid out side by side.
+function slideshowHTML(items) {
+  const slidesHTML = items
+    .map((src, i) => `<div class="project-slideshow-slide${i === 0 ? " is-active" : ""}">${slideTag(src)}</div>`)
+    .join("");
+  return `<div class="project-slideshow" data-slideshow>${slidesHTML}</div>`;
+}
+
+// Runs every active .project-slideshow's interval. Module-level (not per-
+// instance) because renderProject() wholesale-replaces #project-view on
+// every SPA navigation — an interval left running on a detached node would
+// otherwise leak forever; clearSlideshows() (called at the top of
+// renderProject(), before either render path runs) always tears down the
+// previous page's intervals first.
+let slideshowIntervals = [];
+function clearSlideshows() {
+  slideshowIntervals.forEach(clearInterval);
+  slideshowIntervals = [];
+}
+function initSlideshows(root) {
+  root.querySelectorAll("[data-slideshow]").forEach((el) => {
+    const slides = el.querySelectorAll(".project-slideshow-slide");
+    if (slides.length <= 1) return;
+    let i = 0;
+    slideshowIntervals.push(
+      setInterval(() => {
+        slides[i].classList.remove("is-active");
+        i = (i + 1) % slides.length;
+        slides[i].classList.add("is-active");
+      }, 1000)
+    );
+  });
+}
+
+// CSS-only infinite marquee: the track renders the group twice back to
+// back and animates translateX(0 → -50%) — since both halves are
+// identical and equal width, the loop point is seamless. Images keep
+// their natural aspect ratio at a fixed height (no object-fit crop), so
+// they read as a filmstrip, not a cropped grid.
+// No loading="lazy" here (2026-08-11): the track's width:max-content — and
+// therefore where the -50% loop point lands — depends on every image's
+// intrinsic size being known immediately, not resolved gradually as the
+// user scrolls into each one.
+function marqueeHTML(items) {
+  const itemsHTML = items.map((src) => `<div class="project-marquee-item"><img src="${src}" alt="" /></div>`).join("");
+  return `<div class="project-marquee"><div class="project-marquee-track">${itemsHTML}${itemsHTML}</div></div>`;
 }
 
 function carouselHTML(slides, { max } = {}) {
@@ -98,7 +342,27 @@ function carouselHTML(slides, { max } = {}) {
     </div>`;
 }
 
-function tileHTML(item, index, { linkable = true, numbered = true, carousel = true } = {}) {
+// Pencil still has placeholder ("fantasy") caption copy everywhere it uses
+// this Title+description pattern — every Home tile and every Related Work
+// tile literally reads "Vans" / "Serie de ilustraciones y desarrollo de
+// personajes", not per-item content. Mirroring it exactly (not swapping in
+// real project names/blurbs) until real captions land in Pencil.
+const FANTASY_CAPTION_TITLE = "Vans";
+const FANTASY_CAPTION_DESC = "Serie de ilustraciones y desarrollo de personajes";
+function fantasyCaptionHTML(titleClass, descClass) {
+  return `<span class="${titleClass}">${FANTASY_CAPTION_TITLE}</span> <span class="${descClass}">${FANTASY_CAPTION_DESC}</span>`;
+}
+
+// Real caption (client + overview, straight from the project's own
+// brand/blurb — sourced from its text doc, see notas.md) for the same
+// Title+description slot the fantasy copy above uses. Only shown for
+// REAL_MEDIA_PROJECTS entries (2026-08-11, user request) — everything else
+// keeps the Pencil fantasy placeholder until its media/copy is unlocked.
+function realCaptionHTML(titleClass, descClass, item) {
+  return `<span class="${titleClass}">${item.brand}</span> <span class="${descClass}">${item.blurb}</span>`;
+}
+
+function tileHTML(item, index, { linkable = true, numbered = true, carousel = true, fantasyCaption = false, coverOverride = null } = {}) {
   const title = item.brand || item.title;
   const displayTitle = numbered ? `${String(index + 1).padStart(2, "0")} — ${title}` : title;
   const category = item.category || "";
@@ -115,23 +379,80 @@ function tileHTML(item, index, { linkable = true, numbered = true, carousel = tr
       </a>`;
   }
 
-  const slides = item.gallery && item.gallery.length ? item.gallery : [item.cover || item.hero];
+  // coverOverride (e.g. PROJECTS[n].homeCover) swaps in a specific slide
+  // for this tile's cover only — used by renderHomeGrid so a project can
+  // show a video (or any single asset) as its Home tile instead of
+  // gallery[0]/hero, without touching the Project page's own hero/gallery
+  // order. Doesn't affect Work/related-work tiles, which never pass it.
+  const slides = coverOverride
+    ? [coverOverride]
+    : item.gallery && item.gallery.length
+      ? item.gallery
+      : [item.cover || item.hero];
   const cover = carousel ? carouselHTML(slides, { max: 4 }) : `<div class="tile-cover">${slideTag(slides[0])}</div>`;
-  const captionInner = `<h3>${displayTitle}</h3><p>${category}</p>`;
+  const useRealCaption = fantasyCaption && item.slug && REAL_MEDIA_PROJECTS.has(item.slug) && item.blurb;
+  const captionInner = fantasyCaption
+    ? `<p class="tile-caption-text">${
+        useRealCaption
+          ? realCaptionHTML("tile-caption-title", "tile-caption-desc", item)
+          : fantasyCaptionHTML("tile-caption-title", "tile-caption-desc")
+      }</p>`
+    : `<h3>${displayTitle}</h3><p>${category}</p>`;
+  const captionClass = fantasyCaption ? "tile-caption tile-caption--fantasy" : "tile-caption";
 
   if (linkable && item.slug) {
     return `
       <div class="tile" data-slug="${item.slug}">
         ${cover}
-        <a class="tile-caption" href="#/project/${item.slug}">${captionInner}</a>
+        <a class="${captionClass}" href="#/project/${item.slug}">${captionInner}</a>
       </div>`;
   }
-  return `<div class="tile static">${cover}<div class="tile-caption">${captionInner}</div></div>`;
+  return `<div class="tile static">${cover}<div class="${captionClass}">${captionInner}</div></div>`;
 }
 
 function renderGrid(el, items, opts) {
   el.innerHTML = items.map((item, i) => tileHTML(item, i, opts)).join("");
   initTileCarousels(el);
+}
+
+// Home Mobile (tZLyC): two independent columns of 3 tiles each (matches
+// Pencil's "Column Left" / "Column Right"). Home Desktop (z2Lknd) is a 3x3
+// grid instead — the 3rd column (next 3 projects) renders here too but
+// stays CSS-hidden below 861px, so mobile's exact 6-tile set is unchanged.
+function renderHomeGrid(items) {
+  const featured = items.slice(0, 6);
+  const left = featured.filter((_, i) => i % 2 === 0);
+  const right = featured.filter((_, i) => i % 2 === 1);
+  const third = items.slice(6, 9);
+  const tile = (item) =>
+    tileHTML(item, items.indexOf(item), { carousel: false, fantasyCaption: true, coverOverride: item.homeCover });
+  els.gridHomeLeft.innerHTML = left.map(tile).join("");
+  els.gridHomeRight.innerHTML = right.map(tile).join("");
+  initTileCarousels(els.gridHomeLeft);
+  initTileCarousels(els.gridHomeRight);
+  if (els.gridHomeThird) {
+    els.gridHomeThird.innerHTML = third.map(tile).join("");
+    initTileCarousels(els.gridHomeThird);
+  }
+}
+
+// Work Desktop unselected (Ghq1t): the full 12-project catalog as a 3-column
+// masonry grid of fantasy-caption tiles (same u9oDO pattern as Home), no
+// header text. CSS-hidden below 861px, where #grid-work (single-column
+// list) is used instead. All 12 PROJECTS fill exactly 3x4 tiles.
+function renderWorkDesktopGrid(items) {
+  if (!els.gridWorkDesktop) return;
+  const cols = [[], [], []];
+  items.forEach((item, i) => cols[i % 3].push(item));
+  els.gridWorkDesktop.innerHTML = cols
+    .map(
+      (col, ci) => `
+      <div class="work-desktop-col">
+        ${col.map((item) => tileHTML(item, items.indexOf(item), { carousel: false, fantasyCaption: true })).join("")}
+      </div>`
+    )
+    .join("");
+  initTileCarousels(els.gridWorkDesktop);
 }
 
 // Generic carousel controller. Nav/dot clicks always work; `draggable` also
@@ -259,60 +580,142 @@ function initTileCarousels(scopeEl) {
   scopeEl.querySelectorAll("[data-carousel]").forEach((el) => initCarousel(el, { draggable: false }));
 }
 
-function initProjectCarousel() {
-  const el = els.projectView.querySelector("[data-carousel]");
-  if (el) initCarousel(el, { draggable: true });
+// Info Grid (8 category columns, since 2026-08-11) renders as two side-by-side
+// groups (5 + 3) matching Pencil's "Grid Column A / B" split — not a single
+// stacked column.
+function infoColumnsHTML(columns) {
+  const groupHTML = (cols) =>
+    cols
+      .map(
+        (col) => `
+        <div class="info-column">
+          <h4 class="info-column-label">${col.label}</h4>
+          <div class="info-column-values">${col.values.join("<br />")}</div>
+        </div>`
+      )
+      .join("");
+  return `
+    <div class="info-columns">
+      <div class="info-column-group">${groupHTML(columns.slice(0, 5))}</div>
+      <div class="info-column-group">${groupHTML(columns.slice(5))}</div>
+    </div>`;
 }
 
 function renderInfo() {
   const c = INFO_CONTENT;
   els.infoContent.innerHTML = `
     <div class="info-left">
-      ${c.sections
-        .map(
-          (s) => `
-        <div class="info-section">
-          <div class="info-section-head">
-            <span class="info-section-number">${s.number}</span>
-            <span class="info-section-title">${s.title}</span>
-          </div>
-          <div class="info-section-indent"><p>${s.body}</p></div>
-        </div>`
-        )
+      <div class="info-hero-wrap"><div class="info-hero-media">${badgeTag()}</div></div>
+      ${c.bio
+        .split("\n\n")
+        .map((para) => `<p class="info-bio">${para}</p>`)
         .join("")}
-    </div>
-    <div class="info-right">
-      <div class="info-specs">
-        ${c.specs
+      <div class="info-divider"></div>
+      <div class="info-sections">
+        ${c.sections
           .map(
-            (s) => `
-          <div class="info-spec-row">
-            <div class="info-spec-number">${s.number}</div>
-            <div class="info-spec-label">${s.label}</div>
-            <div class="info-spec-values">${s.values.join("<br />")}</div>
+            (s, i) => `
+          ${i > 0 ? '<div class="info-divider"></div>' : ""}
+          <div class="info-section">
+            <p class="info-section-heading">${s.title}</p>
+            <p class="info-section-body">${s.body}</p>
           </div>`
           )
           .join("")}
       </div>
-      <div class="info-contact-block">
-        <h3>Contact</h3>
-        <div>${SITE.email}</div>
-        <div>${SITE.phone}</div>
-        <div>Currently living in ${SITE.location}</div>
+    </div>
+    <div class="info-right">
+      ${infoColumnsHTML(c.columns)}
+      <p class="info-cta">${c.cta}</p>
+      <div class="info-indent-row">
+        <div class="info-spacer"></div>
+        <div class="info-indent-col info-contact-col">
+          <div>${SITE.email}</div>
+          <div>${SITE.phone}</div>
+          <div>Currently living in ${SITE.location}</div>
+        </div>
       </div>
     </div>
   `;
+  renderInfoDesktop();
+}
+
+// Info Desktop (X8g8f): a completely different layout from mobile, not a
+// CSS reflow of it — 3 content columns (each ending in a photo), using
+// Pencil's Desktop-specific list content (INFO_DESKTOP in data.js, approved
+// by the user in place of the mobile INFO_CONTENT lists for this layout
+// only). The matching photo+About/Contact/Instagram+5-project sidebar is
+// rendered separately by renderSidebar("info").
+function infoDesktopSectionHTML(s, i) {
+  const body = s.list ? `<div class="info-desktop-list">${s.list.join("<br />")}</div>` : `<p class="info-desktop-body">${s.body}</p>`;
+  return `
+    ${i > 0 ? '<div class="info-divider"></div>' : ""}
+    <div class="info-desktop-section">
+      <p class="info-desktop-heading">${s.title}</p>
+      ${body}
+    </div>`;
+}
+function renderInfoDesktop() {
+  if (!els.infoDesktop) return;
+  els.infoDesktop.innerHTML = INFO_DESKTOP.columns
+    .map(
+      (col) => `
+      <div class="info-desktop-col">
+        ${col.sections.map(infoDesktopSectionHTML).join("")}
+        <div class="info-desktop-photo">${slideTag()}</div>
+      </div>`
+    )
+    .join("");
 }
 
 function renderSideB() {
-  els.sidebEyebrow.textContent = SIDE_B.eyebrow;
   els.sidebContent.innerHTML = `
-    <p class="sideb-intro">${SIDE_B.intro}</p>
-    <div class="grid" id="grid-sideb"></div>
+    <div class="sideb-title-wrap">
+      <p class="sideb-intro">${SIDE_B.introMobile}</p>
+    </div>
+    <div class="sideb-grid" id="grid-sideb"></div>
+    <div class="sideb-footer-divider"></div>
   `;
-  renderGrid(document.getElementById("grid-sideb"), SIDE_B.items, { linkable: false, numbered: false });
+  renderGrid(document.getElementById("grid-sideb"), SIDE_B.items, { linkable: false, numbered: false, carousel: false });
+  renderSideBDesktop();
 }
 
+// Side B Desktop (BI3ZW): NOT a wider version of the mobile grid — a 4-track
+// masonry. Track 1 ("Sidebar") holds the title + full intro copy + 2
+// photos; the other 3 tracks are pure photo columns (3 each), 11 media
+// slots total, no captions/numbers/links anywhere. CSS-hidden below 861px,
+// where .sideb-content (the mobile grid above) is used instead.
+const SIDEB_DESKTOP_TRACKS = {
+  sidebar: { heights: [240, 240], badges: [true, true] },
+  col1: { heights: [240, 200, 230], badges: [true, false, false] },
+  col2: { heights: [190, 260, 210], badges: [false, true, false] },
+  col3: { heights: [220, 180, 260], badges: [false, false, true] },
+};
+function sideBDesktopPhotoHTML(height, badge) {
+  return `<div class="sideb-desktop-photo" style="height:${height}px">${badge ? slideTag() : `<div class="media-placeholder"></div>`}</div>`;
+}
+function renderSideBDesktop() {
+  if (!els.sidebDesktop) return;
+  const track = (key) => {
+    const t = SIDEB_DESKTOP_TRACKS[key];
+    return t.heights.map((h, i) => sideBDesktopPhotoHTML(h, t.badges[i])).join("");
+  };
+  els.sidebDesktop.innerHTML = `
+    <div class="sideb-desktop-sidebar">
+      <div class="sideb-desktop-intro">
+        <h1 class="sideb-desktop-title">Side B</h1>
+        <p class="sideb-desktop-body">${SIDE_B.intro}</p>
+      </div>
+      ${track("sidebar")}
+    </div>
+    <div class="sideb-desktop-col">${track("col1")}</div>
+    <div class="sideb-desktop-col">${track("col2")}</div>
+    <div class="sideb-desktop-col">${track("col3")}</div>
+  `;
+}
+
+// Kept only for the (currently unused) "logos" project type — no PROJECTS
+// entry sets type:"logos" today, but the branch below still depends on it.
 function nextProjectSlug(currentSlug) {
   const idx = PROJECTS.findIndex((p) => p.slug === currentSlug);
   if (idx === -1) return PROJECTS[0].slug;
@@ -330,19 +733,54 @@ function projectMetaHTML(p) {
     .join("")}</div>`;
 }
 
+// Related Work: next 4 projects after the current one, wrapping — matches
+// Pencil's 2x2 staggered grid (Project Mobile / K9YKC).
+function relatedProjects(slug, count = 4) {
+  const idx = PROJECTS.findIndex((p) => p.slug === slug);
+  if (idx === -1) return PROJECTS.slice(0, count);
+  const out = [];
+  for (let i = 1; out.length < count && i <= PROJECTS.length - 1; i++) {
+    out.push(PROJECTS[(idx + i) % PROJECTS.length]);
+  }
+  return out;
+}
+
+function relatedWorkHTML(slug) {
+  const items = relatedProjects(slug, 4);
+  if (!items.length) return "";
+  const rows = [];
+  for (let i = 0; i < items.length; i += 2) rows.push(items.slice(i, i + 2));
+  return `
+    <div class="project-related">
+      ${rows
+        .map(
+          (row) => `
+        <div class="project-related-row">
+          ${row
+            .map(
+              (item) => `
+            <a class="project-related-item" href="#/project/${item.slug}">
+              <div class="tile-cover">${slideTag(item.hero)}</div>
+              <p class="project-related-caption">${fantasyCaptionHTML("project-related-title", "project-related-desc")}</p>
+            </a>`
+            )
+            .join("")}
+        </div>`
+        )
+        .join("")}
+    </div>`;
+}
+
 function renderProject(slug) {
+  clearSlideshows();
   const p = PROJECTS.find((x) => x.slug === slug);
   if (!p) {
-    els.projectView.innerHTML = `<div class="project-body"><p>Project not found.</p></div>`;
+    els.projectView.innerHTML = `<div class="project-info"><p>Project not found.</p></div>`;
     return;
   }
 
-  const linkHTML = p.link
-    ? `<a class="project-link" href="${p.link}" target="_blank" rel="noopener">${p.linkLabel} →</a>`
-    : "";
-  const nextRow = `<div class="next-project-row"><a class="next-project-link" href="#/project/${nextProjectSlug(p.slug)}">NEXT PROJECT →</a></div>`;
-
   if (p.type === "logos") {
+    const nextRow = `<div class="next-project-row"><a class="next-project-link" href="#/project/${nextProjectSlug(p.slug)}">NEXT PROJECT →</a></div>`;
     els.projectView.innerHTML = `
       <div class="project-header">
         <h1>${p.brand}</h1>
@@ -364,46 +802,134 @@ function renderProject(slug) {
     return;
   }
 
+  if (!isMobile()) {
+    renderProjectDesktop(p);
+    return;
+  }
+
+  // Matches Pencil's Project Mobile frame (K9YKC): Hero Media, then a
+  // Title/"Overview" header row, a Meta Col + body-text row, a stacked
+  // gallery (no carousel chrome — mirrors the gray placeholder mockup),
+  // a Related Work grid, and the shared footer. No CLIENT/ROLE/YEAR
+  // labels or carousel dots/counter — none of that exists in Pencil.
+  const gallery = p.gallery && p.gallery.length ? p.gallery : [p.hero];
+  const restGallery = gallery.slice(1);
+  const linkHTML = p.link
+    ? `<a class="project-link" href="${p.link}" target="_blank" rel="noopener">${p.linkLabel} →</a>`
+    : "";
+
   els.projectView.innerHTML = `
-    <div class="project-header">
-      <h1>${p.brand}</h1>
-      ${projectMetaHTML(p)}
+    <div class="project-hero-wrap">
+      <div class="project-hero-media">${slideTag(gallery[0])}</div>
     </div>
-    ${projectCarouselHTML(p.gallery)}
-    <div class="project-body">${p.body.map((para) => `<p>${para}</p>`).join("")}</div>
-    ${linkHTML}
-    ${nextRow}
-  `;
-  initProjectCarousel();
-}
-
-function projectCarouselHTML(gallery) {
-  const multi = gallery.length > 1;
-  return `
-    <div class="project-carousel" data-carousel>
-      <div class="project-carousel-track" data-track>
-        ${gallery.map((s) => `<div class="project-slide" data-slide>${slideTag(s)}</div>`).join("")}
+    <div class="project-info">
+      <div class="project-info-header">
+        <h1 class="project-title">${p.brand}</h1>
+        <div class="project-overview-label">Overview</div>
       </div>
-      ${
-        multi
-          ? `
-      <button type="button" class="carousel-nav prev" data-nav="-1" aria-label="Previous image">${chevron(-1)}</button>
-      <button type="button" class="carousel-nav next" data-nav="1" aria-label="Next image">${chevron(1)}</button>
-      <div class="carousel-dots">${gallery.map((_, i) => `<span class="dot${i === 0 ? " is-active" : ""}" data-dot></span>`).join("")}</div>
-      <div class="carousel-counter" data-counter>01 / ${String(gallery.length).padStart(2, "0")}</div>`
-          : ""
-      }
-    </div>`;
+      <div class="project-info-body">
+        <div class="project-meta-col">
+          <div class="project-meta-line">${p.category}</div>
+          ${p.year ? `<div class="project-meta-line">${p.year}</div>` : ""}
+        </div>
+        <div class="project-overview-text">
+          ${p.body.map((para) => `<p>${para}</p>`).join("")}
+          ${linkHTML}
+        </div>
+      </div>
+    </div>
+    ${
+      restGallery.length
+        ? `<div class="project-gallery">${restGallery.map(galleryItemHTML).join("")}</div>`
+        : ""
+    }
+    <div class="project-gallery-divider"></div>
+    ${relatedWorkHTML(p.slug)}
+    <div class="project-footer-divider"></div>
+    <footer class="site-footer">${footerHTML()}</footer>
+  `;
+  initSlideshows(els.projectView);
 }
 
-function footerHTML() {
-  return `
-    <p class="footer-cta">For new partnerships and general enquiries, reach out on:</p>
-    <div>
-      <a class="footer-email" href="${mailtoUrl("Hello")}">${SITE.email}</a>
+// Desktop project view — matches Pencil's Work selected Desktop (uDnON), NOT
+// a scaled-up version of the mobile layout: a header (title + tagline, then
+// a description paragraph) and a 3-column masonry photo gallery with no
+// captions at all. The shared page sidebar (Photo+About+Contact+Instagram,
+// "work" variant) stays visible alongside this — openProject() re-renders
+// it, this function only fills #project-view. No Pencil "Project Desktop"
+// frame exists separately; this selected-Work-Desktop state fills that role.
+const PROJECT_DESKTOP_GALLERY_HEIGHTS = [240, 200, 230, 190, 260, 210, 220, 180, 260];
+// A masonry cell whose gallery entry is a nested array (a "carrusel" group,
+// see galleryItemHTML()/marqueeHTML() above) renders the same auto-scroll
+// filmstrip as mobile instead of falling through slideTag() to an empty
+// placeholder (slideTag()/hasRealMedia() only know how to read a string or a
+// {type:"video"} object, not an array — 2026-08-12 bug, was showing as a
+// blank gray box on every project with a carrusel group in Desktop). The
+// filmstrip keeps its own fixed height (.project-marquee, 220px) instead of
+// the masonry's randomized per-cell height — stretching/cropping it to an
+// arbitrary column height would defeat the "natural aspect ratio" point of
+// the marquee.
+function renderDesktopGalleryCell(item) {
+  if (Array.isArray(item.src)) {
+    return `<div class="project-desktop-photo project-desktop-photo--marquee">${marqueeHTML(item.src)}</div>`;
+  }
+  if (item.src && item.src.type === "slideshow") {
+    return `<div class="project-desktop-photo project-desktop-photo--slideshow">${slideshowHTML(item.src.items)}</div>`;
+  }
+  return `<div class="project-desktop-photo" style="height:${item.height}px">${slideTag(item.src)}</div>`;
+}
+function renderProjectDesktop(p) {
+  const gallery = p.gallery && p.gallery.length ? p.gallery : [p.hero];
+  const cols = [[], [], []];
+  gallery.forEach((s, i) => {
+    cols[i % 3].push({ src: s, height: PROJECT_DESKTOP_GALLERY_HEIGHTS[i % PROJECT_DESKTOP_GALLERY_HEIGHTS.length] });
+  });
+  els.projectView.innerHTML = `
+    <div class="project-desktop-header">
+      <div class="project-desktop-header-row">
+        <h1 class="project-desktop-title">${p.brand}</h1>
+        <p class="project-desktop-tagline">${p.blurb}</p>
+      </div>
+      <div class="project-desktop-description">${p.body.map((para) => `<p>${para}</p>`).join("")}</div>
     </div>
+    <div class="project-desktop-gallery">
+      ${cols
+        .map(
+          (col) => `
+        <div class="project-desktop-col">
+          ${col.map(renderDesktopGalleryCell).join("")}
+        </div>`
+        )
+        .join("")}
+    </div>
+    <footer class="site-footer">${footerHTML()}</footer>
+  `;
+  initSlideshows(els.projectView);
+}
+
+// Info page shows a Footer instance with the contact-links block removed
+// (email/phone/Instagram already appear via .info-contact-col above it) —
+// includeContact:false renders just the divider-less copyright/back-to-top
+// row, matching Pencil's per-page override. Every other page keeps the
+// default full footer.
+function footerHTML({ includeContact = true } = {}) {
+  return `
+    ${
+      includeContact
+        ? `
+    <div class="footer-contact">
+      <a class="footer-contact-line" href="${mailtoUrl("Hello")}">${SITE.email}</a>
+      <a class="footer-contact-line" href="tel:${SITE.phone.replace(/\s+/g, "")}">${SITE.phone}</a>
+      <a class="footer-contact-line" href="${SITE.instagramUrl}" target="_blank" rel="noopener">Instagram</a>
+    </div>
+    <div class="footer-divider"></div>`
+        : ""
+    }
     <div class="footer-bottom">
-      <div class="footer-copy">© ${new Date().getFullYear()} Joaquin Lavori</div>
+      <div class="footer-copy">
+        <div class="footer-copyright">© ${new Date().getFullYear()} Joaquin Lavori</div>
+        <div class="footer-rights">All rights reserved</div>
+      </div>
       <button type="button" class="back-to-top" data-back-to-top>Back to top</button>
     </div>
   `;
@@ -411,14 +937,19 @@ function footerHTML() {
 
 function initNav() {
   els.siteNav.innerHTML = `
-    <a class="logo" href="#/">${SITE.name.toUpperCase()}</a>
     <nav class="nav-links">
-      ${NAV.map((n) => `<a data-key="${n.key}" href="${n.hash}">${n.label}</a>`).join("")}
+      ${NAV.map(
+        (n, i) => `
+        ${i > 0 ? '<div class="nav-divider"></div>' : ""}
+        <a class="nav-segment" data-key="${n.key}" href="${n.hash}">
+          <span class="nav-pill-wrap"><span class="nav-pill"><span class="nav-label">${n.label}</span></span></span>
+        </a>`
+      ).join("")}
     </nav>
   `;
 
   document.querySelectorAll("[data-footer]").forEach((f) => {
-    f.innerHTML = footerHTML();
+    f.innerHTML = footerHTML({ includeContact: !f.closest("#page-info") });
   });
 
   document.addEventListener("click", (e) => {
@@ -436,6 +967,18 @@ function initNav() {
     const scroller = btn.closest(".page-scroll") || btn.closest(".project-view") || window;
     scroller.scrollTo({ top: 0, behavior: "smooth" });
   });
+
+  // Clicking the WORK nav pill is the explicit way back to the catalog.
+  // Swiping to Work while a project is open lands on the same "#/work"
+  // hash (see initSwipe()'s silent history.replaceState), so a click here
+  // often doesn't change location.hash and never fires hashchange/route() —
+  // handle the close directly instead of relying on that.
+  els.siteNav.addEventListener("click", (e) => {
+    const link = e.target.closest('.nav-segment[data-key="work"]');
+    if (!link || !els.pageWork.classList.contains("is-project-open")) return;
+    closeProject();
+    goToPage("work");
+  });
 }
 
 function setActiveNav(key) {
@@ -444,7 +987,9 @@ function setActiveNav(key) {
 
 function initNavScroll() {
   const setScrolled = (top) => els.siteNav.classList.toggle("is-scrolled", top > 4);
-  const scrollers = [window, els.projectView, ...document.querySelectorAll(".page-scroll")];
+  // #project-view no longer scrolls independently — it lives inside Work's
+  // own .page-scroll, already covered below.
+  const scrollers = [window, ...document.querySelectorAll(".page-scroll")];
   scrollers.forEach((el) => {
     if (!el) return;
     el.addEventListener(
@@ -477,6 +1022,7 @@ function goToPage(key, { animate = true } = {}) {
   const index = Math.max(0, pageOrder.indexOf(key));
   currentPageIndex = index;
   setActiveNav(key);
+  renderSidebar(key);
 
   const targetEl = document.getElementById(`page-${key}`);
 
@@ -497,22 +1043,44 @@ function goToPage(key, { animate = true } = {}) {
 }
 
 function closeProject() {
-  els.layout.classList.remove("is-project-open");
+  els.pageWork.classList.remove("is-project-open");
   els.projectView.classList.remove("is-open");
-  els.projectView.hidden = true;
 }
 
+// Opening a project always "pins" it to the Work tab (Pencil's Work
+// selected Desktop, uDnON, reused for this — see notas.md) instead of
+// covering the whole screen: #project-view lives inside #page-work's own
+// scroller, so Work stays fixed on this project while the swipe gesture
+// (and the top nav) keep working normally to browse Home/Info/Side B. The
+// project stays open until a different one is opened, or the Work tab is
+// explicitly re-selected (see route()) — navigating elsewhere doesn't
+// close it.
 function openProject(slug) {
   renderProject(slug);
-  els.layout.classList.add("is-project-open");
-  els.projectView.hidden = false;
-  els.projectView.scrollTo(0, 0);
+  els.pageWork.classList.add("is-project-open");
+  goToPage("work");
+  const scroller = els.pageWork.querySelector(".page-scroll");
+  if (scroller) scroller.scrollTo(0, 0);
   if (isMobile()) {
     requestAnimationFrame(() => els.projectView.classList.add("is-open"));
   } else if (typeof gsap !== "undefined") {
     gsap.fromTo(els.projectView, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" });
+  } else {
+    els.projectView.classList.add("is-open");
   }
-  setActiveNav("work");
+  // renderProject() (above) fills #project-view with innerHTML — including
+  // any <video autoplay> tags — while .project-view still has display:none
+  // (the is-project-open class above is what flips it to display:block).
+  // Browsers don't start loading/autoplaying <video> elements that were
+  // inserted into a display:none subtree, and simply becoming visible
+  // afterward doesn't retroactively kick that off (2026-08-12 bug: real
+  // videos in the gallery — poster.jpg loads, .mp4 never does — same cause
+  // on mobile and desktop). Explicitly (re)start them now that the view is
+  // actually visible.
+  els.projectView.querySelectorAll("video[autoplay]").forEach((v) => {
+    v.load();
+    v.play().catch(() => {});
+  });
 }
 
 function route() {
@@ -524,10 +1092,15 @@ function route() {
     return;
   }
 
-  closeProject();
-
   const found = NAV.find((n) => n.hash === hash);
-  goToPage(found ? found.key : "home");
+  const key = found ? found.key : "home";
+
+  // Explicitly navigating to the Work tab (nav click, direct link, back
+  // button) is the way to leave an open project behind and see the catalog
+  // again. Navigating to Home/Info/Side B leaves it pinned/open on Work.
+  if (key === "work") closeProject();
+
+  goToPage(key);
 }
 
 function initSwipe() {
@@ -541,7 +1114,7 @@ function initSwipe() {
   track.addEventListener(
     "touchstart",
     (e) => {
-      if (!isMobile() || els.layout.classList.contains("is-project-open")) return;
+      if (!isMobile()) return;
       const t = e.touches[0];
       startX = t.clientX;
       startY = t.clientY;
@@ -556,7 +1129,7 @@ function initSwipe() {
   track.addEventListener(
     "touchmove",
     (e) => {
-      if (!isMobile() || els.layout.classList.contains("is-project-open")) return;
+      if (!isMobile()) return;
       const t = e.touches[0];
       const dx = t.clientX - startX;
       const dy = t.clientY - startY;
@@ -592,28 +1165,31 @@ function initSwipe() {
       targetIndex = dx < 0 ? currentPageIndex + 1 : currentPageIndex - 1;
       targetIndex = Math.max(0, Math.min(pageOrder.length - 1, targetIndex));
     }
-    const targetKey = pageOrder[targetIndex];
-    if (targetKey !== pageOrder[currentPageIndex]) {
-      location.hash = NAV[targetIndex].hash;
-    } else {
-      goToPage(targetKey);
-    }
+    goToPage(pageOrder[targetIndex]);
+    // A swipe is just a page peek — unlike a real nav click it must not
+    // close a project pinned open on Work (see openProject/route()), so
+    // sync the URL silently instead of going through hashchange routing.
+    const targetHash = NAV[targetIndex].hash;
+    if (location.hash !== targetHash) history.replaceState(null, "", targetHash);
   });
 }
 
 window.addEventListener("hashchange", route);
 window.addEventListener("resize", () => {
   setNavHeight();
-  if (els.layout.classList.contains("is-project-open")) return;
   goToPage(pageOrder[currentPageIndex], { animate: false });
 });
 
 initNav();
 initNavScroll();
-initSidebar();
+renderHomeIntro();
 renderHero();
-renderGrid(els.gridHome, PROJECTS, { carousel: false });
-renderGrid(els.gridWork, PROJECTS);
+renderHomeGrid(PROJECTS);
+// Work Mobile (z0NKkz) is a single-column list of fantasy-caption cards, same
+// pattern as Home — not the old numbered/carousel 2-col grid. CSS (`.grid`)
+// switches #grid-work to a full-width single column at mobile widths.
+renderGrid(els.gridWork, PROJECTS, { carousel: false, fantasyCaption: true });
+renderWorkDesktopGrid(PROJECTS);
 renderInfo();
 renderSideB();
 setNavHeight();

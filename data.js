@@ -2,7 +2,7 @@
 // Edit this file to add, remove or reorder projects. Everything on the
 // site is generated from what's in here — no need to touch the HTML.
 
-/* exported NAV, SITE, PROJECTS, INFO_CONTENT, SIDE_B */
+/* exported NAV, SITE, PROJECTS, INFO_CONTENT, INFO_DESKTOP, SIDE_B */
 
 const NAV = [
   { key: "home", label: "HOME", hash: "#/" },
@@ -17,11 +17,11 @@ const SITE = {
   eyebrow: "BUENOS AIRES — ILLUSTRATION & DESIGN",
   email: "hello@joaquin.com",
   phone: "+61 499 372 409",
-  instagram: "instagram.com/joaquin.motor",
-  instagramUrl: "https://instagram.com/joaquin.motor",
-  location: "Byron Bay, NSW, Australia",
+  instagram: "@joaquinlavori",
+  instagramUrl: "https://instagram.com/joaquinlavori",
+  location: "NSW, Australia",
   aboutShort:
-    "Joaquin Lavori is a graphic designer and illustrator from Buenos Aires, now based in Byron Bay, Australia. His practice moves between art direction, branding and hand-drawn illustration for surf, skate and streetwear brands, bars and independent businesses.",
+    "I'm Joaquin — a graphic designer based in Byron Bay building brand identities with a voice. Brands that actually say something, not just look nice.",
   featuredIn: [
     "7 Capas Magazine",
     "La Nación",
@@ -68,27 +68,44 @@ const PROJECTS = [
     blurb:
       "Logo design for The Movement, a new talent and live-show division by Landia, one of the most awarded advertising production companies.",
     body: [
-      "Logo design for The Movement, a global creative studio and production company working across the music industry and the brands that work with it. Launched by Landia — one of the most awarded advertising production companies — The Movement needed an identity that could carry its own weight as a new division within the group. I explored several directions before landing on an organic, handwritten mark: loose, human, and unmistakably tied to music and performance rather than to a traditional agency register. The result is a flexible, relaxed logotype built to move across music videos, branded content, and live shows — giving The Movement the push it needed to launch under its own name.",
+      "Logo design for The Movement, a global creative studio and production company working across the music industry and the brands that work with it. Launched by Landia — one of the most awarded advertising production companies — The Movement needed an identity that could carry its own weight as a new division within the group.",
+      "I explored several directions before landing on an organic, handwritten mark: loose, human, and unmistakably tied to music and performance rather than to a traditional agency register. The result is a flexible, relaxed logotype built to move across music videos, branded content, and live shows — giving The Movement the push it needed to launch under its own name.",
     ],
     link: "https://themovement.land/",
     linkLabel: "Visit site",
     hero: "assets/img/the-movement/hero.webp",
+    // Home tile cover only (does not affect the Project page hero/gallery
+    // order above): the last video (video-04, native 886x1920) instead of
+    // the usual hero image. Cover sizes to the video's own aspect ratio
+    // instead of the fixed crop other Home tiles use — see
+    // #grid-home-left .tile[data-slug="the-movement"] .tile-cover in
+    // styles.css.
+    homeCover: { type: "video", src: "assets/img/the-movement/video-04.mp4", poster: "assets/img/the-movement/video-04-poster.jpg" },
+    // A plain array entry inside `gallery` (nested, as opposed to a string
+    // or {type:"video"} object) is a "carrusel" group: a set of photos
+    // meant to render as one auto-scrolling horizontal filmstrip instead of
+    // stacked full-width items — see galleryItemHTML()/marqueeHTML() in
+    // script.js and notas.md 2026-08-11.
     gallery: [
       "assets/img/the-movement/hero.webp",
       "assets/img/the-movement/logo.webp",
-      "assets/img/the-movement/team.webp",
       { type: "video", src: "assets/img/the-movement/video-01.mp4", poster: "assets/img/the-movement/video-01-poster.jpg" },
       { type: "video", src: "assets/img/the-movement/video-02.mp4", poster: "assets/img/the-movement/video-02-poster.jpg" },
+      [
+        "assets/img/the-movement/phone-01.webp",
+        "assets/img/the-movement/phone-02.webp",
+        "assets/img/the-movement/phone-03.webp",
+        "assets/img/the-movement/phone-04.webp",
+      ],
       { type: "video", src: "assets/img/the-movement/video-03.mp4", poster: "assets/img/the-movement/video-03-poster.jpg" },
+      "assets/img/the-movement/team.webp",
       { type: "video", src: "assets/img/the-movement/video-04.mp4", poster: "assets/img/the-movement/video-04-poster.jpg" },
-      "assets/img/the-movement/phone-01.webp",
-      "assets/img/the-movement/phone-02.webp",
-      "assets/img/the-movement/phone-03.webp",
-      "assets/img/the-movement/phone-04.webp",
-      "assets/img/the-movement/phone-05.webp",
-      "assets/img/the-movement/phone-06.webp",
-      "assets/img/the-movement/phone-07.webp",
-      "assets/img/the-movement/phone-08.webp",
+      [
+        "assets/img/the-movement/phone-05.webp",
+        "assets/img/the-movement/phone-06.webp",
+        "assets/img/the-movement/phone-07.webp",
+        "assets/img/the-movement/phone-08.webp",
+      ],
     ],
   },
   {
@@ -101,17 +118,85 @@ const PROJECTS = [
     ],
     link: "https://afends.com/search?q=joaquin+motor&options%5Bprefix%5D=last",
     linkLabel: "View project",
-    hero: "assets/img/afends/01.webp",
+    hero: "assets/img/afends/hero.webp",
+    // Gallery order follows assets/work/02-afends/'s own numbering
+    // (00-47, re-set by hand 2026-08-12 after a full reorg — see notas.md).
+    // Three distinct entry shapes:
+    //  - plain string: a single static photo (.project-gallery-item).
+    //  - nested array: a "carrusel" group — auto-scrolling filmstrip, all
+    //    photos visible side by side (marqueeHTML() in script.js). Also used
+    //    for spread-01/02 (the two oversized PNG spreads, 22-carrusel-01 /
+    //    24-carrusel-02, ~9MB each, re-optimized to webp) wrapped as their
+    //    own 1-item "carrusel" per the user's own framing (2026-08-12): each
+    //    is already a wide composite photo, so it loops on itself rather
+    //    than sitting statically.
+    //  - {type:"slideshow", items:[...]}: a "slide-cut" group — one photo
+    //    at a time, hard cut (no fade) to the next every 1s, infinite loop,
+    //    no nav/dots (2026-08-12, user request — see slideshowHTML() in
+    //    script.js). Distinct from "carrusel": nothing scrolls, only one
+    //    photo is ever visible.
     gallery: [
-      "assets/img/afends/01.webp",
-      "assets/img/afends/02.webp",
-      "assets/img/afends/03.webp",
-      "assets/img/afends/04.webp",
-      "assets/img/afends/05.webp",
-      "assets/img/afends/06.webp",
-      "assets/img/afends/07.webp",
-      "assets/img/afends/08.webp",
-      "assets/img/afends/09.webp",
+      "assets/img/afends/hero.webp",
+      [
+        "assets/img/afends/carrusel1-01.webp",
+        "assets/img/afends/carrusel1-02.webp",
+        "assets/img/afends/carrusel1-03.webp",
+        "assets/img/afends/carrusel1-04.webp",
+        "assets/img/afends/carrusel1-05.webp",
+        "assets/img/afends/carrusel1-06.webp",
+        "assets/img/afends/carrusel1-07.webp",
+        "assets/img/afends/carrusel1-08.webp",
+      ],
+      {
+        type: "slideshow",
+        items: [
+          "assets/img/afends/slidercut4-01.webp",
+          "assets/img/afends/slidercut4-02.webp",
+          "assets/img/afends/slidercut4-03.webp",
+        ],
+      },
+      { type: "video", src: "assets/img/afends/video-01.mp4", poster: "assets/img/afends/video-01-poster.jpg" },
+      {
+        type: "slideshow",
+        items: [
+          "assets/img/afends/slidecut6-01.webp",
+          "assets/img/afends/slidecut6-02.webp",
+          "assets/img/afends/slidecut6-03.webp",
+          "assets/img/afends/slidecut6-04.webp",
+          "assets/img/afends/slidecut6-05.webp",
+          "assets/img/afends/slidecut6-06.webp",
+          "assets/img/afends/slidecut6-07.webp",
+          "assets/img/afends/slidecut6-08.webp",
+        ],
+      },
+      { type: "video", src: "assets/img/afends/video-02.mp4", poster: "assets/img/afends/video-02-poster.jpg" },
+      ["assets/img/afends/spread-01.webp"],
+      "assets/img/afends/foto-02.webp",
+      { type: "video", src: "assets/img/afends/video-03.mp4", poster: "assets/img/afends/video-03-poster.jpg" },
+      ["assets/img/afends/spread-02.webp"],
+      {
+        type: "slideshow",
+        items: [
+          "assets/img/afends/slidecut5-01.webp",
+          "assets/img/afends/slidecut5-02.webp",
+          "assets/img/afends/slidecut5-03.webp",
+          "assets/img/afends/slidecut5-04.webp",
+          "assets/img/afends/slidecut5-05.webp",
+        ],
+      },
+      [
+        "assets/img/afends/carrusel3-01.webp",
+        "assets/img/afends/carrusel3-02.webp",
+        "assets/img/afends/carrusel3-03.webp",
+        "assets/img/afends/carrusel3-04.webp",
+        "assets/img/afends/carrusel3-05.webp",
+        "assets/img/afends/carrusel3-06.webp",
+        "assets/img/afends/carrusel3-07.webp",
+        "assets/img/afends/carrusel3-08.webp",
+        "assets/img/afends/carrusel3-09.webp",
+        "assets/img/afends/carrusel3-10.webp",
+      ],
+      "assets/img/afends/foto-01.webp",
     ],
   },
   {
@@ -300,49 +385,113 @@ const PROJECTS = [
 ];
 
 const INFO_CONTENT = {
+  // Pencil's Info Mobile (trYo5) splits this into 3 paragraphs (blank-line
+  // separated); Desktop (X8g8f) shows it as one continuous block instead —
+  // renderInfo() below splits on the blank lines for mobile rendering.
+  bio: "I'm Joaquin, a graphic designer and visual artist based in Byron Bay. I build brand identities for people who don't want to blend in — identity with a voice, not just a look.\n\nMost brands play it safe and end up saying nothing; I'm after the opposite: a point of view, real character, something worth remembering.\n\nMy work leans on strong systems and a good eye for personality, shaped as much by the coast and the water as by the studio. If your brand has something to say, let's give it one.",
   sections: [
     {
-      number: "1.",
-      title: "Introduction",
-      body: "My practice moves between branding, illustration, and art direction — building brand identities from the ground up, then carrying that same thinking into illustrated work, often under my alter ego, Joaquin Motor. The work spans logos, web design, apparel, and campaign material for clients across fashion, music, food, action sports, and activism.",
+      title: "So, how do I actually help you?",
+      body: "By building your identity from the ground up. It shows up as brand mentorship, logos, web design, apparel, and campaign material, for brands across fashion, music, food, action sports, and activism.",
     },
     {
-      number: "2.",
-      title: "Method",
-      body: "My method starts with a conversation. I listen to how a client sees their own project until we land on what's actually right for it — not just what looks good. From there, I treat graphic design as a powerful tool for capturing something harder to put into words: the feeling a brand carries, even before anyone's said it out loud.",
+      title: "Where does a brand actually start?",
+      body: "With strategy, identity, and design working as one — the groundwork that makes every piece after it make sense.",
     },
     {
-      number: "3.",
-      title: "Collaboration",
-      body: "Alongside my independent practice, I've worked as art director and creative ambassador for brands like Vans Argentina, and partner directly with founders and teams to help shape brand concepts from the beginning, not just execute them.",
+      title: "Who carries that through to the finished piece?",
+      body: "Together working as a team — from first concept to final asset, I'll direct the visual world of your brand through creative direction and campaign work.",
     },
   ],
-  specs: [
+  // 8 categories, in the exact order/split Pencil's Info Grid uses on
+  // mobile (5 in Column A, 3 in Column B — see infoColumnsHTML() in
+  // script.js). As of 2026-08-11 this is the SAME canonical set/values
+  // INFO_DESKTOP below shows (Pencil unified mobile and desktop content —
+  // previously mobile had its own leaner placeholder list here, see
+  // notas.md). INFO_DESKTOP now reuses these arrays by index instead of
+  // duplicating them, so there's one source of truth per category.
+  columns: [
     {
-      number: "2. 1",
       label: "Areas of Expertise",
-      values: ["Creative Direction", "Visual Identity", "Illustration", "Storytelling"],
+      values: ["Creative Direction", "Visual Identity", "Illustration", "Web Design", "Packaging Design"],
     },
     {
-      number: "2. 2",
+      label: "Courses and Workshops Delivered",
+      values: ["Ideas to Paper, Palmira Estudios", "Idea to Skin, University of Palermo", "Urban Interventions, Argentine University of Enterprise"],
+    },
+    {
       label: "Operating Sectors",
       values: ["Fashion", "Product", "Arts", "Hospitality", "Retail"],
     },
     {
-      number: "2. 3",
       label: "Core Principles",
       values: ["Active Listening", "Functionality", "Passion", "Authenticity"],
+    },
+    {
+      label: "Media Coverage",
+      values: ["Obra Compartida, Ernesto Pesce", "Revista Otra", "Diario de viaje al desierto, Bucle Editorial", "7 Capas Magazine", "Diario La Nación", "Diario Popular"],
+    },
+    {
+      label: "Tools",
+      values: ["Figma", "Procreate", "Pencil", "Resolume", "Adobe Suite"],
+    },
+    {
+      label: "Selected Clients",
+      values: ["Vans", "Afends", "The Movement", "La Calle Bar", "Zero Skateboards"],
+    },
+    {
+      label: "Awards",
+      values: ['Art Basel Cities, "Eternity" by Maurizio Cattelan (2018)', "VET Academic Excellence, Greystone College (2026)"],
     },
   ],
   cta: "For new partnerships and general enquiries, reach out on:",
 };
 
+// Info Desktop (X8g8f) — a different layout from Info Mobile, not a reflow
+// of it: 3 content columns, each ending in a photo. Reuses INFO_CONTENT.columns
+// by index for every category (as of 2026-08-11 mobile and desktop show the
+// same 8 categories/values — see the comment on that field above), and adds
+// "Say Hello" (desktop-only, no mobile equivalent). See notas.md.
+const INFO_DESKTOP = {
+  columns: [
+    {
+      sections: [
+        ...INFO_CONTENT.sections,
+        { title: "Areas of Expertise", list: INFO_CONTENT.columns[0].values },
+        { title: "Courses and Workshops Delivered", list: INFO_CONTENT.columns[1].values },
+      ],
+    },
+    {
+      sections: [
+        { title: "Core Principles", list: INFO_CONTENT.columns[3].values },
+        { title: "Operating Sectors", list: INFO_CONTENT.columns[2].values },
+        { title: "Media Coverage", list: INFO_CONTENT.columns[4].values },
+        { title: "Tools", list: INFO_CONTENT.columns[5].values },
+      ],
+    },
+    {
+      sections: [
+        { title: "Selected Clients", list: INFO_CONTENT.columns[6].values },
+        { title: "Awards", list: INFO_CONTENT.columns[7].values },
+        {
+          title: "Say Hello",
+          body: "For new partnerships and general enquiries, reach out on hello@joaquin.com or +61 499 372 409. Currently living in NSW, Australia. Got a project in mind? Send a short brief with scope, timeline and budget — I'll get back within two business days to see if it's a fit.",
+        },
+      ],
+    },
+  ],
+};
+
 // Side B — experiments, discarded directions, off-cuts. Placeholder set,
 // reuses existing project imagery until dedicated Side B material is ready.
 const SIDE_B = {
-  eyebrow: "PROCESS, SKETCHES & EXPERIMENTS",
+  // Short kicker-style intro shown on mobile (matches Pencil's Side B Mobile,
+  // yi8Jx). `intro` (below) is the longer version used on Desktop (Side B
+  // Desktop, BI3ZW) — Desktop layout itself isn't built yet, see notas.md.
+  introMobile:
+    "Experiments, dropped ideas, and pieces that never found a home. The collection keeps every day.",
   intro:
-    "This is where the loose ends live: experiments that didn't make the cut, ideas I loved and then dropped, offshoots of finished projects, half-formed thoughts, and typographic play that never found a home. I keep them here because even the pieces nobody used still carry something worth looking at. The collection keeps growing as I keep making things on the side.",
+    "Here you will find an assorted mix of experiments, some failed and some discarded, ideas I loved and then dropped, offshoots of finished projects, half-formed thoughts, and typographic play that never found a home. I keep them here because even the pieces nobody used still carry something worth looking at. The collection keeps growing as I keep making things on the side.",
   items: [
     {
       title: "Sketch — Vans",
@@ -360,7 +509,7 @@ const SIDE_B = {
       cover: "assets/img/fatima/02.jpg",
       gallery: ["assets/img/fatima/02.jpg", "assets/img/fatima/03.jpg", "assets/img/fatima/04.jpg"],
     },
-    { title: "Layout test — Afends", category: "Study", blurb: "An early layout, dropped before final.", cover: "assets/img/afends/03.webp" },
+    { title: "Layout test — Afends", category: "Study", blurb: "An early layout, dropped before final.", cover: "assets/img/afends/carrusel1-03.webp" },
     { title: "Type study — La Guitarrita", category: "Type Study", blurb: "Typographic alchemy, kept for the archive.", cover: "assets/img/laguitarrita/02.jpg" },
   ],
 };

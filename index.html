@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Joaquin Lavori — Branding & Illustration</title>
 <meta name="description" content="Joaquin Lavori is a graphic designer and illustrator working across branding, art direction and hand-drawn illustration." />
-<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="styles.css?v=1786542182" />
 </head>
 <body>
 
@@ -13,38 +13,10 @@
 
   <div class="layout" id="layout">
 
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-block" id="sidebar-about">
-        <h3>About</h3>
-        <p id="about-text"></p>
-      </div>
-      <div class="sidebar-block" id="sidebar-contact">
-        <div class="sidebar-row">
-          <span>Consultation</span>
-          <a id="book-link" href="#" class="sidebar-link">book a call</a>
-        </div>
-        <div class="sidebar-row">
-          <span>Email</span>
-          <a id="email-link" href="#" class="sidebar-link"></a>
-        </div>
-        <div class="sidebar-row">
-          <span>Phone</span>
-          <a id="phone-link" href="#" class="sidebar-link"></a>
-        </div>
-        <div class="sidebar-row">
-          <span>Instagram</span>
-          <a id="ig-link" href="#" target="_blank" rel="noopener" class="sidebar-link">follow</a>
-        </div>
-      </div>
-      <div class="sidebar-block" id="featured-in-block">
-        <h3>Featured In</h3>
-        <ul id="featured-in-list" class="plain-list"></ul>
-      </div>
-      <div class="sidebar-block" id="awards-block">
-        <h3>Awards</h3>
-        <ul id="awards-list" class="plain-list"></ul>
-      </div>
-    </aside>
+    <!-- Content is rendered per-page by renderSidebar() in script.js: Home/Work/Info
+         get the compact Photo+About+Contact+Instagram card sidebar (Info adds 5 project
+         preview cards), Side B hides the sidebar entirely. See notas.md. -->
+    <aside class="sidebar" id="sidebar"></aside>
 
     <main class="main" id="main">
 
@@ -53,18 +25,21 @@
         <section class="page" id="page-home" data-page="home">
           <div class="page-scroll">
             <div class="hero" id="hero">
-              <div class="hero-letters" aria-hidden="true">
-                <span class="hero-letter hero-letter-j">J</span>
-                <span class="hero-letter hero-letter-q">Q</span>
-              </div>
+              <!-- Play badge removed 2026-08-11 (user request) — was a static
+                   affordance that always sat over the hero regardless of
+                   what it showed; no longer needed since nothing here needs
+                   a "tap to play" hint. -->
               <a class="hero-media" id="heroMedia" href="#/">
                 <div class="hero-media-cover" id="heroMediaCover"></div>
-                <span class="play-badge" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="18" height="18"><polygon points="6,4 20,12 6,20" fill="currentColor" /></svg>
-                </span>
               </a>
+              <p class="home-intro" id="homeIntro"></p>
             </div>
-            <div class="grid" id="grid-home"></div>
+            <div class="home-tile-columns" id="grid-home">
+              <div class="home-tile-column" id="grid-home-left"></div>
+              <div class="home-tile-column" id="grid-home-right"></div>
+              <!-- Desktop only (Home Desktop, z2Lknd, is a 3x3 grid); hidden on mobile via CSS -->
+              <div class="home-tile-column" id="grid-home-third"></div>
+            </div>
             <footer class="site-footer" data-footer></footer>
           </div>
         </section>
@@ -72,6 +47,14 @@
         <section class="page" id="page-work" data-page="work">
           <div class="page-scroll">
             <div class="grid" id="grid-work"></div>
+            <!-- Desktop only (Work Desktop, Ghq1t: 3-col masonry catalog); hidden on mobile via CSS -->
+            <div class="work-desktop-grid" id="grid-work-desktop"></div>
+            <!-- Project detail view lives inside Work's page-scroll (not a
+                 separate full-screen overlay) so it swipes/paginates with the
+                 rest of the track like a normal page. #page-work.is-project-open
+                 (toggled in script.js) hides the catalog above and shows this;
+                 see notas.md "swipe stays working with an open project". -->
+            <div class="project-view" id="project-view"></div>
             <footer class="site-footer" data-footer></footer>
           </div>
         </section>
@@ -79,30 +62,31 @@
         <section class="page" id="page-info" data-page="info">
           <div class="page-scroll">
             <div class="info-content" id="infoContent"></div>
+            <!-- Desktop only (Info Desktop, X8g8f: 3 content columns, not a reflow
+                 of the mobile layout above); hidden on mobile via CSS -->
+            <div class="info-desktop" id="infoDesktop"></div>
             <footer class="site-footer" data-footer></footer>
           </div>
         </section>
 
         <section class="page" id="page-sideb" data-page="sideb">
           <div class="page-scroll">
-            <div class="intro">
-              <p class="eyebrow" id="sidebEyebrow"></p>
-            </div>
             <div class="sideb-content" id="sidebContent"></div>
+            <!-- Desktop only (Side B Desktop, BI3ZW: 4-track photo masonry, totally
+                 different from the mobile grid above); hidden on mobile via CSS -->
+            <div class="sideb-desktop" id="sidebDesktop"></div>
             <footer class="site-footer" data-footer></footer>
           </div>
         </section>
 
       </div>
 
-      <div class="project-view" id="project-view" hidden></div>
-
     </main>
 
   </div>
 
-  <script src="data.js"></script>
+  <script src="data.js?v=1786542182"></script>
   <script src="https://unpkg.com/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script src="script.js"></script>
+  <script src="script.js?v=1786542182"></script>
 </body>
 </html>
