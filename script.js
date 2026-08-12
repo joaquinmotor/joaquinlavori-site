@@ -277,7 +277,7 @@ function galleryItemHTML(entry) {
   // Ceremonia's own carrusel4) are untouched by this — they keep the
   // default height from .project-marquee in styles.css.
   if (entry && entry.type === "carrusel") return marqueeHTML(entry.items, entry.height);
-  if (entry && entry.type === "slideshow") return slideshowHTML(entry.items);
+  if (entry && entry.type === "slideshow") return slideshowHTML(entry.items, entry.height);
   return `<div class="project-gallery-item">${slideTag(entry)}</div>`;
 }
 
@@ -286,12 +286,19 @@ function galleryItemHTML(entry) {
 // every .5s, infinite loop, no nav/dots (2026-08-12, user request). Distinct
 // from a "carrusel" marquee: nothing scrolls, only one photo is ever
 // visible, all photos are stacked in the same box and shown/hidden via the
-// is-active class instead of laid out side by side.
-function slideshowHTML(items) {
+// is-active class instead of laid out side by side. Optional `height`
+// (2026-08-12, Ceremonia: "las fotos... ahora tienen todas el mismo tamaño
+// de alto") switches every slide to a fixed box (object-fit:cover, see
+// .is-fixed-height in styles.css) instead of each photo's own natural
+// size — without it (afends' slideshows), the box still jumps size on
+// every cut, unchanged.
+function slideshowHTML(items, height) {
+  const fixedClass = height ? " is-fixed-height" : "";
+  const style = height ? ` style="height:${height}px"` : "";
   const slidesHTML = items
     .map((src, i) => `<div class="project-slideshow-slide${i === 0 ? " is-active" : ""}">${slideTag(src)}</div>`)
     .join("");
-  return `<div class="project-slideshow" data-slideshow>${slidesHTML}</div>`;
+  return `<div class="project-slideshow${fixedClass}" data-slideshow${style}>${slidesHTML}</div>`;
 }
 
 // Runs every active .project-slideshow's interval. Module-level (not per-
@@ -928,7 +935,7 @@ function renderDesktopGalleryCell(item) {
     return `<div class="project-desktop-photo project-desktop-photo--marquee">${marqueeHTML(item.src.items, item.src.height)}</div>`;
   }
   if (item.src && item.src.type === "slideshow") {
-    return `<div class="project-desktop-photo project-desktop-photo--slideshow">${slideshowHTML(item.src.items)}</div>`;
+    return `<div class="project-desktop-photo project-desktop-photo--slideshow">${slideshowHTML(item.src.items, item.src.height)}</div>`;
   }
   return `<div class="project-desktop-photo" style="height:${item.height}px">${slideTag(item.src)}</div>`;
 }

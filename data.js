@@ -270,6 +270,11 @@ const PROJECTS = [
       { type: "video", src: "assets/img/ceremonia/video-01.mp4", poster: "assets/img/ceremonia/video-01-poster.jpg" },
       {
         type: "slideshow",
+        // height:460 — the 5 slidecut photos have different aspect ratios
+        // (0.75 to 1.19), so left at natural size (the afends default) the
+        // box jumped size on every .5s cut. Fixed height (2026-08-12, user
+        // request) makes all 5 fill the same box via object-fit:cover.
+        height: 460,
         items: [
           "assets/img/ceremonia/slidecut-01.webp",
           "assets/img/ceremonia/slidecut-02.webp",
