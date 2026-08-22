@@ -523,10 +523,19 @@ function renderGrid(el, items, opts) {
 // an odd count simply leaves the left column one tile longer. The desktop-only
 // third column picks up the 3 projects that follow.
 const HOME_FEATURED_COUNT = 7;
+// The first 6 tiles keep Pencil's original layout exactly: strict alternation,
+// even index -> left column, odd -> right. Tiles BEYOND those 6 are appended
+// starting on the RIGHT, then alternating (7th -> right, 8th -> left,
+// 9th -> right...). That's what puts La Guitarrita directly under Vans, the
+// last tile of the right column (2026-08-22, user: "abajo de vans pone el
+// proyecto en el home") instead of at the foot of the taller left column,
+// which is where plain alternation sent it.
+const HOME_BASE_TILES = 6;
 function renderHomeGrid(items) {
   const featured = items.slice(0, HOME_FEATURED_COUNT);
-  const left = featured.filter((_, i) => i % 2 === 0);
-  const right = featured.filter((_, i) => i % 2 === 1);
+  const onLeft = (i) => (i < HOME_BASE_TILES ? i % 2 === 0 : (i - HOME_BASE_TILES) % 2 === 1);
+  const left = featured.filter((_, i) => onLeft(i));
+  const right = featured.filter((_, i) => !onLeft(i));
   const third = items.slice(HOME_FEATURED_COUNT, HOME_FEATURED_COUNT + 3);
   const tile = (item) =>
     tileHTML(item, items.indexOf(item), { carousel: false, fantasyCaption: true, coverOverride: item.homeCover });
