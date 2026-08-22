@@ -291,55 +291,55 @@ const PROJECTS = [
     link: "https://weareceremonia.com/",
     linkLabel: "View site",
     hero: "assets/img/ceremonia/hero.webp",
-    // Gallery order follows assets/work/04-ceremonia/'s own numbering
-    // (00-15, set by hand 2026-08-12 after uploading real media — see
-    // notas.md). Entry shapes (same as the-movement/afends, plus one new
-    // one added for this project):
-    //  - plain string: a single static photo (.project-gallery-item).
-    //  - {type:"video", src, poster}: a real video.
-    //  - nested array: a "carrusel" group at the DEFAULT height (220px,
-    //    see .project-marquee in styles.css) — auto-scrolling filmstrip.
-    //    Used here for carrusel4-01, a single wide composite photo wrapped
-    //    as its own 1-item carrusel (user's own framing, 2026-08-12), same
-    //    precedent as afends' spread-01/spread-02 — loops on itself rather
-    //    than sitting static.
-    //  - {type:"carrusel", items:[...], height:N}: same marquee mechanism
-    //    as the plain-array form above, but with an explicit height
-    //    override instead of the 220px default (2026-08-12, user request:
-    //    carrusel1/carrusel2/carrusel3 needed to sit at 70px). See
-    //    galleryItemHTML()/marqueeHTML()/renderDesktopGalleryCell() in
-    //    script.js — this is additive, doesn't change the plain-array form
-    //    used elsewhere (the-movement, afends, this project's own carrusel4).
-    //  - {type:"slideshow", items:[...]}: a "slide-cut" group — hard cut
-    //    to the next photo every .5s, infinite loop (slideshowHTML() in
-    //    script.js). User asked for a .5s interval specifically (2026-08-12).
+    // Gallery order and entry types are DERIVED from assets/work/04-ceremonia/'s
+    // own file numbering and names — regenerated with scripts/sync-project.py
+    // (see sync-de-proyectos.md), never hand-edited. Last rebuild 2026-08-22,
+    // after the user replaced the three banner strips (02/05/08-carrusel-N).
+    // carrusel1/2/3 sit at height:70 (narrow strips, the user's own call) and
+    // the slide-cut group at height:460 because its 5 photos mix aspect ratios.
     gallery: [
       { type: "video", src: "assets/img/ceremonia/hero.mp4", poster: "assets/img/ceremonia/hero-poster.jpg" },
       "assets/img/ceremonia/foto-01.webp",
-      { type: "carrusel", items: ["assets/img/ceremonia/carrusel1-01.webp"], height: 70 },
+      {
+        type: "carrusel",
+        height: 70,
+        items: [
+          "assets/img/ceremonia/carrusel1-01.webp",
+        ],
+      },
       "assets/img/ceremonia/foto-02.webp",
       "assets/img/ceremonia/foto-03.webp",
-      { type: "carrusel", items: ["assets/img/ceremonia/carrusel2-01.webp"], height: 70 },
+      {
+        type: "carrusel",
+        height: 70,
+        items: [
+          "assets/img/ceremonia/carrusel2-01.webp",
+        ],
+      },
       "assets/img/ceremonia/foto-04.webp",
       "assets/img/ceremonia/foto-05.webp",
-      { type: "carrusel", items: ["assets/img/ceremonia/carrusel3-01.webp"], height: 70 },
+      {
+        type: "carrusel",
+        height: 70,
+        items: [
+          "assets/img/ceremonia/carrusel3-01.webp",
+        ],
+      },
       { type: "video", src: "assets/img/ceremonia/video-01.mp4", poster: "assets/img/ceremonia/video-01-poster.jpg" },
       {
         type: "slideshow",
-        // height:460 — the 5 slidecut photos have different aspect ratios
-        // (0.75 to 1.19), so left at natural size (the afends default) the
-        // box jumped size on every .5s cut. Fixed height (2026-08-12, user
-        // request) makes all 5 fill the same box via object-fit:cover.
         height: 460,
         items: [
-          "assets/img/ceremonia/slidecut-01.webp",
-          "assets/img/ceremonia/slidecut-02.webp",
-          "assets/img/ceremonia/slidecut-03.webp",
-          "assets/img/ceremonia/slidecut-04.webp",
-          "assets/img/ceremonia/slidecut-05.webp",
+          "assets/img/ceremonia/slidecut4-01.webp",
+          "assets/img/ceremonia/slidecut4-02.webp",
+          "assets/img/ceremonia/slidecut4-03.webp",
+          "assets/img/ceremonia/slidecut4-04.webp",
+          "assets/img/ceremonia/slidecut4-05.webp",
         ],
       },
-      ["assets/img/ceremonia/carrusel4-01.webp"],
+      [
+        "assets/img/ceremonia/carrusel4-01.webp",
+      ],
     ],
   },
   {
@@ -528,13 +528,57 @@ const PROJECTS = [
     ],
     link: "https://www.instagram.com/fatimasurfboards",
     linkLabel: "View site",
-    hero: "assets/img/fatima/hero.jpg",
+    hero: "assets/img/fatima/hero.webp",
+    // Gallery order and entry types are DERIVED from assets/work/08-fatima/'s own
+    // file numbering and names — generated with scripts/sync-project.py (see
+    // sync-de-proyectos.md), never hand-edited. Notes for this project:
+    // "carrusel1/2/3" are written without the hyphen before the group number
+    // (the parser accepts that too); carrusel1 and carrusel3 are single
+    // panoramic strips (22127x1008 and 23159x1007 in the source) capped to
+    // 9600px wide so they stay under mobile browsers' texture limits; and
+    // 29-gif.gif is copied through as a GIF rather than converted, so the
+    // 2-frame animation survives — <img> plays it natively (2026-08-22).
     gallery: [
-      "assets/img/fatima/hero.jpg",
-      "assets/img/fatima/02.jpg",
-      "assets/img/fatima/03.jpg",
-      "assets/img/fatima/04.jpg",
-      "assets/img/fatima/05.jpg",
+      { type: "video", src: "assets/img/fatima/hero.mp4", poster: "assets/img/fatima/hero-poster.jpg" },
+      "assets/img/fatima/foto-01.webp",
+      "assets/img/fatima/foto-02.webp",
+      { type: "video", src: "assets/img/fatima/video-01.mp4", poster: "assets/img/fatima/video-01-poster.jpg" },
+      [
+        "assets/img/fatima/carrusel1-01.webp",
+      ],
+      {
+        type: "slideshow",
+        items: [
+          "assets/img/fatima/slidecut1-01.webp",
+          "assets/img/fatima/slidecut1-02.webp",
+          "assets/img/fatima/slidecut1-03.webp",
+          "assets/img/fatima/slidecut1-04.webp",
+          "assets/img/fatima/slidecut1-05.webp",
+          "assets/img/fatima/slidecut1-06.webp",
+        ],
+      },
+      { type: "video", src: "assets/img/fatima/video-02.mp4", poster: "assets/img/fatima/video-02-poster.jpg" },
+      [
+        "assets/img/fatima/carrusel2-01.webp",
+        "assets/img/fatima/carrusel2-02.webp",
+        "assets/img/fatima/carrusel2-03.webp",
+        "assets/img/fatima/carrusel2-04.webp",
+      ],
+      { type: "video", src: "assets/img/fatima/video-03.mp4", poster: "assets/img/fatima/video-03-poster.jpg" },
+      "assets/img/fatima/foto-03.webp",
+      "assets/img/fatima/foto-04.webp",
+      "assets/img/fatima/foto-05.webp",
+      "assets/img/fatima/foto-06.webp",
+      "assets/img/fatima/foto-07.webp",
+      "assets/img/fatima/foto-08.webp",
+      "assets/img/fatima/foto-09.webp",
+      [
+        "assets/img/fatima/carrusel3-01.webp",
+      ],
+      { type: "video", src: "assets/img/fatima/video-04.mp4", poster: "assets/img/fatima/video-04-poster.jpg" },
+      "assets/img/fatima/foto-10.webp",
+      "assets/img/fatima/foto-11.webp",
+      "assets/img/fatima/gif.gif",
     ],
   },
   {
