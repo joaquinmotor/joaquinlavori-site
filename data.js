@@ -393,15 +393,43 @@ const PROJECTS = [
     ],
     link: "https://au.roark.com/blogs/the-artifacts-of-adventure/a-new-collaboration-with-zero-skateboards",
     linkLabel: "View project",
-    hero: "assets/img/roark/01.jpg",
+    hero: "assets/img/roark/hero.webp",
+    // Gallery order and entry types follow assets/work/05-roark/'s own file
+    // numbering (01-20, renamed by the user 2026-08-22 — the first pass had
+    // 02/03/04 used twice, once by carrusel-N and once by slide-cut-1, and a
+    // second pass reused carrusel-1/carrusel-2 for two separate runs; the
+    // current names are the corrected, unambiguous set). Entry shapes are the
+    // same as afends/ceremonia/lacalle — see those projects' comments.
+    // Skipped on purpose: the two loose "Screenshot 2026-08-17..." files in
+    // the source folder carry no number and no type, so per the user's own
+    // convention they are not gallery entries (2026-08-22, confirmed).
     gallery: [
-      "assets/img/roark/01.jpg",
-      "assets/img/roark/06.jpg",
-      "assets/img/roark/02.jpg",
-      "assets/img/roark/03.jpg",
-      "assets/img/roark/07.jpg",
-      "assets/img/roark/04.jpg",
-      "assets/img/roark/05.jpg",
+      "assets/img/roark/hero.webp",
+      ["assets/img/roark/carrusel1-01.webp", "assets/img/roark/carrusel1-02.webp"],
+      // height:200 — single-photo carrusel (the 4 knife illustrations), same
+      // 1-item marquee precedent as afends' spreads and Ceremonia's carrusel4.
+      // 200px is a first try (2026-08-22, user: "probemos el 200 y despues vemos").
+      { type: "carrusel", items: ["assets/img/roark/carrusel2-01.webp"], height: 200 },
+      "assets/img/roark/foto-01.webp",
+      {
+        type: "slideshow",
+        items: ["assets/img/roark/slidecut1-01.webp", "assets/img/roark/slidecut1-02.webp"],
+      },
+      [
+        "assets/img/roark/carrusel3-01.webp",
+        "assets/img/roark/carrusel3-02.webp",
+        "assets/img/roark/carrusel3-03.webp",
+        "assets/img/roark/carrusel3-04.webp",
+      ],
+      [
+        "assets/img/roark/carrusel4-01.webp",
+        "assets/img/roark/carrusel4-02.webp",
+        "assets/img/roark/carrusel4-03.webp",
+        "assets/img/roark/carrusel4-04.webp",
+      ],
+      "assets/img/roark/foto-02.webp",
+      "assets/img/roark/foto-03.webp",
+      { type: "video", src: "assets/img/roark/video-01.mp4", poster: "assets/img/roark/video-01-poster.jpg" },
     ],
   },
   {
