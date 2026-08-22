@@ -238,7 +238,6 @@ const PROJECTS = [
         "assets/img/lacalle/carrusel1-02.webp",
         "assets/img/lacalle/carrusel1-03.webp",
         "assets/img/lacalle/carrusel1-04.webp",
-        "assets/img/lacalle/carrusel1-05.webp",
       ],
       { type: "video", src: "assets/img/lacalle/video-01.mp4", poster: "assets/img/lacalle/video-01-poster.jpg" },
       [
@@ -247,7 +246,6 @@ const PROJECTS = [
         "assets/img/lacalle/carrusel2-03.webp",
         "assets/img/lacalle/carrusel2-04.webp",
         "assets/img/lacalle/carrusel2-05.webp",
-        "assets/img/lacalle/carrusel2-06.webp",
       ],
       {
         type: "slideshow",
@@ -269,6 +267,9 @@ const PROJECTS = [
         // cut. 300px matches the dominant ~4:3 landscape shape at full
         // mobile width (2026-08-22, user request).
         height: 300,
+        // interval:1000 — "la mitad de velocidad" (2026-08-22, user
+        // request). Default is SLIDESHOW_INTERVAL_MS (500) in script.js.
+        interval: 1000,
         items: [
           "assets/img/lacalle/slidecut2-01.webp",
           "assets/img/lacalle/slidecut2-02.webp",
@@ -300,6 +301,10 @@ const PROJECTS = [
       "assets/img/lacalle/foto-02.webp",
       {
         type: "slideshow",
+        // interval:1000 — same half-speed request as slidecut2 above
+        // (2026-08-22, user referred to this group as "slide-cut-46",
+        // after its first source file 46-slide-cut-3.png).
+        interval: 1000,
         items: [
           "assets/img/lacalle/slidecut3-01.webp",
           "assets/img/lacalle/slidecut3-02.webp",

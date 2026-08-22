@@ -277,7 +277,7 @@ function galleryItemHTML(entry) {
   // Ceremonia's own carrusel4) are untouched by this — they keep the
   // default height from .project-marquee in styles.css.
   if (entry && entry.type === "carrusel") return marqueeHTML(entry.items, entry.height);
-  if (entry && entry.type === "slideshow") return slideshowHTML(entry.items, entry.height);
+  if (entry && entry.type === "slideshow") return slideshowHTML(entry.items, entry.height, entry.interval);
   return `<div class="project-gallery-item">${slideTag(entry)}</div>`;
 }
 
@@ -292,13 +292,18 @@ function galleryItemHTML(entry) {
 // .is-fixed-height in styles.css) instead of each photo's own natural
 // size — without it (afends' slideshows), the box still jumps size on
 // every cut, unchanged.
-function slideshowHTML(items, height) {
+function slideshowHTML(items, height, interval) {
   const fixedClass = height ? " is-fixed-height" : "";
   const style = height ? ` style="height:${height}px"` : "";
+  // Optional per-group interval override (2026-08-22, user request: La Calle
+  // Bar's slidecut2/slidecut3 needed "la mitad de velocidad" = 1000ms). Read
+  // back by initSlideshows() off the data attribute; groups without it keep
+  // the SLIDESHOW_INTERVAL_MS default, so afends/Ceremonia are untouched.
+  const intervalAttr = interval ? ` data-slideshow-interval="${interval}"` : "";
   const slidesHTML = items
     .map((src, i) => `<div class="project-slideshow-slide${i === 0 ? " is-active" : ""}">${slideTag(src)}</div>`)
     .join("");
-  return `<div class="project-slideshow${fixedClass}" data-slideshow${style}>${slidesHTML}</div>`;
+  return `<div class="project-slideshow${fixedClass}" data-slideshow${intervalAttr}${style}>${slidesHTML}</div>`;
 }
 
 // Runs every active .project-slideshow's interval. Module-level (not per-
@@ -350,17 +355,22 @@ function initMarquees(root) {
   });
 }
 
+// Default hard-cut interval for a "slide-cut" group (2026-08-12, user
+// request: half a second). A group can override it with `interval` in
+// data.js -> data-slideshow-interval (2026-08-22).
+const SLIDESHOW_INTERVAL_MS = 500;
 function initSlideshows(root) {
   root.querySelectorAll("[data-slideshow]").forEach((el) => {
     const slides = el.querySelectorAll(".project-slideshow-slide");
     if (slides.length <= 1) return;
+    const ms = Number(el.dataset.slideshowInterval) || SLIDESHOW_INTERVAL_MS;
     let i = 0;
     slideshowIntervals.push(
       setInterval(() => {
         slides[i].classList.remove("is-active");
         i = (i + 1) % slides.length;
         slides[i].classList.add("is-active");
-      }, 500)
+      }, ms)
     );
   });
 }
@@ -935,7 +945,7 @@ function renderDesktopGalleryCell(item) {
     return `<div class="project-desktop-photo project-desktop-photo--marquee">${marqueeHTML(item.src.items, item.src.height)}</div>`;
   }
   if (item.src && item.src.type === "slideshow") {
-    return `<div class="project-desktop-photo project-desktop-photo--slideshow">${slideshowHTML(item.src.items, item.src.height)}</div>`;
+    return `<div class="project-desktop-photo project-desktop-photo--slideshow">${slideshowHTML(item.src.items, item.src.height, item.src.interval)}</div>`;
   }
   return `<div class="project-desktop-photo" style="height:${item.height}px">${slideTag(item.src)}</div>`;
 }

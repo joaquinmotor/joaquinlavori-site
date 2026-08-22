@@ -166,6 +166,29 @@ button{ font-family: inherit; }
    tiles for the-movement keep the normal cropped aspect-ratio. */
 #grid-home-left .tile[data-slug="the-movement"] .tile-cover{ aspect-ratio: 886/1920; }
 
+/* Home tile covers at their media's own proportion (2026-08-22, user
+   request: "el cover del home... deberia tener el alto del video, no el
+   que esta ahora"). Same pattern already used for Work Mobile tiles and
+   for the project hero (see #grid-work and .project-hero-media below):
+   the fixed 187/197 - 187/177 aspect-ratios above are Pencil box sizes,
+   and the global img/video object-fit:cover was force-cropping real
+   covers to them — La Calle Bar's and Ceremonia's Home covers are both
+   gallery[0], a 1180x2556 vertical video, so they were being cut down to
+   a near-square box.
+   Generic on purpose (user chose this over per-slug rules): ANY project in
+   REAL_MEDIA_PROJECTS gets its natural proportion here, so afends picks it
+   up too and future projects need no new CSS. Placeholder tiles (no
+   .media-real child) don't match :has() and keep the fixed box untouched.
+   ID selectors are needed to outrank the .home-tile-column:nth-child()
+   rules above; the-movement's hardcoded rule stays and still wins for it,
+   but resolves to the same 886/1920 the video would give anyway. */
+#grid-home-left .tile-cover:has(.media-real),
+#grid-home-right .tile-cover:has(.media-real),
+#grid-home-third .tile-cover:has(.media-real){ aspect-ratio: unset; }
+#grid-home-left .tile-cover .media-real,
+#grid-home-right .tile-cover .media-real,
+#grid-home-third .tile-cover .media-real{ height:auto; object-fit:unset; }
+
 /* ---------- Grid (tiles with mini-carousel) ---------- */
 /* Work Mobile (z0NKkz): single-column, full-width fantasy-caption cards —
    not the old 2-col numbered/carousel grid. Desktop still uses the old 2-col
@@ -483,6 +506,20 @@ button{ font-family: inherit; }
 .project-related-row:nth-child(odd) .project-related-item:nth-child(2) .tile-cover{ height:177px; }
 .project-related-row:nth-child(even) .project-related-item:nth-child(1) .tile-cover{ height:177px; }
 .project-related-row:nth-child(even) .project-related-item:nth-child(2) .tile-cover{ height:197px; }
+
+/* Related Work covers at their media's own proportion (2026-08-22, user
+   request: "lo mismo en el footer de la calle bar cuando aparece en cover
+   de ceremonia"). These tiles render slideTag(item.hero) — for a project
+   with real media that's the actual cover file (La Calle Bar's hero.webp
+   is a 1180x2556 frame pulled from its hero video), and the fixed
+   177/197px heights above plus the global object-fit:cover were cropping
+   it. Selectors repeat the nth-child chain so they outrank those four
+   rules; placeholder projects keep the fixed heights. */
+.project-related-row:nth-child(odd) .project-related-item:nth-child(1) .tile-cover:has(.media-real),
+.project-related-row:nth-child(odd) .project-related-item:nth-child(2) .tile-cover:has(.media-real),
+.project-related-row:nth-child(even) .project-related-item:nth-child(1) .tile-cover:has(.media-real),
+.project-related-row:nth-child(even) .project-related-item:nth-child(2) .tile-cover:has(.media-real){ height:auto; }
+.project-related-item .tile-cover .media-real{ height:auto; object-fit:unset; }
 /* One flowing sentence, title inline with the description — matches
    Pencil's "Title" + "Prefix"/"Rest" caption (hand-split there for its
    static text tool; here plain CSS word-wrap does the same job). */
