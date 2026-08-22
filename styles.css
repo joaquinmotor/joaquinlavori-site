@@ -500,6 +500,12 @@ button{ font-family: inherit; }
 .project-related{ display:flex; flex-direction:column; gap:20px; padding: 16px 6px 24px; }
 .project-related-row{ display:flex; gap:4px; }
 .project-related-item{ display:block; flex:1 1 0; min-width:0; }
+/* Un tile solo en la ultima fila (cuando la cantidad de proyectos es impar)
+   se estiraba a todo el ancho por el flex:1 de arriba — se veia al doble de
+   tamano que el resto (2026-08-22, user: "tiene que aparecer a 1 columna
+   como el resto, ahora aparece a 2"). Queda a media fila, alineado con la
+   columna izquierda; el gap de .project-related-row es de 4px. */
+.project-related-row > .project-related-item:only-child{ flex: 0 1 calc(50% - 2px); }
 .project-related-item .tile-cover{ position:relative; overflow:hidden; background: var(--border); border-radius:8px; aspect-ratio:unset; }
 .project-related-item .play-badge{ width:40px; height:40px; background: var(--ink); }
 .project-related-row:nth-child(odd) .project-related-item:nth-child(1) .tile-cover{ height:197px; }

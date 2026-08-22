@@ -555,6 +555,12 @@ const PROJECTS = [
       },
       {
         type: "slideshow",
+        // height:474 — the 6 photos are almost but not quite the same shape
+        // (ratios .79 to .81), so at natural size the box grew and shrank by
+        // ~12px on every cut (2026-08-22, user: "hay como un salto de tamano
+        // en un slide-cut"). 474 is the midpoint of their rendered heights,
+        // so the crop is a few pixels either way.
+        height: 474,
         items: [
           "assets/img/fatima/slidecut1-01.webp",
           "assets/img/fatima/slidecut1-02.webp",
