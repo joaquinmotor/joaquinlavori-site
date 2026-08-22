@@ -88,7 +88,7 @@ function hasRealMedia(media) {
 // per user feedback — a static poster read as broken/unfinished).
 function realMediaTag(media) {
   if (media && typeof media === "object" && media.type === "video") {
-    return `<video class="media-real" src="${media.src}" poster="${media.poster}" muted autoplay loop playsinline preload="auto"></video>`;
+    return `<video class="media-real" src="${media.src}" poster="${media.poster}" muted autoplay loop playsinline preload="auto" fetchpriority="low"></video>`;
   }
   return `<img class="media-real" src="${media}" alt="" loading="lazy" />`;
 }
@@ -276,7 +276,7 @@ function galleryItemHTML(entry) {
   // Plain-array carrusel groups elsewhere (the-movement, afends, and
   // Ceremonia's own carrusel4) are untouched by this — they keep the
   // default height from .project-marquee in styles.css.
-  if (entry && entry.type === "carrusel") return marqueeHTML(entry.items, entry.height);
+  if (entry && entry.type === "carrusel") return marqueeHTML(entry.items, entry.height, entry.speed);
   if (entry && entry.type === "slideshow") return slideshowHTML(entry.items, entry.height, entry.interval);
   return `<div class="project-gallery-item">${slideTag(entry)}</div>`;
 }
@@ -334,7 +334,8 @@ function initMarquees(root) {
     const imgs = Array.from(track.querySelectorAll("img"));
     const apply = () => {
       const halfWidth = track.scrollWidth / 2;
-      if (halfWidth > 0) track.style.animationDuration = `${halfWidth / MARQUEE_PX_PER_SEC}s`;
+      const pxPerSec = Number(track.dataset.speed) || MARQUEE_PX_PER_SEC;
+      if (halfWidth > 0) track.style.animationDuration = `${halfWidth / pxPerSec}s`;
     };
     if (imgs.every((img) => img.complete)) {
       apply();
@@ -384,10 +385,26 @@ function initSlideshows(root) {
 // therefore where the -50% loop point lands — depends on every image's
 // intrinsic size being known immediately, not resolved gradually as the
 // user scrolls into each one.
-function marqueeHTML(items, height) {
-  const itemsHTML = items.map((src) => `<div class="project-marquee-item"><img src="${src}" alt="" /></div>`).join("");
+function marqueeHTML(items, height, speed) {
+  // fetchpriority="high" + decoding="async" (2026-08-22, user report: "a las
+  // fotos de los carruseles les cuesta cargar"). These images can't be lazy
+  // (see the note above), so they all request the moment a project opens —
+  // right when the gallery's autoplaying <video>s start pulling tens of MB.
+  // The hint puts the filmstrip photos ahead of the videos in the browser's
+  // request queue instead of behind them; realMediaTag() marks the videos
+  // fetchpriority="low" for the same reason. The other half of that fix was
+  // resizing every marquee source to 660px tall (3x the 220px display
+  // height) — they were being served at up to 1600px, ~4.3MB total across
+  // the site, now ~1.7MB.
+  const itemsHTML = items
+    .map((src) => `<div class="project-marquee-item"><img src="${src}" alt="" fetchpriority="high" decoding="async" /></div>`)
+    .join("");
   const style = height ? ` style="height:${height}px"` : "";
-  return `<div class="project-marquee"${style}><div class="project-marquee-track">${itemsHTML}${itemsHTML}</div></div>`;
+  // Optional per-group scroll speed in px/s, overriding MARQUEE_PX_PER_SEC
+  // (2026-08-22, user request: Roark's carrusel4 "tiene que correr apenas
+  // mas rapido"). Read back by initMarquees() off the data attribute.
+  const speedAttr = speed ? ` data-speed="${speed}"` : "";
+  return `<div class="project-marquee"${style}><div class="project-marquee-track"${speedAttr}>${itemsHTML}${itemsHTML}</div></div>`;
 }
 
 function carouselHTML(slides, { max } = {}) {
@@ -942,7 +959,7 @@ function renderDesktopGalleryCell(item) {
   // above, mirrored here so Desktop's masonry respects the custom height too
   // instead of falling back to the fixed 220px (2026-08-12, Ceremonia).
   if (item.src && item.src.type === "carrusel") {
-    return `<div class="project-desktop-photo project-desktop-photo--marquee">${marqueeHTML(item.src.items, item.src.height)}</div>`;
+    return `<div class="project-desktop-photo project-desktop-photo--marquee">${marqueeHTML(item.src.items, item.src.height, item.src.speed)}</div>`;
   }
   if (item.src && item.src.type === "slideshow") {
     return `<div class="project-desktop-photo project-desktop-photo--slideshow">${slideshowHTML(item.src.items, item.src.height, item.src.interval)}</div>`;

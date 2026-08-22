@@ -408,8 +408,9 @@ const PROJECTS = [
       ["assets/img/roark/carrusel1-01.webp", "assets/img/roark/carrusel1-02.webp"],
       // height:200 — single-photo carrusel (the 4 knife illustrations), same
       // 1-item marquee precedent as afends' spreads and Ceremonia's carrusel4.
-      // 200px is a first try (2026-08-22, user: "probemos el 200 y despues vemos").
-      { type: "carrusel", items: ["assets/img/roark/carrusel2-01.webp"], height: 200 },
+      // 200px was the first try; the user then asked for "70px menos de alto"
+      // (2026-08-22), so 130px.
+      { type: "carrusel", items: ["assets/img/roark/carrusel2-01.webp"], height: 130 },
       "assets/img/roark/foto-01.webp",
       {
         type: "slideshow",
@@ -421,15 +422,21 @@ const PROJECTS = [
         "assets/img/roark/carrusel3-03.webp",
         "assets/img/roark/carrusel3-04.webp",
       ],
-      [
-        "assets/img/roark/carrusel4-01.webp",
-        "assets/img/roark/carrusel4-02.webp",
-        "assets/img/roark/carrusel4-03.webp",
-        "assets/img/roark/carrusel4-04.webp",
-      ],
+      {
+        // speed:70 px/s instead of the global MARQUEE_PX_PER_SEC (55)
+        // — "carrusel 4 tiene que correr apenas mas rapido" (2026-08-22).
+        // ~25% faster; the other three carruseles here keep the default.
+        type: "carrusel",
+        speed: 70,
+        items: [
+          "assets/img/roark/carrusel4-01.webp",
+          "assets/img/roark/carrusel4-02.webp",
+          "assets/img/roark/carrusel4-03.webp",
+          "assets/img/roark/carrusel4-04.webp",
+        ],
+      },
       "assets/img/roark/foto-02.webp",
       "assets/img/roark/foto-03.webp",
-      { type: "video", src: "assets/img/roark/video-01.mp4", poster: "assets/img/roark/video-01-poster.jpg" },
     ],
   },
   {
