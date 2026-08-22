@@ -215,22 +215,14 @@ const PROJECTS = [
     hero: "assets/img/lacalle/hero.webp",
     // Gallery order and entry types follow assets/work/03-la-calle-bar/'s own
     // file numbering (01-55, named by the user: hero / carrusel-N /
-    // slide-cut-N / foto / video). Entry shapes, same as afends/ceremonia:
-    //  - plain string: a single static photo (.project-gallery-item).
-    //  - {type:"video", src, poster}: a real video.
-    //  - nested array: a "carrusel" group at the DEFAULT height (220px, see
-    //    .project-marquee in styles.css) — auto-scrolling filmstrip, all
-    //    photos visible side by side. Used for the three carrusel-N groups
-    //    (2026-08-22, user chose the 220px default so the vertical phone
-    //    captures show uncropped).
-    //  - {type:"slideshow", items:[...]}: a "slide-cut" group — hard cut to
-    //    the next photo every .5s, infinite loop. slidecut2 carries an
-    //    explicit height (see its own comment); slidecut1 and slidecut3 are
-    //    left at natural size (the afends default) because every photo in
-    //    those groups shares one aspect ratio, so the box never jumps.
-    // Source video 40-video-3.MP4 was HEVC (h.265) — unplayable in Chrome and
-    // Firefox — so video-03.mp4 is the only one re-encoded to H.264 rather
-    // than remuxed with -c copy (2026-08-22).
+    // slide-cut-N / foto / video). RE-SYNCED 2026-08-22 after the user
+    // reorganised the source folder: the original 22MB 1180x2556 hero was
+    // dropped and the video that used to sit at position 07 was promoted to
+    // 01-hero.mov, leaving 3 videos instead of 4. So hero.mp4 is the old
+    // video-01, the old video-02 (the user's re-cut 1472x1870 file) is now
+    // video-01, and the re-encoded HEVC one is now video-02. Entry shapes
+    // are documented in carruseles-y-slideshows.md; media cache-busting is
+    // handled globally by MEDIA_V in script.js, not by query strings here.
     gallery: [
       { type: "video", src: "assets/img/lacalle/hero.mp4", poster: "assets/img/lacalle/hero-poster.jpg" },
       [
@@ -239,7 +231,6 @@ const PROJECTS = [
         "assets/img/lacalle/carrusel1-03.webp",
         "assets/img/lacalle/carrusel1-04.webp",
       ],
-      { type: "video", src: "assets/img/lacalle/video-01.mp4", poster: "assets/img/lacalle/video-01-poster.jpg" },
       [
         "assets/img/lacalle/carrusel2-01.webp",
         "assets/img/lacalle/carrusel2-02.webp",
@@ -259,22 +250,13 @@ const PROJECTS = [
         ],
       },
       "assets/img/lacalle/foto-01.webp",
-      // ?v=2 (2026-08-22): the user replaced this video in place (same
-      // filename, new 1472x1870 cut instead of the old 1180x2556 one).
-      // Media files aren't covered by index.html's ?v= cache-busting, which
-      // only versions css/js, so without this a browser that already loaded
-      // the project would keep serving the old cached mp4. Bump the number
-      // again if this file is ever replaced in place a third time.
-      { type: "video", src: "assets/img/lacalle/video-02.mp4?v=2", poster: "assets/img/lacalle/video-02-poster.jpg?v=2" },
+      { type: "video", src: "assets/img/lacalle/video-01.mp4", poster: "assets/img/lacalle/video-01-poster.jpg" },
       {
         type: "slideshow",
         // height:300 — these 18 menu spreads have mixed aspect ratios
-        // (1.06 to 1.32), so at natural size the box jumped on every .5s
-        // cut. 300px matches the dominant ~4:3 landscape shape at full
-        // mobile width (2026-08-22, user request).
+        // (1.06 to 1.32), so at natural size the box jumped on every cut.
+        // interval:1000 — "la mitad de velocidad" (2026-08-22).
         height: 300,
-        // interval:1000 — "la mitad de velocidad" (2026-08-22, user
-        // request). Default is SLIDESHOW_INTERVAL_MS (500) in script.js.
         interval: 1000,
         items: [
           "assets/img/lacalle/slidecut2-01.webp",
@@ -297,7 +279,7 @@ const PROJECTS = [
           "assets/img/lacalle/slidecut2-18.webp",
         ],
       },
-      { type: "video", src: "assets/img/lacalle/video-03.mp4", poster: "assets/img/lacalle/video-03-poster.jpg" },
+      { type: "video", src: "assets/img/lacalle/video-02.mp4", poster: "assets/img/lacalle/video-02-poster.jpg" },
       [
         "assets/img/lacalle/carrusel3-01.webp",
         "assets/img/lacalle/carrusel3-02.webp",
@@ -307,9 +289,7 @@ const PROJECTS = [
       "assets/img/lacalle/foto-02.webp",
       {
         type: "slideshow",
-        // interval:1000 — same half-speed request as slidecut2 above
-        // (2026-08-22, user referred to this group as "slide-cut-46",
-        // after its first source file 46-slide-cut-3.png).
+        // interval:1000 — same half-speed request as the menu group above.
         interval: 1000,
         items: [
           "assets/img/lacalle/slidecut3-01.webp",

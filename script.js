@@ -86,11 +86,26 @@ function hasRealMedia(media) {
 // Real <img>/<video> markup for a media entry already confirmed real by
 // hasRealMedia(). Videos autoplay muted + looped, no controls (2026-08-11,
 // per user feedback — a static poster read as broken/unfinished).
+// Cache-busting for MEDIA files (index.html's ?v= only versions css/js).
+// The user replaces files in place all the time — same filename, new content
+// (a re-cut video, a re-exported photo, the 2026-08-22 pass that resized
+// every carrusel image to 660px) — and browsers that already loaded a page
+// keep serving the stale copy. Appending this to every real-media URL at
+// render time makes those replacements land without a hard refresh.
+// BUMP THIS whenever media files are overwritten in place. It is applied
+// here, not in data.js, so the paths in data.js stay clean and hasRealMedia()
+// keeps matching them.
+const MEDIA_V = "3";
+function withMediaV(url) {
+  if (!url) return url;
+  return url + (url.includes("?") ? "&" : "?") + "v=" + MEDIA_V;
+}
+
 function realMediaTag(media) {
   if (media && typeof media === "object" && media.type === "video") {
-    return `<video class="media-real" src="${media.src}" poster="${media.poster}" muted autoplay loop playsinline preload="auto" fetchpriority="low"></video>`;
+    return `<video class="media-real" src="${withMediaV(media.src)}" poster="${withMediaV(media.poster)}" muted autoplay loop playsinline preload="auto" fetchpriority="low"></video>`;
   }
-  return `<img class="media-real" src="${media}" alt="" loading="lazy" />`;
+  return `<img class="media-real" src="${withMediaV(media)}" alt="" loading="lazy" />`;
 }
 
 // The big Home hero (mobile) stays placeholder-only on purpose (2026-08-11,
@@ -397,7 +412,7 @@ function marqueeHTML(items, height, speed) {
   // height) — they were being served at up to 1600px, ~4.3MB total across
   // the site, now ~1.7MB.
   const itemsHTML = items
-    .map((src) => `<div class="project-marquee-item"><img src="${src}" alt="" fetchpriority="high" decoding="async" /></div>`)
+    .map((src) => `<div class="project-marquee-item"><img src="${withMediaV(src)}" alt="" fetchpriority="high" decoding="async" /></div>`)
     .join("");
   const style = height ? ` style="height:${height}px"` : "";
   // Optional per-group scroll speed in px/s, overriding MARQUEE_PX_PER_SEC
