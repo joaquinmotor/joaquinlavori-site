@@ -708,19 +708,20 @@ const PROJECTS = [
   },
   {
     slug: "fortyspotted",
-    brand: "Forty Spotted Gin Sonic",
-    category: "Illustration & Campaign Design",
+    brand: "Forty Spotted",
+    category: "Illustration & Brand Artwork",
     blurb:
-      "An illustrated campaign for Forty Spotted's canned Gin Sonic — characters, posters, tees and totes for a Tasmanian gin that drinks like summer.",
+      "Original illustrations for Forty Spotted Gin, built to run across merchandise and digital.",
     body: [
-      "Forty Spotted makes gin at the southern end of the world, in Tasmania, and their Gin Sonic puts it in a can with soda, tonic and a citrus squeeze. The drink is easy; the campaign had to be too. I built it around a cast of characters — the can and the glass as a double act, all rubber-hose limbs, cowboy boots and permanent good mood — in a peach, teal and cream palette warm enough to carry the \"sipped as the sun goes down\" line the brand keeps coming back to. From there the system stretched across everything a bar and a bottle shop actually touch: posters, door hangers, tote bags, tees. The result is a campaign that reads as a party from across the room, and still points back to the gin when you get close.",
+      "Forty Spotted is the Tasmanian gin from Lark Distilling Co., a brand with a youthful, playful streak, and they came to me with a brief for a series of original illustrations to carry it. I drew a set of vector artworks around the pieces people already associate with the gin: the bottle, the Gin Sonic serve, and the orange garnish that signs off every pour. The line had to stay loose enough to feel drawn by hand but clean enough to hold at any size, because the same artwork had to live on shirts, hats, towels and cups as much as on screen. I worked alongside the Forty Spotted marketing team through each round and delivered final files prepared for every application. The result is a small illustrated vocabulary the brand can keep pulling from, recognisable as Forty Spotted before you read the name.",
     ],
-    link: "https://www.fortyspotted.com/",
+    link: "https://fortyspotted.com/",
     linkLabel: "View site",
     hero: "assets/img/fortyspotted/hero.webp",
     // Galeria DERIVADA de los nombres de archivo de assets/work/17 - Forty Spotted/,
     // generada con scripts/sync-project.py (ver sync-de-proyectos.md), nunca editada
-    // a mano. Subida 2026-08-22. Dos cosas de como esta nombrada la carpeta:
+    // a mano. Subida y re-sincronizada 2026-08-22 (el usuario cambio el hero y
+    // reordeno fotos: 01-hero y 10-foto se intercambiaron). Dos cosas de como esta nombrada la carpeta:
     //  - 18-carrusel-4 y 24-carrusel-4 repiten el numero de grupo y no son
     //    consecutivos, asi que son dos grupos: el segundo salio carrusel5-*.
     //  - carrusel4-01 es una tira de 2506x95; va a height:25 por pedido del usuario
