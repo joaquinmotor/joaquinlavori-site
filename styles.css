@@ -158,13 +158,16 @@ button{ font-family: inherit; }
 .home-tile-column:nth-child(2) .tile:nth-child(odd) .tile-cover{ aspect-ratio: 187/177; }
 .home-tile-column:nth-child(2) .tile:nth-child(even) .tile-cover{ aspect-ratio: 187/197; }
 
-/* the-movement's Home tile (see data.js homeCover): cover is a specific
-   video (native 886x1920), not the usual gallery[0]/hero — sized to the
-   video's own aspect ratio instead of the fixed per-position crop above.
-   ID selector wins the specificity fight against the nth-child rules
-   above without needing !important. Only scoped to Home — Work/related
-   tiles for the-movement keep the normal cropped aspect-ratio. */
-#grid-home-left .tile[data-slug="the-movement"] .tile-cover{ aspect-ratio: 886/1920; }
+/* NOTA (2026-08-22): aca vivia una regla hardcodeada
+   `#grid-home-left .tile[data-slug="the-movement"] .tile-cover{ aspect-ratio: 886/1920; }`
+   con la proporcion del video-04, que era el homeCover de the-movement. Al
+   re-sincronizar el proyecto el homeCover paso a celu.mp4 (956x1966) pero la
+   regla seguia forzando la caja vieja, asi que el tile del Home mostraba el
+   cover nuevo recortado a la proporcion del anterior. Se elimino: la regla
+   generica de mas abajo (.tile-cover:has(.media-real) -> aspect-ratio: unset)
+   ya le da a CUALQUIER proyecto con media real su proporcion nativa, que es
+   justo lo que el usuario eligio sobre las reglas por slug. No volver a
+   hardcodear una proporcion por proyecto. */
 
 /* Home tile covers at their media's own proportion (2026-08-22, user
    request: "el cover del home... deberia tener el alto del video, no el
@@ -180,8 +183,8 @@ button{ font-family: inherit; }
    up too and future projects need no new CSS. Placeholder tiles (no
    .media-real child) don't match :has() and keep the fixed box untouched.
    ID selectors are needed to outrank the .home-tile-column:nth-child()
-   rules above; the-movement's hardcoded rule stays and still wins for it,
-   but resolves to the same 886/1920 the video would give anyway. */
+   rules above. the-movement tenia una regla propia mas arriba que le ganaba
+   a esta; se elimino el 2026-08-22 (ver la nota) y ahora cae aca como todos. */
 #grid-home-left .tile-cover:has(.media-real),
 #grid-home-right .tile-cover:has(.media-real),
 #grid-home-third .tile-cover:has(.media-real){ aspect-ratio: unset; }
