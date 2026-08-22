@@ -95,7 +95,7 @@ function hasRealMedia(media) {
 // BUMP THIS whenever media files are overwritten in place. It is applied
 // here, not in data.js, so the paths in data.js stay clean and hasRealMedia()
 // keeps matching them.
-const MEDIA_V = "4";
+const MEDIA_V = "5";
 function withMediaV(url) {
   if (!url) return url;
   return url + (url.includes("?") ? "&" : "?") + "v=" + MEDIA_V;
@@ -515,11 +515,19 @@ function renderGrid(el, items, opts) {
 // Pencil's "Column Left" / "Column Right"). Home Desktop (z2Lknd) is a 3x3
 // grid instead — the 3rd column (next 3 projects) renders here too but
 // stays CSS-hidden below 861px, so mobile's exact 6-tile set is unchanged.
+// How many projects the Home grid features across its two main columns.
+// New projects are appended in PROJECTS order — the user's rule (2026-08-22):
+// "cuando se agregan proyectos se van agregando abajo del ultimo". So when a
+// project is finished and added, BUMP THIS NUMBER; nothing else needs to
+// change. The two columns alternate by index (even -> left, odd -> right), so
+// an odd count simply leaves the left column one tile longer. The desktop-only
+// third column picks up the 3 projects that follow.
+const HOME_FEATURED_COUNT = 7;
 function renderHomeGrid(items) {
-  const featured = items.slice(0, 6);
+  const featured = items.slice(0, HOME_FEATURED_COUNT);
   const left = featured.filter((_, i) => i % 2 === 0);
   const right = featured.filter((_, i) => i % 2 === 1);
-  const third = items.slice(6, 9);
+  const third = items.slice(HOME_FEATURED_COUNT, HOME_FEATURED_COUNT + 3);
   const tile = (item) =>
     tileHTML(item, items.indexOf(item), { carousel: false, fantasyCaption: true, coverOverride: item.homeCover });
   els.gridHomeLeft.innerHTML = left.map(tile).join("");

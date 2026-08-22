@@ -219,7 +219,8 @@ const PROJECTS = [
     // asks for a re-sync, so this block is regenerated wholesale, never
     // hand-edited. Last rebuild 2026-08-22: slide-cut-3 (the 10 cocktail
     // plates) was dropped, slide-cut-2 went from 18 to 15 spreads, and two
-    // loose fotos plus a re-numbered carrusel-3 came in. Per-group knobs
+    // loose fotos plus a re-numbered carrusel-3 came in; 08-foto was dropped
+    // on 2026-08-22 too, which re-numbered every foto after it. Per-group knobs
     // below (speed / height / interval) are re-applied by hand on each
     // rebuild — see carruseles-y-slideshows.md.
     gallery: [
@@ -232,7 +233,6 @@ const PROJECTS = [
       "assets/img/lacalle/foto-01.webp",
       "assets/img/lacalle/foto-02.webp",
       "assets/img/lacalle/foto-03.webp",
-      "assets/img/lacalle/foto-04.webp",
       {
         type: "carrusel",
         speed: 45,
@@ -244,9 +244,9 @@ const PROJECTS = [
           "assets/img/lacalle/carrusel2-05.webp",
         ],
       },
+      "assets/img/lacalle/foto-04.webp",
       "assets/img/lacalle/foto-05.webp",
       "assets/img/lacalle/foto-06.webp",
-      "assets/img/lacalle/foto-07.webp",
       { type: "video", src: "assets/img/lacalle/video-01.mp4", poster: "assets/img/lacalle/video-01-poster.jpg" },
       {
         type: "slideshow",
@@ -270,14 +270,14 @@ const PROJECTS = [
           "assets/img/lacalle/slidecut2-15.webp",
         ],
       },
-      "assets/img/lacalle/foto-08.webp",
+      "assets/img/lacalle/foto-07.webp",
       [
         "assets/img/lacalle/carrusel3-01.webp",
         "assets/img/lacalle/carrusel3-02.webp",
         "assets/img/lacalle/carrusel3-03.webp",
         "assets/img/lacalle/carrusel3-04.webp",
       ],
-      "assets/img/lacalle/foto-09.webp",
+      "assets/img/lacalle/foto-08.webp",
     ],
   },
   {
