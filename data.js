@@ -295,14 +295,14 @@ const PROJECTS = [
     // own file numbering and names — regenerated with scripts/sync-project.py
     // (see sync-de-proyectos.md), never hand-edited. Last rebuild 2026-08-22,
     // after the user replaced the three banner strips (02/05/08-carrusel-N).
-    // carrusel1/2/3 sit at height:70 (narrow strips, the user's own call) and
+    // carrusel1/2/3 sit at height:50 (narrow strips, the user's own call) and
     // the slide-cut group at height:460 because its 5 photos mix aspect ratios.
     gallery: [
       { type: "video", src: "assets/img/ceremonia/hero.mp4", poster: "assets/img/ceremonia/hero-poster.jpg" },
       "assets/img/ceremonia/foto-01.webp",
       {
         type: "carrusel",
-        height: 70,
+        height: 50,
         items: [
           "assets/img/ceremonia/carrusel1-01.webp",
         ],
@@ -311,7 +311,7 @@ const PROJECTS = [
       "assets/img/ceremonia/foto-03.webp",
       {
         type: "carrusel",
-        height: 70,
+        height: 50,
         items: [
           "assets/img/ceremonia/carrusel2-01.webp",
         ],
@@ -320,7 +320,7 @@ const PROJECTS = [
       "assets/img/ceremonia/foto-05.webp",
       {
         type: "carrusel",
-        height: 70,
+        height: 50,
         items: [
           "assets/img/ceremonia/carrusel3-01.webp",
         ],
