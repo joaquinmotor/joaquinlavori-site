@@ -646,9 +646,13 @@ const PROJECTS = [
         "assets/img/lightningbolt/carrusel1-05.webp",
       ],
       "assets/img/lightningbolt/foto-02.webp",
-      [
-        "assets/img/lightningbolt/carrusel2-01.webp",
-      ],
+      {
+        type: "carrusel",
+        height: 50,
+        items: [
+          "assets/img/lightningbolt/carrusel2-01.webp",
+        ],
+      },
       {
         type: "slideshow",
         items: [
@@ -660,9 +664,13 @@ const PROJECTS = [
           "assets/img/lightningbolt/slidecut2-06.webp",
         ],
       },
-      [
-        "assets/img/lightningbolt/carrusel02-01.webp",
-      ],
+      {
+        type: "carrusel",
+        height: 50,
+        items: [
+          "assets/img/lightningbolt/carrusel02-01.webp",
+        ],
+      },
       { type: "video", src: "assets/img/lightningbolt/video-01.mp4", poster: "assets/img/lightningbolt/video-01-poster.jpg" },
       [
         "assets/img/lightningbolt/carrusel3-01.webp",
