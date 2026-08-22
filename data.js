@@ -218,9 +218,9 @@ const PROJECTS = [
     // slide-cut-N / foto / video). RE-SYNCED 2026-08-22 after the user
     // reorganised the source folder: the original 22MB 1180x2556 hero was
     // dropped and the video that used to sit at position 07 was promoted to
-    // 01-hero.mov, leaving 3 videos instead of 4. So hero.mp4 is the old
-    // video-01, the old video-02 (the user's re-cut 1472x1870 file) is now
-    // video-01, and the re-encoded HEVC one is now video-02. Entry shapes
+    // 01-hero.mov. Then 40-video-3.MP4 was dropped too (2026-08-22), leaving
+    // just 2 videos: hero.mp4 (the old video-01) and video-01.mp4 (the user's
+    // re-cut 1472x1870 file). No HEVC source is left in this project. Entry shapes
     // are documented in carruseles-y-slideshows.md; media cache-busting is
     // handled globally by MEDIA_V in script.js, not by query strings here.
     gallery: [
@@ -231,13 +231,22 @@ const PROJECTS = [
         "assets/img/lacalle/carrusel1-03.webp",
         "assets/img/lacalle/carrusel1-04.webp",
       ],
-      [
-        "assets/img/lacalle/carrusel2-01.webp",
-        "assets/img/lacalle/carrusel2-02.webp",
-        "assets/img/lacalle/carrusel2-03.webp",
-        "assets/img/lacalle/carrusel2-04.webp",
-        "assets/img/lacalle/carrusel2-05.webp",
-      ],
+      {
+        // speed:45 px/s vs the global MARQUEE_PX_PER_SEC (55) that carrusel1
+        // right above keeps — "carrusel 1 y carrusel 2 ponelos a diferente
+        // velocidad, el 2 un poco mas lento" (2026-08-22). The two sit back
+        // to back since the video that used to separate them became the hero,
+        // so matching speeds read as one single strip.
+        type: "carrusel",
+        speed: 45,
+        items: [
+          "assets/img/lacalle/carrusel2-01.webp",
+          "assets/img/lacalle/carrusel2-02.webp",
+          "assets/img/lacalle/carrusel2-03.webp",
+          "assets/img/lacalle/carrusel2-04.webp",
+          "assets/img/lacalle/carrusel2-05.webp",
+        ],
+      },
       {
         type: "slideshow",
         items: [
@@ -279,7 +288,6 @@ const PROJECTS = [
           "assets/img/lacalle/slidecut2-18.webp",
         ],
       },
-      { type: "video", src: "assets/img/lacalle/video-02.mp4", poster: "assets/img/lacalle/video-02-poster.jpg" },
       [
         "assets/img/lacalle/carrusel3-01.webp",
         "assets/img/lacalle/carrusel3-02.webp",
