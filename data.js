@@ -75,36 +75,41 @@ const PROJECTS = [
     linkLabel: "Visit site",
     hero: "assets/img/the-movement/hero.webp",
     // Home tile cover only (does not affect the Project page hero/gallery
-    // order above): the last video (video-04, native 886x1920) instead of
-    // the usual hero image. Cover sizes to the video's own aspect ratio
-    // instead of the fixed crop other Home tiles use — see
-    // #grid-home-left .tile[data-slug="the-movement"] .tile-cover in
+    // order above): el ultimo video del proyecto (celu.mp4, nativo 956x1966)
+    // en vez de la imagen de hero. Era video-04 hasta el 2026-08-22, cuando el
+    // usuario reordeno la carpeta y ese archivo dejo de existir. Cover sizes to
+    // the video's own aspect ratio instead of the fixed crop other Home tiles
+    // use — see #grid-home-left .tile[data-slug="the-movement"] .tile-cover in
     // styles.css.
-    homeCover: { type: "video", src: "assets/img/the-movement/video-04.mp4", poster: "assets/img/the-movement/video-04-poster.jpg" },
+    homeCover: { type: "video", src: "assets/img/the-movement/celu.mp4", poster: "assets/img/the-movement/celu-poster.jpg" },
     // A plain array entry inside `gallery` (nested, as opposed to a string
     // or {type:"video"} object) is a "carrusel" group: a set of photos
     // meant to render as one auto-scrolling horizontal filmstrip instead of
     // stacked full-width items — see galleryItemHTML()/marqueeHTML() in
     // script.js and notas.md 2026-08-11.
+    // Galeria DERIVADA de los nombres de archivo de assets/work/01-the-movement/,
+    // regenerada con scripts/sync-project.py (ver sync-de-proyectos.md), nunca
+    // editada a mano. Re-sincronizada 2026-08-22 con el orden nuevo del usuario:
+    // desaparecieron los phone-01..08 y video-03/04, entro 11-celu-11.mp4 (sale
+    // como celu.mp4) y los dos grupos de carrusel.
     gallery: [
-      "assets/img/the-movement/hero.webp",
+      { type: "video", src: "assets/img/the-movement/hero.mp4", poster: "assets/img/the-movement/hero-poster.jpg" },
       "assets/img/the-movement/logo.webp",
+      "assets/img/the-movement/foto-01.webp",
       { type: "video", src: "assets/img/the-movement/video-01.mp4", poster: "assets/img/the-movement/video-01-poster.jpg" },
-      { type: "video", src: "assets/img/the-movement/video-02.mp4", poster: "assets/img/the-movement/video-02-poster.jpg" },
       [
-        "assets/img/the-movement/phone-01.webp",
-        "assets/img/the-movement/phone-02.webp",
-        "assets/img/the-movement/phone-03.webp",
-        "assets/img/the-movement/phone-04.webp",
+        "assets/img/the-movement/carrusel1-01.webp",
+        "assets/img/the-movement/carrusel1-02.webp",
+        "assets/img/the-movement/carrusel1-03.webp",
+        "assets/img/the-movement/carrusel1-04.webp",
       ],
-      { type: "video", src: "assets/img/the-movement/video-03.mp4", poster: "assets/img/the-movement/video-03-poster.jpg" },
+      { type: "video", src: "assets/img/the-movement/video-02.mp4", poster: "assets/img/the-movement/video-02-poster.jpg" },
       "assets/img/the-movement/team.webp",
-      { type: "video", src: "assets/img/the-movement/video-04.mp4", poster: "assets/img/the-movement/video-04-poster.jpg" },
+      { type: "video", src: "assets/img/the-movement/celu.mp4", poster: "assets/img/the-movement/celu-poster.jpg" },
       [
-        "assets/img/the-movement/phone-05.webp",
-        "assets/img/the-movement/phone-06.webp",
-        "assets/img/the-movement/phone-07.webp",
-        "assets/img/the-movement/phone-08.webp",
+        "assets/img/the-movement/carrusel2-01.webp",
+        "assets/img/the-movement/carrusel2-02.webp",
+        "assets/img/the-movement/carrusel2-03.webp",
       ],
     ],
   },
