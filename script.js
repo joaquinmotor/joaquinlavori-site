@@ -848,18 +848,21 @@ function projectMetaHTML(p) {
 
 // Related Work: next 4 projects after the current one, wrapping — matches
 // Pencil's 2x2 staggered grid (Project Mobile / K9YKC).
-function relatedProjects(slug, count = 4) {
-  const idx = PROJECTS.findIndex((p) => p.slug === slug);
-  if (idx === -1) return PROJECTS.slice(0, count);
-  const out = [];
-  for (let i = 1; out.length < count && i <= PROJECTS.length - 1; i++) {
-    out.push(PROJECTS[(idx + i) % PROJECTS.length]);
-  }
-  return out;
+// Related Work = the SAME set of projects the Home grid features, minus the
+// one being viewed, in PROJECTS order (2026-08-22, user: "tienen que volver a
+// aparecer todos los proyectos del home").
+// It used to be "the next 4 projects after this one, wrapping", which broke
+// down as the catalogue filled in from the top: opening La Guitarrita — the
+// last featured project — wrapped straight into fatima/lightningbolt/aim/
+// voicot, four projects still in placeholder mode, so the footer was four
+// grey boxes. Reusing HOME_FEATURED_COUNT means this section grows with the
+// Home grid automatically and can never fall off the end of the list.
+function relatedProjects(slug) {
+  return PROJECTS.slice(0, HOME_FEATURED_COUNT).filter((p) => p.slug !== slug);
 }
 
 function relatedWorkHTML(slug) {
-  const items = relatedProjects(slug, 4);
+  const items = relatedProjects(slug);
   if (!items.length) return "";
   const rows = [];
   for (let i = 0; i < items.length; i += 2) rows.push(items.slice(i, i + 2));
@@ -874,7 +877,11 @@ function relatedWorkHTML(slug) {
               (item) => `
             <a class="project-related-item" href="#/project/${item.slug}">
               <div class="tile-cover">${slideTag(item.hero)}</div>
-              <p class="project-related-caption">${fantasyCaptionHTML("project-related-title", "project-related-desc")}</p>
+              <p class="project-related-caption">${
+                REAL_MEDIA_PROJECTS.has(item.slug) && item.blurb
+                  ? realCaptionHTML("project-related-title", "project-related-desc", item)
+                  : fantasyCaptionHTML("project-related-title", "project-related-desc")
+              }</p>
             </a>`
             )
             .join("")}
