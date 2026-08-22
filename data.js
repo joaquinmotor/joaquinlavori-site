@@ -615,14 +615,60 @@ const PROJECTS = [
     ],
     link: "https://www.lightningbolt.com.ar/",
     linkLabel: "View site",
-    hero: "assets/img/lightningbolt/hero.jpg",
+    hero: "assets/img/lightningbolt/hero.webp",
+    // Galeria DERIVADA de los nombres de archivo de assets/work/09-bolt/,
+    // regenerada con scripts/sync-project.py (ver sync-de-proyectos.md), nunca
+    // editada a mano. Subida 2026-08-22.
+    // OJO: el usuario nombro TRES grupos de carrusel distintos con el numero 2
+    // (16-carrusel-2, 23-carrusel-02, 25/26/27-carrusel-2). El script ahora
+    // desambigua y el ultimo salio como carrusel3-*; los nombres de origen
+    // quedan como estan, la desambiguacion es solo de salida.
     gallery: [
-      "assets/img/lightningbolt/hero.jpg",
-      "assets/img/lightningbolt/02.jpg",
-      "assets/img/lightningbolt/03.jpg",
-      "assets/img/lightningbolt/04.jpg",
-      "assets/img/lightningbolt/05.jpg",
-      "assets/img/lightningbolt/06.jpg",
+      "assets/img/lightningbolt/hero.webp",
+      "assets/img/lightningbolt/foto-01.webp",
+      {
+        type: "slideshow",
+        items: [
+          "assets/img/lightningbolt/slidecut1-01.webp",
+          "assets/img/lightningbolt/slidecut1-02.webp",
+          "assets/img/lightningbolt/slidecut1-03.webp",
+          "assets/img/lightningbolt/slidecut1-04.webp",
+          "assets/img/lightningbolt/slidecut1-05.webp",
+          "assets/img/lightningbolt/slidecut1-06.webp",
+          "assets/img/lightningbolt/slidecut1-07.webp",
+        ],
+      },
+      [
+        "assets/img/lightningbolt/carrusel1-01.webp",
+        "assets/img/lightningbolt/carrusel1-02.webp",
+        "assets/img/lightningbolt/carrusel1-03.webp",
+        "assets/img/lightningbolt/carrusel1-04.webp",
+        "assets/img/lightningbolt/carrusel1-05.webp",
+      ],
+      "assets/img/lightningbolt/foto-02.webp",
+      [
+        "assets/img/lightningbolt/carrusel2-01.webp",
+      ],
+      {
+        type: "slideshow",
+        items: [
+          "assets/img/lightningbolt/slidecut2-01.webp",
+          "assets/img/lightningbolt/slidecut2-02.webp",
+          "assets/img/lightningbolt/slidecut2-03.webp",
+          "assets/img/lightningbolt/slidecut2-04.webp",
+          "assets/img/lightningbolt/slidecut2-05.webp",
+          "assets/img/lightningbolt/slidecut2-06.webp",
+        ],
+      },
+      [
+        "assets/img/lightningbolt/carrusel02-01.webp",
+      ],
+      { type: "video", src: "assets/img/lightningbolt/video-01.mp4", poster: "assets/img/lightningbolt/video-01-poster.jpg" },
+      [
+        "assets/img/lightningbolt/carrusel3-01.webp",
+        "assets/img/lightningbolt/carrusel3-02.webp",
+        "assets/img/lightningbolt/carrusel3-03.webp",
+      ],
     ],
   },
   {

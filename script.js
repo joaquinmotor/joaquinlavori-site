@@ -67,7 +67,7 @@ function playBadge() {
 // Pencil) until its photos are reviewed and confirmed ready. Add a slug
 // once that project's assets/img/<slug>/ folder is final. See notas.md
 // "El sitio hoy NO renderiza fotos/videos reales" for the full context.
-const REAL_MEDIA_PROJECTS = new Set(["the-movement", "afends", "ceremonia", "lacalle", "roark", "vans", "laguitarrita", "fatima"]);
+const REAL_MEDIA_PROJECTS = new Set(["the-movement", "afends", "ceremonia", "lacalle", "roark", "vans", "laguitarrita", "fatima", "lightningbolt"]);
 
 function mediaSrc(media) {
   if (!media) return null;
@@ -522,7 +522,7 @@ function renderGrid(el, items, opts) {
 // change. The two columns alternate by index (even -> left, odd -> right), so
 // an odd count simply leaves the left column one tile longer. The desktop-only
 // third column picks up the 3 projects that follow.
-const HOME_FEATURED_COUNT = 8;
+const HOME_FEATURED_COUNT = 9;
 // The first 6 tiles keep Pencil's original layout exactly: strict alternation,
 // even index -> left column, odd -> right. Tiles BEYOND those 6 are appended
 // starting on the RIGHT, then alternating (7th -> right, 8th -> left,
