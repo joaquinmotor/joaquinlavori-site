@@ -75,13 +75,13 @@ const PROJECTS = [
     linkLabel: "Visit site",
     hero: "assets/img/the-movement/hero.webp",
     // Home tile cover only (does not affect the Project page hero/gallery
-    // order above): el ultimo video del proyecto (celu.mp4, nativo 956x1966)
-    // en vez de la imagen de hero. Era video-04 hasta el 2026-08-22, cuando el
-    // usuario reordeno la carpeta y ese archivo dejo de existir. Cover sizes to
-    // the video's own aspect ratio instead of the fixed crop other Home tiles
-    // use — see #grid-home-left .tile[data-slug="the-movement"] .tile-cover in
-    // styles.css.
-    homeCover: { type: "video", src: "assets/img/the-movement/celu.mp4", poster: "assets/img/the-movement/celu-poster.jpg" },
+    // order above): el video de hero del proyecto (hero.mp4, nativo 886x1400).
+    // Era video-04 hasta el 2026-08-22; al re-sincronizar la carpeta ese archivo
+    // dejo de existir, se probo con celu.mp4 y el usuario pidio el del hero.
+    // El tile toma la proporcion nativa del video por la regla generica
+    // .tile-cover:has(.media-real) de styles.css — NO hardcodear un aspect-ratio
+    // por slug, ya paso una vez y dejo el cover recortado a la caja vieja.
+    homeCover: { type: "video", src: "assets/img/the-movement/hero.mp4", poster: "assets/img/the-movement/hero-poster.jpg" },
     // A plain array entry inside `gallery` (nested, as opposed to a string
     // or {type:"video"} object) is a "carrusel" group: a set of photos
     // meant to render as one auto-scrolling horizontal filmstrip instead of
