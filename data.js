@@ -140,6 +140,18 @@ const PROJECTS = [
     //    no nav/dots (2026-08-12, user request — see slideshowHTML() in
     //    script.js). Distinct from "carrusel": nothing scrolls, only one
     //    photo is ever visible.
+    // Galeria DERIVADA de los nombres de archivo de assets/work/02-afends/,
+    // regenerada con scripts/sync-project.py (ver sync-de-proyectos.md), nunca
+    // editada a mano. Re-sincronizada 2026-08-22: hasta entonces este data.js
+    // era anterior al script y usaba nombres propios (spread-01, slidercut4-*),
+    // por eso cambiaron TODOS los archivos de la carpeta de imagenes del proyecto.
+    // Dos cosas que vienen de como el usuario nombro la carpeta:
+    //  - 09/10/11 dicen "slider-cut" (con r); el script lo toma como slide-cut.
+    //  - 44-47-48-carrusel-03 repite el numero de grupo de 38-42-carrusel-03,
+    //    y como no son consecutivos son dos grupos: el segundo salio carrusel2-*.
+    //  - 49-slide-cut-6.webp es un webp ANIMADO y ya trae su propia animacion:
+    //    se copia tal cual (ffmpeg no decodifica webp animados) y queda como un
+    //    slide-cut de un solo item al final, que es donde lo pone su numero.
     gallery: [
       "assets/img/afends/hero.webp",
       [
@@ -155,9 +167,9 @@ const PROJECTS = [
       {
         type: "slideshow",
         items: [
-          "assets/img/afends/slidercut4-01.webp",
-          "assets/img/afends/slidercut4-02.webp",
-          "assets/img/afends/slidercut4-03.webp",
+          "assets/img/afends/slidecut4-01.webp",
+          "assets/img/afends/slidecut4-02.webp",
+          "assets/img/afends/slidecut4-03.webp",
         ],
       },
       { type: "video", src: "assets/img/afends/video-01.mp4", poster: "assets/img/afends/video-01-poster.jpg" },
@@ -175,10 +187,14 @@ const PROJECTS = [
         ],
       },
       { type: "video", src: "assets/img/afends/video-02.mp4", poster: "assets/img/afends/video-02-poster.jpg" },
-      ["assets/img/afends/spread-01.webp"],
-      "assets/img/afends/foto-02.webp",
+      [
+        "assets/img/afends/carrusel01-01.webp",
+      ],
+      "assets/img/afends/foto-01.webp",
       { type: "video", src: "assets/img/afends/video-03.mp4", poster: "assets/img/afends/video-03-poster.jpg" },
-      ["assets/img/afends/spread-02.webp"],
+      [
+        "assets/img/afends/carrusel02-01.webp",
+      ],
       {
         type: "slideshow",
         items: [
@@ -190,20 +206,26 @@ const PROJECTS = [
         ],
       },
       [
-        "assets/img/afends/carrusel3-01.webp",
-        "assets/img/afends/carrusel3-02.webp",
-        "assets/img/afends/carrusel3-03.webp",
-        "assets/img/afends/carrusel3-04.webp",
-        "assets/img/afends/carrusel3-05.webp",
+        "assets/img/afends/carrusel03-01.webp",
+        "assets/img/afends/carrusel03-02.webp",
+        "assets/img/afends/carrusel03-03.webp",
+        "assets/img/afends/carrusel03-04.webp",
+        "assets/img/afends/carrusel03-05.webp",
       ],
-      "assets/img/afends/foto-01.webp",
+      "assets/img/afends/foto-02.webp",
       [
-        "assets/img/afends/carrusel3-07.webp",
-        "assets/img/afends/carrusel3-08.webp",
-        "assets/img/afends/carrusel3-09.webp",
-        "assets/img/afends/carrusel3-10.webp",
-        "assets/img/afends/carrusel3-06.webp",
+        "assets/img/afends/carrusel2-01.webp",
+        "assets/img/afends/carrusel2-02.webp",
+        "assets/img/afends/carrusel2-03.webp",
+        "assets/img/afends/carrusel2-04.webp",
+        "assets/img/afends/carrusel2-05.webp",
       ],
+      {
+        type: "slideshow",
+        items: [
+          "assets/img/afends/slidecut1-01.webp",
+        ],
+      },
     ],
   },
   {
