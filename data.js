@@ -537,8 +537,8 @@ const PROJECTS = [
     // panoramic strips (22127x1008 and 23159x1007 in the source) capped to
     // 9600px wide so they stay under mobile browsers' texture limits; and
     // carrusel1 and carrusel3 sit at height:50 (2026-08-22, user request:
-    // "05 carrusel, 25 carrusel, van de 50px de alto") while carrusel2, a
-    // normal 4-photo group, keeps the 220px default. 29-gif.gif is copied
+    // "05 carrusel, 25 carrusel, van de 50px de alto") and carrusel2, the
+    // 4-photo group, at height:150 too. 29-gif.gif is copied
     // through as a GIF rather than converted, so the
     // 2-frame animation survives — <img> plays it natively.
     gallery: [
@@ -565,12 +565,19 @@ const PROJECTS = [
         ],
       },
       { type: "video", src: "assets/img/fatima/video-02.mp4", poster: "assets/img/fatima/video-02-poster.jpg" },
-      [
-        "assets/img/fatima/carrusel2-01.webp",
-        "assets/img/fatima/carrusel2-02.webp",
-        "assets/img/fatima/carrusel2-03.webp",
-        "assets/img/fatima/carrusel2-04.webp",
-      ],
+      {
+        type: "carrusel",
+        height: 150,
+        // speed:83 px/s = 1.5x the global MARQUEE_PX_PER_SEC (55) — "0.5 mas
+        // rapido" (2026-08-22). The two panoramic strips keep the default.
+        speed: 83,
+        items: [
+          "assets/img/fatima/carrusel2-01.webp",
+          "assets/img/fatima/carrusel2-02.webp",
+          "assets/img/fatima/carrusel2-03.webp",
+          "assets/img/fatima/carrusel2-04.webp",
+        ],
+      },
       { type: "video", src: "assets/img/fatima/video-03.mp4", poster: "assets/img/fatima/video-03-poster.jpg" },
       "assets/img/fatima/foto-03.webp",
       "assets/img/fatima/foto-04.webp",
