@@ -446,8 +446,22 @@ const PROJECTS = [
     // and 14-carrusel-2 / 33-carrusel are single wide composites wrapped as
     // 1-item carruseles (same precedent as afends' spreads) — the latter
     // carries no group number, hence the plain carrusel-NN filenames.
+    // Galeria DERIVADA de los nombres de archivo de assets/work/06-vans/,
+    // regenerada con scripts/sync-project.py (ver sync-de-proyectos.md), nunca
+    // editada a mano. Re-sincronizada 2026-08-22 con el reorden del usuario.
+    // Notas de como esta nombrada la carpeta:
+    //  - 33-carrusel.png no lleva numero de grupo, por eso su salida es
+    //    carrusel-01.webp (sin digito) en vez de carruselN-01.webp.
+    //  - 33-carrusel.png y 33-gif.mp4 comparten el numero 33; el desempate es
+    //    alfabetico, asi que el carrusel va antes que el gif.
+    //  - el carrusel del 33 va a height:200 por pedido del usuario (2026-08-22),
+    //    que ademas reporto que "salta y se traba". Su archivo se genera a 600px
+    //    de alto (3x los 200 que se muestran) en vez de los 660 del default, que
+    //    para una tira de 6:1 significaba 4019px de ancho nativo: 20 MB de
+    //    textura para pintar 1.9 MB. Al re-sincronizar vans hay que pasar
+    //    OVERRIDES='{"carrusel": {"height": 200}}' para que el build lo respete.
     gallery: [
-      { type: "video", src: "assets/img/vans/hero.mp4", poster: "assets/img/vans/hero-poster.jpg" },
+      "assets/img/vans/hero.webp",
       [
         "assets/img/vans/carrusel1-01.webp",
         "assets/img/vans/carrusel1-02.webp",
@@ -483,12 +497,18 @@ const PROJECTS = [
       ],
       { type: "video", src: "assets/img/vans/video-02.mp4", poster: "assets/img/vans/video-02-poster.jpg" },
       "assets/img/vans/foto-05.webp",
-      [
-        "assets/img/vans/carrusel-01.webp",
-      ],
+      {
+        type: "carrusel",
+        height: 200,
+        items: [
+          "assets/img/vans/carrusel-01.webp",
+        ],
+      },
+      { type: "video", src: "assets/img/vans/gif.mp4", poster: "assets/img/vans/gif-poster.jpg" },
       "assets/img/vans/foto-06.webp",
-      "assets/img/vans/foto-07.webp",
-      "assets/img/vans/foto-08.webp",
+      [
+        "assets/img/vans/carrusel4-01.webp",
+      ],
     ],
   },
   {
