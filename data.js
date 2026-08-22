@@ -259,7 +259,13 @@ const PROJECTS = [
         ],
       },
       "assets/img/lacalle/foto-01.webp",
-      { type: "video", src: "assets/img/lacalle/video-02.mp4", poster: "assets/img/lacalle/video-02-poster.jpg" },
+      // ?v=2 (2026-08-22): the user replaced this video in place (same
+      // filename, new 1472x1870 cut instead of the old 1180x2556 one).
+      // Media files aren't covered by index.html's ?v= cache-busting, which
+      // only versions css/js, so without this a browser that already loaded
+      // the project would keep serving the old cached mp4. Bump the number
+      // again if this file is ever replaced in place a third time.
+      { type: "video", src: "assets/img/lacalle/video-02.mp4?v=2", poster: "assets/img/lacalle/video-02-poster.jpg?v=2" },
       {
         type: "slideshow",
         // height:300 — these 18 menu spreads have mixed aspect ratios
