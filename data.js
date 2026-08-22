@@ -212,16 +212,107 @@ const PROJECTS = [
     ],
     link: "https://www.instagram.com/lacallebar/",
     linkLabel: "View site",
-    hero: "assets/img/lacalle/hero.jpg",
+    hero: "assets/img/lacalle/hero.webp",
+    // Gallery order and entry types follow assets/work/03-la-calle-bar/'s own
+    // file numbering (01-55, named by the user: hero / carrusel-N /
+    // slide-cut-N / foto / video). Entry shapes, same as afends/ceremonia:
+    //  - plain string: a single static photo (.project-gallery-item).
+    //  - {type:"video", src, poster}: a real video.
+    //  - nested array: a "carrusel" group at the DEFAULT height (220px, see
+    //    .project-marquee in styles.css) — auto-scrolling filmstrip, all
+    //    photos visible side by side. Used for the three carrusel-N groups
+    //    (2026-08-22, user chose the 220px default so the vertical phone
+    //    captures show uncropped).
+    //  - {type:"slideshow", items:[...]}: a "slide-cut" group — hard cut to
+    //    the next photo every .5s, infinite loop. slidecut2 carries an
+    //    explicit height (see its own comment); slidecut1 and slidecut3 are
+    //    left at natural size (the afends default) because every photo in
+    //    those groups shares one aspect ratio, so the box never jumps.
+    // Source video 40-video-3.MP4 was HEVC (h.265) — unplayable in Chrome and
+    // Firefox — so video-03.mp4 is the only one re-encoded to H.264 rather
+    // than remuxed with -c copy (2026-08-22).
     gallery: [
-      "assets/img/lacalle/02.jpg",
-      "assets/img/lacalle/hero.jpg",
-      "assets/img/lacalle/03.jpg",
-      "assets/img/lacalle/04.jpg",
-      "assets/img/lacalle/05.jpg",
-      "assets/img/lacalle/06.jpg",
-      "assets/img/lacalle/07.jpg",
-      "assets/img/lacalle/08.jpg",
+      { type: "video", src: "assets/img/lacalle/hero.mp4", poster: "assets/img/lacalle/hero-poster.jpg" },
+      [
+        "assets/img/lacalle/carrusel1-01.webp",
+        "assets/img/lacalle/carrusel1-02.webp",
+        "assets/img/lacalle/carrusel1-03.webp",
+        "assets/img/lacalle/carrusel1-04.webp",
+        "assets/img/lacalle/carrusel1-05.webp",
+      ],
+      { type: "video", src: "assets/img/lacalle/video-01.mp4", poster: "assets/img/lacalle/video-01-poster.jpg" },
+      [
+        "assets/img/lacalle/carrusel2-01.webp",
+        "assets/img/lacalle/carrusel2-02.webp",
+        "assets/img/lacalle/carrusel2-03.webp",
+        "assets/img/lacalle/carrusel2-04.webp",
+        "assets/img/lacalle/carrusel2-05.webp",
+        "assets/img/lacalle/carrusel2-06.webp",
+      ],
+      {
+        type: "slideshow",
+        items: [
+          "assets/img/lacalle/slidecut1-01.webp",
+          "assets/img/lacalle/slidecut1-02.webp",
+          "assets/img/lacalle/slidecut1-03.webp",
+          "assets/img/lacalle/slidecut1-04.webp",
+          "assets/img/lacalle/slidecut1-05.webp",
+          "assets/img/lacalle/slidecut1-06.webp",
+        ],
+      },
+      "assets/img/lacalle/foto-01.webp",
+      { type: "video", src: "assets/img/lacalle/video-02.mp4", poster: "assets/img/lacalle/video-02-poster.jpg" },
+      {
+        type: "slideshow",
+        // height:300 — these 18 menu spreads have mixed aspect ratios
+        // (1.06 to 1.32), so at natural size the box jumped on every .5s
+        // cut. 300px matches the dominant ~4:3 landscape shape at full
+        // mobile width (2026-08-22, user request).
+        height: 300,
+        items: [
+          "assets/img/lacalle/slidecut2-01.webp",
+          "assets/img/lacalle/slidecut2-02.webp",
+          "assets/img/lacalle/slidecut2-03.webp",
+          "assets/img/lacalle/slidecut2-04.webp",
+          "assets/img/lacalle/slidecut2-05.webp",
+          "assets/img/lacalle/slidecut2-06.webp",
+          "assets/img/lacalle/slidecut2-07.webp",
+          "assets/img/lacalle/slidecut2-08.webp",
+          "assets/img/lacalle/slidecut2-09.webp",
+          "assets/img/lacalle/slidecut2-10.webp",
+          "assets/img/lacalle/slidecut2-11.webp",
+          "assets/img/lacalle/slidecut2-12.webp",
+          "assets/img/lacalle/slidecut2-13.webp",
+          "assets/img/lacalle/slidecut2-14.webp",
+          "assets/img/lacalle/slidecut2-15.webp",
+          "assets/img/lacalle/slidecut2-16.webp",
+          "assets/img/lacalle/slidecut2-17.webp",
+          "assets/img/lacalle/slidecut2-18.webp",
+        ],
+      },
+      { type: "video", src: "assets/img/lacalle/video-03.mp4", poster: "assets/img/lacalle/video-03-poster.jpg" },
+      [
+        "assets/img/lacalle/carrusel3-01.webp",
+        "assets/img/lacalle/carrusel3-02.webp",
+        "assets/img/lacalle/carrusel3-03.webp",
+        "assets/img/lacalle/carrusel3-04.webp",
+      ],
+      "assets/img/lacalle/foto-02.webp",
+      {
+        type: "slideshow",
+        items: [
+          "assets/img/lacalle/slidecut3-01.webp",
+          "assets/img/lacalle/slidecut3-02.webp",
+          "assets/img/lacalle/slidecut3-03.webp",
+          "assets/img/lacalle/slidecut3-04.webp",
+          "assets/img/lacalle/slidecut3-05.webp",
+          "assets/img/lacalle/slidecut3-06.webp",
+          "assets/img/lacalle/slidecut3-07.webp",
+          "assets/img/lacalle/slidecut3-08.webp",
+          "assets/img/lacalle/slidecut3-09.webp",
+          "assets/img/lacalle/slidecut3-10.webp",
+        ],
+      },
     ],
   },
   {
