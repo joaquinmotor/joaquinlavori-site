@@ -670,6 +670,19 @@ const PROJECTS = [
     // (16-carrusel-2, 23-carrusel-02, 25/26/27-carrusel-2). El script ahora
     // desambigua y el ultimo salio como carrusel3-*; los nombres de origen
     // quedan como estan, la desambiguacion es solo de salida.
+    // Galeria DERIVADA de los nombres de archivo de assets/work/09-bolt/,
+    // regenerada con scripts/sync-project.py (ver sync-de-proyectos.md), nunca
+    // editada a mano. Re-sincronizada 2026-08-22 con las fotos que optimizo el
+    // usuario. Dos cosas de como esta nombrada la carpeta:
+    //  - el usuario nombro TRES grupos de carrusel con el numero 2
+    //    (16-carrusel-2, 23-carrusel-02, 25/26/27-carrusel-2); el script
+    //    desambigua y el ultimo sale como carrusel3-*.
+    //  - carrusel2 y carrusel02 son las dos tiras panoramicas, a height:50.
+    // Al re-sincronizar hay que pasar
+    // OVERRIDES='{"carrusel2": {"height": 50}, "carrusel02": {"height": 50}}'
+    // para que el build genere esos dos a 150px de alto (3x los 50 que se
+    // muestran) en vez de los 626 nativos: asi salieron 1800x150 y 1499x150 en
+    // vez de 7513x626 y 6257x626, que eran ~19 MB de textura cada uno.
     gallery: [
       "assets/img/lightningbolt/hero.webp",
       "assets/img/lightningbolt/foto-01.webp",
