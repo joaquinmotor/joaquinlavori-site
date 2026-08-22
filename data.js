@@ -213,30 +213,31 @@ const PROJECTS = [
     link: "https://www.instagram.com/lacallebar/",
     linkLabel: "View site",
     hero: "assets/img/lacalle/hero.webp",
-    // Gallery order and entry types follow assets/work/03-la-calle-bar/'s own
-    // file numbering (01-55, named by the user: hero / carrusel-N /
-    // slide-cut-N / foto / video). RE-SYNCED 2026-08-22 after the user
-    // reorganised the source folder: the original 22MB 1180x2556 hero was
-    // dropped and the video that used to sit at position 07 was promoted to
-    // 01-hero.mov. Then 40-video-3.MP4 was dropped too (2026-08-22), leaving
-    // just 2 videos: hero.mp4 (the old video-01) and video-01.mp4 (the user's
-    // re-cut 1472x1870 file). No HEVC source is left in this project. Entry shapes
-    // are documented in carruseles-y-slideshows.md; media cache-busting is
-    // handled globally by MEDIA_V in script.js, not by query strings here.
+    // Gallery order and entry types are DERIVED from assets/work/03-la-calle-bar/'s
+    // own file numbering and names (NN-hero / NN-carrusel-N / NN-slide-cut-N /
+    // NN-foto / NN-video): the number gives the order, the word gives the type,
+    // and consecutive files sharing a group name form one group. The user
+    // reorganises that folder often and asks for a re-sync, so this block is
+    // regenerated wholesale rather than hand-edited — last rebuild 2026-08-22,
+    // when slide-cut-1 was dropped entirely, six loose fotos were added, and
+    // carrusel-1 went down to 3 photos. Media cache-busting is global via
+    // MEDIA_V in script.js; per-group knobs (height/speed/interval) are
+    // documented in carruseles-y-slideshows.md.
     gallery: [
       { type: "video", src: "assets/img/lacalle/hero.mp4", poster: "assets/img/lacalle/hero-poster.jpg" },
       [
         "assets/img/lacalle/carrusel1-01.webp",
         "assets/img/lacalle/carrusel1-02.webp",
         "assets/img/lacalle/carrusel1-03.webp",
-        "assets/img/lacalle/carrusel1-04.webp",
       ],
+      "assets/img/lacalle/foto-01.webp",
+      "assets/img/lacalle/foto-02.webp",
+      "assets/img/lacalle/foto-03.webp",
+      "assets/img/lacalle/foto-04.webp",
       {
         // speed:45 px/s vs the global MARQUEE_PX_PER_SEC (55) that carrusel1
-        // right above keeps — "carrusel 1 y carrusel 2 ponelos a diferente
-        // velocidad, el 2 un poco mas lento" (2026-08-22). The two sit back
-        // to back since the video that used to separate them became the hero,
-        // so matching speeds read as one single strip.
+        // keeps — "carrusel 1 y carrusel 2 ponelos a diferente velocidad, el
+        // 2 un poco mas lento" (2026-08-22).
         type: "carrusel",
         speed: 45,
         items: [
@@ -247,23 +248,14 @@ const PROJECTS = [
           "assets/img/lacalle/carrusel2-05.webp",
         ],
       },
-      {
-        type: "slideshow",
-        items: [
-          "assets/img/lacalle/slidecut1-01.webp",
-          "assets/img/lacalle/slidecut1-02.webp",
-          "assets/img/lacalle/slidecut1-03.webp",
-          "assets/img/lacalle/slidecut1-04.webp",
-          "assets/img/lacalle/slidecut1-05.webp",
-          "assets/img/lacalle/slidecut1-06.webp",
-        ],
-      },
-      "assets/img/lacalle/foto-01.webp",
+      "assets/img/lacalle/foto-05.webp",
+      "assets/img/lacalle/foto-06.webp",
+      "assets/img/lacalle/foto-07.webp",
       { type: "video", src: "assets/img/lacalle/video-01.mp4", poster: "assets/img/lacalle/video-01-poster.jpg" },
       {
         type: "slideshow",
-        // height:300 — these 18 menu spreads have mixed aspect ratios
-        // (1.06 to 1.32), so at natural size the box jumped on every cut.
+        // height:300 — these 18 menu spreads have mixed aspect ratios (1.06
+        // to 1.32), so at natural size the box jumped on every cut.
         // interval:1000 — "la mitad de velocidad" (2026-08-22).
         height: 300,
         interval: 1000,
@@ -294,7 +286,7 @@ const PROJECTS = [
         "assets/img/lacalle/carrusel3-03.webp",
         "assets/img/lacalle/carrusel3-04.webp",
       ],
-      "assets/img/lacalle/foto-02.webp",
+      "assets/img/lacalle/foto-08.webp",
       {
         type: "slideshow",
         // interval:1000 — same half-speed request as the menu group above.
