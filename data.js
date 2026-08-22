@@ -322,6 +322,11 @@ const PROJECTS = [
     // own file numbering and names — regenerated with scripts/sync-project.py
     // (see sync-de-proyectos.md), never hand-edited. Last rebuild 2026-08-22,
     // after the user replaced the three banner strips (02/05/08-carrusel-N).
+    // Al re-sincronizar hay que pasar OVERRIDES='{"carrusel1":{"height":30},
+    // "carrusel2":{"height":30},"carrusel3":{"height":30},"slidecut4":{"height":460}}'
+    // para que el build genere los tres banners a 120px de alto (3x los 30 que se
+    // muestran) en vez de sus 266 nativos. Sin eso vuelven a pesar 79x mas pixeles
+    // de los que se ven.
     // carrusel1/2/3 sit at height:30 (narrow strips, the user's own call) and
     // the slide-cut group at height:460 because its 5 photos mix aspect ratios.
     gallery: [
@@ -583,6 +588,10 @@ const PROJECTS = [
     // (the parser accepts that too); carrusel1 and carrusel3 are single
     // panoramic strips (22127x1008 and 23159x1007 in the source) capped to
     // 9600px wide so they stay under mobile browsers' texture limits; and
+    // Al re-sincronizar hay que pasar OVERRIDES='{"carrusel1":{"height":50},
+    // "carrusel3":{"height":50},"carrusel2":{"height":150,"speed":83},
+    // "slidecut1":{"height":474}}' para que el build genere carrusel1/3 a 150px de
+    // alto y carrusel2 a 450 (3x lo que se muestran) en vez de 437/417 nativos.
     // carrusel1 and carrusel3 sit at height:50 (2026-08-22, user request:
     // "05 carrusel, 25 carrusel, van de 50px de alto") and carrusel2, the
     // 4-photo group, at height:150 too. 29-gif.gif is copied
