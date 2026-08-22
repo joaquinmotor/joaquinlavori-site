@@ -707,6 +707,69 @@ const PROJECTS = [
     ],
   },
   {
+    slug: "fortyspotted",
+    brand: "Forty Spotted Gin Sonic",
+    category: "Illustration & Campaign Design",
+    blurb:
+      "An illustrated campaign for Forty Spotted's canned Gin Sonic — characters, posters, tees and totes for a Tasmanian gin that drinks like summer.",
+    body: [
+      "Forty Spotted makes gin at the southern end of the world, in Tasmania, and their Gin Sonic puts it in a can with soda, tonic and a citrus squeeze. The drink is easy; the campaign had to be too. I built it around a cast of characters — the can and the glass as a double act, all rubber-hose limbs, cowboy boots and permanent good mood — in a peach, teal and cream palette warm enough to carry the \"sipped as the sun goes down\" line the brand keeps coming back to. From there the system stretched across everything a bar and a bottle shop actually touch: posters, door hangers, tote bags, tees. The result is a campaign that reads as a party from across the room, and still points back to the gin when you get close.",
+    ],
+    link: "https://www.fortyspotted.com/",
+    linkLabel: "View site",
+    hero: "assets/img/fortyspotted/hero.webp",
+    // Galeria DERIVADA de los nombres de archivo de assets/work/17 - Forty Spotted/,
+    // generada con scripts/sync-project.py (ver sync-de-proyectos.md), nunca editada
+    // a mano. Subida 2026-08-22. Dos cosas de como esta nombrada la carpeta:
+    //  - 18-carrusel-4 y 24-carrusel-4 repiten el numero de grupo y no son
+    //    consecutivos, asi que son dos grupos: el segundo salio carrusel5-*.
+    //  - carrusel4-01 es una tira de 2506x95; se le fija height:95 (su alto nativo)
+    //    porque los 220px del default la agrandaban 2.3x y la dejaban borrosa.
+    gallery: [
+      "assets/img/fortyspotted/hero.webp",
+      "assets/img/fortyspotted/foto-01.webp",
+      [
+        "assets/img/fortyspotted/carrusel1-01.webp",
+        "assets/img/fortyspotted/carrusel1-02.webp",
+        "assets/img/fortyspotted/carrusel1-03.webp",
+      ],
+      "assets/img/fortyspotted/foto-02.webp",
+      "assets/img/fortyspotted/foto-03.webp",
+      [
+        "assets/img/fortyspotted/carrusel2-01.webp",
+      ],
+      "assets/img/fortyspotted/foto-04.webp",
+      "assets/img/fortyspotted/foto-05.webp",
+      "assets/img/fortyspotted/foto-06.webp",
+      [
+        "assets/img/fortyspotted/carrusel3-01.webp",
+        "assets/img/fortyspotted/carrusel3-02.webp",
+        "assets/img/fortyspotted/carrusel3-03.webp",
+      ],
+      "assets/img/fortyspotted/foto-07.webp",
+      {
+        type: "carrusel",
+        height: 95,
+        items: [
+          "assets/img/fortyspotted/carrusel4-01.webp",
+        ],
+      },
+      {
+        type: "slideshow",
+        items: [
+          "assets/img/fortyspotted/slidecut1-01.webp",
+          "assets/img/fortyspotted/slidecut1-02.webp",
+          "assets/img/fortyspotted/slidecut1-03.webp",
+          "assets/img/fortyspotted/slidecut1-04.webp",
+          "assets/img/fortyspotted/slidecut1-05.webp",
+        ],
+      },
+      [
+        "assets/img/fortyspotted/carrusel5-01.webp",
+      ],
+    ],
+  },
+  {
     slug: "aim",
     brand: "AIM Miami",
     category: "Branding & Web Design",
