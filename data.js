@@ -723,8 +723,9 @@ const PROJECTS = [
     // a mano. Subida 2026-08-22. Dos cosas de como esta nombrada la carpeta:
     //  - 18-carrusel-4 y 24-carrusel-4 repiten el numero de grupo y no son
     //    consecutivos, asi que son dos grupos: el segundo salio carrusel5-*.
-    //  - carrusel4-01 es una tira de 2506x95; se le fija height:95 (su alto nativo)
-    //    porque los 220px del default la agrandaban 2.3x y la dejaban borrosa.
+    //  - carrusel4-01 es una tira de 2506x95; va a height:25 por pedido del usuario
+    //    (2026-08-22). Se habia dejado en 95, su alto nativo, para que los 220px del
+    //    default no la agrandaran; el la quiso mas fina todavia.
     gallery: [
       "assets/img/fortyspotted/hero.webp",
       "assets/img/fortyspotted/foto-01.webp",
@@ -749,7 +750,7 @@ const PROJECTS = [
       "assets/img/fortyspotted/foto-07.webp",
       {
         type: "carrusel",
-        height: 95,
+        height: 25,
         items: [
           "assets/img/fortyspotted/carrusel4-01.webp",
         ],
