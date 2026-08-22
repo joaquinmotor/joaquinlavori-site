@@ -67,7 +67,7 @@ function playBadge() {
 // Pencil) until its photos are reviewed and confirmed ready. Add a slug
 // once that project's assets/img/<slug>/ folder is final. See notas.md
 // "El sitio hoy NO renderiza fotos/videos reales" for the full context.
-const REAL_MEDIA_PROJECTS = new Set(["the-movement", "afends", "ceremonia", "lacalle", "roark"]);
+const REAL_MEDIA_PROJECTS = new Set(["the-movement", "afends", "ceremonia", "lacalle", "roark", "vans"]);
 
 function mediaSrc(media) {
   if (!media) return null;
