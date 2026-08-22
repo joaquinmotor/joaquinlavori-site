@@ -411,19 +411,14 @@ const PROJECTS = [
     linkLabel: "View site",
     hero: "assets/img/vans/hero.webp",
     // Gallery order and entry types are DERIVED from assets/work/06-vans/'s own
-    // file numbering and names — regenerated with scripts/sync-project.py
-    // (2026-08-22). The number gives the order, the word gives the type, and
-    // consecutive files sharing a type+group form one group. Notes for this
-    // project: "slidecut-1" is spelled without the hyphen La Calle Bar uses
-    // (the parser accepts both); 14-carrusel-2 and 33-carrusel are single wide
-    // composites wrapped as 1-item carruseles (same precedent as afends'
-    // spreads); 33-carrusel carries no group number, so its files are just
-    // carrusel-NN; and 15-pastilla.svg is kept as VECTOR, not rasterised —
-    // it is a flat "Off The Wall" pill mark that scales better as SVG and
-    // weighs less. (An interactive 3D-spinning HTML version of that pill
-    // existed in the source folder; the user deleted it and asked for the
-    // plain SVG only.) Per-group knobs are documented in
-    // carruseles-y-slideshows.md.
+    // file numbering and names — regenerated with scripts/sync-project.py (see
+    // sync-de-proyectos.md), never hand-edited. Last rebuild 2026-08-22: the
+    // user removed 15-pastilla.svg (the flat "Off The Wall" pill vector) and
+    // the whole 26-30 carrusel-4 group. Notes still standing: "slidecut-1" is
+    // spelled without the hyphen La Calle Bar uses (the parser accepts both),
+    // and 14-carrusel-2 / 33-carrusel are single wide composites wrapped as
+    // 1-item carruseles (same precedent as afends' spreads) — the latter
+    // carries no group number, hence the plain carrusel-NN filenames.
     gallery: [
       { type: "video", src: "assets/img/vans/hero.mp4", poster: "assets/img/vans/hero-poster.jpg" },
       [
@@ -448,7 +443,6 @@ const PROJECTS = [
       [
         "assets/img/vans/carrusel2-01.webp",
       ],
-      "assets/img/vans/pastilla.svg",
       { type: "video", src: "assets/img/vans/video-01.mp4", poster: "assets/img/vans/video-01-poster.jpg" },
       "assets/img/vans/foto-01.webp",
       "assets/img/vans/foto-02.webp",
@@ -459,13 +453,6 @@ const PROJECTS = [
         "assets/img/vans/carrusel3-02.webp",
         "assets/img/vans/carrusel3-03.webp",
         "assets/img/vans/carrusel3-04.webp",
-      ],
-      [
-        "assets/img/vans/carrusel4-01.webp",
-        "assets/img/vans/carrusel4-02.webp",
-        "assets/img/vans/carrusel4-03.webp",
-        "assets/img/vans/carrusel4-04.webp",
-        "assets/img/vans/carrusel4-05.webp",
       ],
       { type: "video", src: "assets/img/vans/video-02.mp4", poster: "assets/img/vans/video-02-poster.jpg" },
       "assets/img/vans/foto-05.webp",
