@@ -474,8 +474,48 @@ const PROJECTS = [
     ],
     link: "https://laguitarrita.com.ar/",
     linkLabel: "View site",
-    hero: "assets/img/laguitarrita/hero.jpg",
-    gallery: ["assets/img/laguitarrita/hero.jpg", "assets/img/laguitarrita/02.jpg"],
+    hero: "assets/img/laguitarrita/hero.webp",
+    // Gallery order and entry types are DERIVED from assets/work/07-la-guitarrita/'s
+    // own file numbering and names — generated with scripts/sync-project.py (see
+    // sync-de-proyectos.md), never hand-edited. The hero here is a still photo
+    // (4500x3000), not a video, so hero.webp is both the tile cover and
+    // gallery[0]. slidecut1 carries height:280 because its 3 photos mix 4:3
+    // and 3:2 (2026-08-22, applied by default so the box doesn't jump on the
+    // cut — a small crop, easy to drop if the user prefers natural size).
+    gallery: [
+      "assets/img/laguitarrita/hero.webp",
+      "assets/img/laguitarrita/foto-01.webp",
+      [
+        "assets/img/laguitarrita/carrusel1-01.webp",
+        "assets/img/laguitarrita/carrusel1-02.webp",
+        "assets/img/laguitarrita/carrusel1-03.webp",
+      ],
+      {
+        type: "slideshow",
+        height: 280,
+        items: [
+          "assets/img/laguitarrita/slidecut1-01.webp",
+          "assets/img/laguitarrita/slidecut1-02.webp",
+          "assets/img/laguitarrita/slidecut1-03.webp",
+        ],
+      },
+      { type: "video", src: "assets/img/laguitarrita/video-01.mp4", poster: "assets/img/laguitarrita/video-01-poster.jpg" },
+      [
+        "assets/img/laguitarrita/carrusel2-01.webp",
+        "assets/img/laguitarrita/carrusel2-02.webp",
+        "assets/img/laguitarrita/carrusel2-03.webp",
+        "assets/img/laguitarrita/carrusel2-04.webp",
+      ],
+      { type: "video", src: "assets/img/laguitarrita/video-02.mp4", poster: "assets/img/laguitarrita/video-02-poster.jpg" },
+      [
+        "assets/img/laguitarrita/carrusel3-01.webp",
+        "assets/img/laguitarrita/carrusel3-02.webp",
+        "assets/img/laguitarrita/carrusel3-03.webp",
+        "assets/img/laguitarrita/carrusel3-04.webp",
+        "assets/img/laguitarrita/carrusel3-05.webp",
+        "assets/img/laguitarrita/carrusel3-06.webp",
+      ],
+    ],
   },
   {
     slug: "fatima",
