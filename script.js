@@ -103,7 +103,16 @@ function withMediaV(url) {
 
 function realMediaTag(media) {
   if (media && typeof media === "object" && media.type === "video") {
-    return `<video class="media-real" src="${withMediaV(media.src)}" poster="${withMediaV(media.poster)}" muted autoplay loop playsinline preload="auto" fetchpriority="low"></video>`;
+    // preload="none" + data-src, NO src: el video no se baja hasta que
+    // initLazyVideos() lo ve entrar en pantalla. Antes esto era src + autoplay +
+    // preload="auto", que hacia que abrir un proyecto se bajara TODOS sus videos
+    // enteros de una, aunque estuvieran a cinco pantallas de scroll: fatima son
+    // 38.9 MB en 5 videos, the-movement y afends 18.4 MB cada uno. El poster se
+    // ve igual desde el primer frame, asi que visualmente no cambia nada.
+    // El atributo autoplay se deja puesto a proposito: sin src no hace nada, y
+    // cuando el observer asigna el src el video arranca solo, sin depender de
+    // que el .play() programatico sea aceptado (Safari es quisquilloso con eso).
+    return `<video class="media-real" data-src="${withMediaV(media.src)}" poster="${withMediaV(media.poster)}" muted autoplay loop playsinline preload="none" fetchpriority="low"></video>`;
   }
   return `<img class="media-real" src="${withMediaV(media)}" alt="" loading="lazy" />`;
 }
@@ -344,6 +353,32 @@ function clearSlideshows() {
 // MARQUEE_PX_PER_SEC regardless of item count/width. The CSS's 22s stays
 // as the fallback for the brief window before images finish loading.
 const MARQUEE_PX_PER_SEC = 55;
+// Carga y reproduce cada video recien cuando entra en pantalla, y lo pausa al
+// salir. rootMargin 300px = empieza a bajarlo un poco antes de que se vea, para
+// que no se note el arranque. Sin esto el navegador se baja todos los videos de
+// la pagina de entrada (ver realMediaTag()).
+function initLazyVideos(root) {
+  const vids = (root || document).querySelectorAll('video.media-real[data-src]');
+  if (!vids.length) return;
+  if (!('IntersectionObserver' in window)) {
+    // fallback: sin observer, cargar todo como antes
+    vids.forEach((v) => { v.src = v.dataset.src; v.autoplay = true; v.play().catch(() => {}); });
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      const v = e.target;
+      if (e.isIntersecting) {
+        if (!v.src) { v.preload = 'auto'; v.src = v.dataset.src; }
+        v.play().catch(() => {});
+      } else if (!v.paused) {
+        v.pause();
+      }
+    });
+  }, { rootMargin: '300px 0px' });
+  vids.forEach((v) => io.observe(v));
+}
+
 function initMarquees(root) {
   root.querySelectorAll(".project-marquee-track").forEach((track) => {
     const imgs = Array.from(track.querySelectorAll("img"));
@@ -509,6 +544,7 @@ function tileHTML(item, index, { linkable = true, numbered = true, carousel = tr
 function renderGrid(el, items, opts) {
   el.innerHTML = items.map((item, i) => tileHTML(item, i, opts)).join("");
   initTileCarousels(el);
+  initLazyVideos(el);
 }
 
 // Home Mobile (tZLyC): two independent columns of 3 tiles each (matches
@@ -543,9 +579,12 @@ function renderHomeGrid(items) {
   els.gridHomeRight.innerHTML = right.map(tile).join("");
   initTileCarousels(els.gridHomeLeft);
   initTileCarousels(els.gridHomeRight);
+  initLazyVideos(els.gridHomeLeft);
+  initLazyVideos(els.gridHomeRight);
   if (els.gridHomeThird) {
     els.gridHomeThird.innerHTML = third.map(tile).join("");
     initTileCarousels(els.gridHomeThird);
+    initLazyVideos(els.gridHomeThird);
   }
 }
 
@@ -566,6 +605,7 @@ function renderWorkDesktopGrid(items) {
     )
     .join("");
   initTileCarousels(els.gridWorkDesktop);
+  initLazyVideos(els.gridWorkDesktop);
 }
 
 // Generic carousel controller. Nav/dot clicks always work; `draggable` also
@@ -970,6 +1010,7 @@ function renderProject(slug) {
   `;
   initSlideshows(els.projectView);
   initMarquees(els.projectView);
+  initLazyVideos(els.projectView);
 }
 
 // Desktop project view — matches Pencil's Work selected Desktop (uDnON), NOT
@@ -1033,6 +1074,7 @@ function renderProjectDesktop(p) {
   `;
   initSlideshows(els.projectView);
   initMarquees(els.projectView);
+  initLazyVideos(els.projectView);
 }
 
 // Info page shows a Footer instance with the contact-links block removed
