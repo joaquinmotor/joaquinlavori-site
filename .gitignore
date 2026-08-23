@@ -6,3 +6,7 @@ references/
 scripts/
 .claude/
 /*.png
+
+# Textos de trabajo: el docx de Info que el usuario edita a mano y del que
+# Claude lee para actualizar data.js. No es un asset del sitio.
+assets/info/
