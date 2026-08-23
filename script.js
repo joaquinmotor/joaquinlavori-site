@@ -95,7 +95,7 @@ function hasRealMedia(media) {
 // BUMP THIS whenever media files are overwritten in place. It is applied
 // here, not in data.js, so the paths in data.js stay clean and hasRealMedia()
 // keeps matching them.
-const MEDIA_V = "18";
+const MEDIA_V = "19";
 function withMediaV(url) {
   if (!url) return url;
   return url + (url.includes("?") ? "&" : "?") + "v=" + MEDIA_V;
