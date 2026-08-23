@@ -83,6 +83,17 @@ function hasRealMedia(media) {
   return false;
 }
 
+// El catalogo "vivo": los proyectos que ya tienen media real. Los que no
+// (aim, voicot, signal) se renderizaban como cuadrados grises con el caption
+// fantasy de Pencil — "Vans / Serie de ilustraciones y desarrollo de
+// personajes" — que es texto de maqueta, no contenido, y encima de otra
+// marca (2026-08-23, el usuario: "en la parte de WORK quedaron abajo 3
+// cuadrados grises con texto de vans que son viejos, hay que borrarlos").
+// Se filtran del catalogo de Work y de la tercera columna de Home Desktop.
+// Cada proyecto vuelve solo al prenderse, sin tocar nada mas: alcanza con
+// sumar su slug a REAL_MEDIA_PROJECTS.
+const LIVE_PROJECTS = PROJECTS.filter((p) => REAL_MEDIA_PROJECTS.has(p.slug));
+
 // Real <img>/<video> markup for a media entry already confirmed real by
 // hasRealMedia(). Videos autoplay muted + looped, no controls (2026-08-11,
 // per user feedback — a static poster read as broken/unfinished).
@@ -357,22 +368,29 @@ const MARQUEE_PX_PER_SEC = 55;
 // salir. rootMargin 300px = empieza a bajarlo un poco antes de que se vea, para
 // que no se note el arranque. Sin esto el navegador se baja todos los videos de
 // la pagina de entrada (ver realMediaTag()).
-// Mini animacion de entrada (fade + slide up de 14px) para los bloques de texto
-// de Info. Pedido del usuario el 2026-08-23. El stagger es por orden de aparicion
-// dentro de cada grupo, con tope de 6 pasos para que el ultimo no se haga esperar.
-// La clase .reveal se agrega ACA y no en el HTML a proposito: si este JS no corre,
-// el texto queda visible en vez de invisible.
+// Mini animacion de entrada (fade + slide up de 20px) para los bloques de texto
+// de Info. Pedido del usuario el 2026-08-23.
+// El stagger corre POR TANDA del IntersectionObserver, no por posicion en el
+// documento. Antes el retraso era (indice dentro del grupo) * 90ms, asi que un
+// bloque que aparecia solo al scrollear igual esperaba su turno entero y se
+// sentia trabado. Ahora solo se escalonan los que cruzan el borde juntos, y el
+// que entra solo arranca en 0ms.
+// La clase .reveal se agrega ACA y no en el HTML a proposito: si este JS no
+// corre, el texto queda visible en vez de invisible.
+const REVEAL_STAGGER_MS = 70;
 function initReveal(root) {
   const scope = root || document;
   const grupos = [
     scope.querySelectorAll(".info-bio"),
     scope.querySelectorAll(".info-section"),
-    scope.querySelectorAll(".info-col-block, .info-cta, .info-contact-col"),
+    // .info-column-row es la FILA entera, no cada categoria: por eso el par
+    // entra junto. Ver infoColumnsHTML() y .info-column-row en styles.css.
+    scope.querySelectorAll(".info-column-row, .info-cta, .info-contact-col"),
     scope.querySelectorAll(".info-desktop-section"),
   ];
   const todos = [];
   grupos.forEach((g) => {
-    [...g].forEach((el, i) => {
+    [...g].forEach((el) => {
       if (el.classList.contains("reveal")) return;
       // Saltear lo que esta oculto AHORA. Info tiene dos arboles, #info
       // (mobile) y #info-desktop, y el que no corresponde al viewport esta en
@@ -382,7 +400,6 @@ function initReveal(root) {
       // con el texto invisible. Los que estan ocultos no se tocan, y el
       // listener de resize de abajo los engancha cuando se vuelven visibles.
       if (!el.getClientRects().length) return;
-      el.style.setProperty("--reveal-delay", Math.min(i, 6) * 90 + "ms");
       el.classList.add("reveal");
       todos.push(el);
     });
@@ -393,8 +410,31 @@ function initReveal(root) {
     return;
   }
   const io = new IntersectionObserver((entries) => {
-    entries.forEach((e) => {
-      if (!e.isIntersecting) return;
+    // Red de seguridad. Un IntersectionObserver solo avisa cuando el estado
+    // CAMBIA: si el scroll salta de golpe (entrar con un #hash, restaurar la
+    // posicion, mandarse al fondo de una), un bloque puede pasar de "abajo de
+    // la pantalla" a "arriba de la pantalla" en un solo frame sin haber
+    // intersectado nunca, y entonces no dispara jamas y queda en opacity:0
+    // para siempre. Por eso el barrido es sobre TODOS los observados y no
+    // sobre entries: cualquier callback aprovecha para rescatar a los que ya
+    // quedaron arriba. Se muestran de una, sin animar, que es lo correcto:
+    // el usuario ya paso por ahi.
+    todos.forEach((el) => {
+      if (el.classList.contains("is-in")) return;
+      if (el.getBoundingClientRect().bottom < 0) {
+        el.classList.add("is-in");
+        io.unobserve(el);
+      }
+    });
+    const hits = entries.filter((e) => e.isIntersecting);
+    if (!hits.length) return;
+    // De arriba hacia abajo, para que la cascada siga el orden de lectura y no
+    // el orden en que el observer junto las entradas.
+    hits.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+    hits.forEach((e, i) => {
+      // Tope de 4 pasos: al cargar la pagina puede entrar media pantalla de
+      // golpe y sin tope el ultimo bloque esperaria casi un segundo.
+      e.target.style.setProperty("--reveal-delay", Math.min(i, 4) * REVEAL_STAGGER_MS + "ms");
       e.target.classList.add("is-in");
       io.unobserve(e.target); // una sola vez: no re-anima al volver a scrollear
     });
@@ -656,7 +696,10 @@ function renderHomeGrid(items) {
   const onLeft = (i) => (i < HOME_BASE_TILES ? i % 2 === 0 : (i - HOME_BASE_TILES) % 2 === 1);
   const left = featured.filter((_, i) => onLeft(i));
   const right = featured.filter((_, i) => !onLeft(i));
-  const third = items.slice(HOME_FEATURED_COUNT, HOME_FEATURED_COUNT + 3);
+  // Mismo filtro que Work: sin esto la tercera columna de Home Desktop toma
+  // justo los 3 proyectos que siguen al ultimo featured, que hoy son los que
+  // todavia estan en placeholder.
+  const third = items.slice(HOME_FEATURED_COUNT, HOME_FEATURED_COUNT + 3).filter((p) => REAL_MEDIA_PROJECTS.has(p.slug));
   const tile = (item) =>
     tileHTML(item, items.indexOf(item), { carousel: false, fantasyCaption: true, coverOverride: item.homeCover });
   els.gridHomeLeft.innerHTML = left.map(tile).join("");
@@ -820,21 +863,38 @@ function initTileCarousels(scopeEl) {
 // Info Grid (8 category columns, since 2026-08-11) renders as two side-by-side
 // groups (5 + 3) matching Pencil's "Grid Column A / B" split — not a single
 // stacked column.
+// Info Mobile - la grilla de categorias, en filas de a dos.
+// El pareo lo definio el usuario el 2026-08-23:
+//   Areas of Expertise              | Tools
+//   Courses and Workshops Delivered | Selected Clients
+//   Operating Sectors               | Awards
+//   Core Principles                 | Media Coverage
+// "Media Coverage tiene que ir abajo de Awards": por eso pasa de la pila
+// izquierda (donde estaba quinta) a la derecha, y la grilla queda 4+4 en vez
+// de 5+3. Los indices son sobre INFO_CONTENT.columns, que NO se reordena a
+// proposito - INFO_DESKTOP lo referencia por indice y reordenarlo romperia el
+// layout de Desktop, que arma sus 3 columnas con otro criterio.
+const INFO_COLUMN_PAIRS = [
+  [0, 5],
+  [1, 6],
+  [2, 7],
+  [3, 4],
+];
 function infoColumnsHTML(columns) {
-  const groupHTML = (cols) =>
-    cols
-      .map(
-        (col) => `
+  const cellHTML = (col) =>
+    !col
+      ? ""
+      : `
         <div class="info-column">
           <h4 class="info-column-label">${col.label}</h4>
           <div class="info-column-values">${col.values.join("<br />")}</div>
-        </div>`
-      )
-      .join("");
+        </div>`;
   return `
     <div class="info-columns">
-      <div class="info-column-group">${groupHTML(columns.slice(0, 5))}</div>
-      <div class="info-column-group">${groupHTML(columns.slice(5))}</div>
+      ${INFO_COLUMN_PAIRS.map(
+        (pair) => `
+      <div class="info-column-row">${pair.map((i) => cellHTML(columns[i])).join("")}</div>`
+      ).join("")}
     </div>`;
 }
 
@@ -1490,8 +1550,8 @@ renderHomeGrid(PROJECTS);
 // Work Mobile (z0NKkz) is a single-column list of fantasy-caption cards, same
 // pattern as Home — not the old numbered/carousel 2-col grid. CSS (`.grid`)
 // switches #grid-work to a full-width single column at mobile widths.
-renderGrid(els.gridWork, PROJECTS, { carousel: false, fantasyCaption: true });
-renderWorkDesktopGrid(PROJECTS);
+renderGrid(els.gridWork, LIVE_PROJECTS, { carousel: false, fantasyCaption: true });
+renderWorkDesktopGrid(LIVE_PROJECTS);
 renderInfo();
 renderSideB();
 setNavHeight();
