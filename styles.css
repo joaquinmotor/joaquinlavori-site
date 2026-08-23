@@ -907,3 +907,24 @@ button{ font-family: inherit; }
 
   .site-footer{ padding-bottom: max(40px, env(safe-area-inset-bottom)); }
 }
+
+/* Reveal de entrada para los textos de Info (2026-08-23, pedido del usuario:
+   "cada parrafo aparece con una mini animacion, slide up"). Sube 14px y hace
+   fade al entrar en pantalla, escalonado por orden.
+   OJO: la clase .reveal la pone initReveal() desde JS, NUNCA el HTML. Si el JS
+   no corre, el texto se ve normal en vez de quedar invisible con opacity:0.
+   Con Reduce Motion activado el texto aparece igual, sin transicion — no se
+   oculta (ver la nota de .project-marquee mas arriba: en iOS eso ya causo un
+   "se ve pero no se mueve" que costo diagnosticar). */
+.reveal{
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 620ms cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 620ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+.reveal.is-in{ opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce){
+  .reveal{ opacity: 1; transform: none; transition: none; }
+}

@@ -21,7 +21,7 @@ const SITE = {
   instagramUrl: "https://instagram.com/joaquinlavori",
   location: "NSW, Australia",
   aboutShort:
-    "I'm Joaquin — a graphic designer based in Byron Bay building brand identities with a voice. Brands that actually say something, not just look nice.",
+    "Joaquin Lavori. Graphic designer, born in Buenos Aires, based in Byron Bay. Brand identities for people who'd rather not look like everyone else.",
   featuredIn: [
     "7 Capas Magazine",
     "La Nación",
@@ -870,7 +870,7 @@ const INFO_CONTENT = {
   // Pencil's Info Mobile (trYo5) splits this into 3 paragraphs (blank-line
   // separated); Desktop (X8g8f) shows it as one continuous block instead —
   // renderInfo() below splits on the blank lines for mobile rendering.
-  bio: "I'm Joaquin, a graphic designer and visual artist based in Byron Bay. I build brand identities for people who don't want to blend in — identity with a voice, not just a look.\n\nMost brands play it safe and end up saying nothing; I'm after the opposite: a point of view, real character, something worth remembering.\n\nMy work leans on strong systems and a good eye for personality, shaped as much by the coast and the water as by the studio. If your brand has something to say, let's give it one.",
+  bio: "I'm Joaquin, a graphic designer and illustrator. I grew up in Buenos Aires and I'm currently living in Byron Bay.\n\nI've been working in design for over ten years. Most of it is brand identity, helping people grow their brand without losing what made it theirs in the first place. I like it when a project ends up with a character of its own. I ask a lot of questions before I open anything on the computer.\n\nI take photos when I'm not designing. Some of them are in Side B.",
   sections: [
     {
       title: "So, how do I actually help you?",
@@ -878,7 +878,7 @@ const INFO_CONTENT = {
     },
     {
       title: "Where does a brand actually start?",
-      body: "With strategy, identity, and design working as one — the groundwork that makes every piece after it make sense.",
+      body: "With a clear read of the problem. That becomes a direction and a plan of action, so your project grows on stable ground instead of guesswork.",
     },
     {
       title: "Who carries that through to the finished piece?",
@@ -903,7 +903,7 @@ const INFO_CONTENT = {
     },
     {
       label: "Operating Sectors",
-      values: ["Fashion", "Product", "Arts", "Hospitality", "Retail"],
+      values: ["Fashion", "Food & Drink", "Arts & Culture", "Product Design", "Retail"],
     },
     {
       label: "Core Principles",
@@ -915,7 +915,7 @@ const INFO_CONTENT = {
     },
     {
       label: "Tools",
-      values: ["Figma", "Procreate", "Pencil", "Resolume", "Adobe Suite"],
+      values: ["Adobe Suite", "Procreate", "Resolume", "Pencil", "Figma"],
     },
     {
       label: "Selected Clients",

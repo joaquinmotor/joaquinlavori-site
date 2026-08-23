@@ -357,6 +357,64 @@ const MARQUEE_PX_PER_SEC = 55;
 // salir. rootMargin 300px = empieza a bajarlo un poco antes de que se vea, para
 // que no se note el arranque. Sin esto el navegador se baja todos los videos de
 // la pagina de entrada (ver realMediaTag()).
+// Mini animacion de entrada (fade + slide up de 14px) para los bloques de texto
+// de Info. Pedido del usuario el 2026-08-23. El stagger es por orden de aparicion
+// dentro de cada grupo, con tope de 6 pasos para que el ultimo no se haga esperar.
+// La clase .reveal se agrega ACA y no en el HTML a proposito: si este JS no corre,
+// el texto queda visible en vez de invisible.
+function initReveal(root) {
+  const scope = root || document;
+  const grupos = [
+    scope.querySelectorAll(".info-bio"),
+    scope.querySelectorAll(".info-section"),
+    scope.querySelectorAll(".info-col-block, .info-cta, .info-contact-col"),
+    scope.querySelectorAll(".info-desktop-section"),
+  ];
+  const todos = [];
+  grupos.forEach((g) => {
+    [...g].forEach((el, i) => {
+      if (el.classList.contains("reveal")) return;
+      // Saltear lo que esta oculto AHORA. Info tiene dos arboles, #info
+      // (mobile) y #info-desktop, y el que no corresponde al viewport esta en
+      // display:none. Un elemento adentro de un display:none nunca intersecta,
+      // asi que el observer no dispara nunca y quedaria en opacity:0 para
+      // siempre: al rotar el telefono o achicar la ventana aparecia el arbol
+      // con el texto invisible. Los que estan ocultos no se tocan, y el
+      // listener de resize de abajo los engancha cuando se vuelven visibles.
+      if (!el.getClientRects().length) return;
+      el.style.setProperty("--reveal-delay", Math.min(i, 6) * 90 + "ms");
+      el.classList.add("reveal");
+      todos.push(el);
+    });
+  });
+  if (!todos.length) return;
+  if (!("IntersectionObserver" in window)) {
+    todos.forEach((el) => el.classList.add("is-in"));
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add("is-in");
+      io.unobserve(e.target); // una sola vez: no re-anima al volver a scrollear
+    });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
+  todos.forEach((el) => io.observe(el));
+}
+
+// Al cambiar el tamanio de la ventana, el arbol de Info que estaba en
+// display:none pasa a mostrarse: hay que correr initReveal() de nuevo para que
+// esos bloques tambien animen (en el pasado ni siquiera tenian la clase, ver
+// arriba). Con debounce para no rehacerlo en cada pixel del arrastre.
+let revealResizeT;
+window.addEventListener("resize", () => {
+  clearTimeout(revealResizeT);
+  revealResizeT = setTimeout(() => {
+    if (els.infoContent) initReveal(els.infoContent);
+    if (els.infoDesktop) initReveal(els.infoDesktop);
+  }, 200);
+});
+
 function initLazyVideos(root) {
   const vids = (root || document).querySelectorAll('video.media-real[data-src]');
   if (!vids.length) return;
@@ -791,6 +849,8 @@ function renderInfo() {
     </div>
   `;
   renderInfoDesktop();
+  initReveal(els.infoContent);
+  initReveal(els.infoDesktop);
 }
 
 // Info Desktop (X8g8f): a completely different layout from mobile, not a
@@ -1271,6 +1331,19 @@ function route() {
   if (key === "work") closeProject();
 
   goToPage(key);
+
+  // El reveal de Info se arma ACA y no en renderInfo(): renderInfo() corre una
+  // sola vez al cargar el sitio, cuando la seccion Info todavia esta oculta, y
+  // initReveal() saltea a proposito lo que no tiene layout (ver su comentario).
+  // Enganchado a la navegacion, la animacion arranca cada vez que se entra a
+  // Info, que es lo que se quiere. El rAF le da un frame al cambio de pagina
+  // para que los bloques ya midan antes de observarlos.
+  if (key === "info") {
+    requestAnimationFrame(() => {
+      if (els.infoContent) initReveal(els.infoContent);
+      if (els.infoDesktop) initReveal(els.infoDesktop);
+    });
+  }
 }
 
 function initSwipe() {
