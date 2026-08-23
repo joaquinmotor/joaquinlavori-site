@@ -247,9 +247,13 @@ const PROJECTS = [
     // hand-edited. Last rebuild 2026-08-22: slide-cut-3 (the 10 cocktail
     // plates) was dropped, slide-cut-2 went from 18 to 15 spreads, and two
     // loose fotos plus a re-numbered carrusel-3 came in; 08-foto was dropped
-    // on 2026-08-22 too, which re-numbered every foto after it. Per-group knobs
-    // below (speed / height / interval) are re-applied by hand on each
-    // rebuild — see carruseles-y-slideshows.md.
+    // on 2026-08-22 too, which re-numbered every foto after it. Ultimo rebuild
+    // 2026-08-23: entraron 42-foto y 43-foto (foto-08 y foto-09) al final.
+    // OJO: 43 venia como "43.png", sin tipo — el script ignora en silencio
+    // cualquier archivo que no sea <NN>-<tipo>.<ext>, asi que se renombro a
+    // 43-foto.png. Los knobs por grupo se pasan al build con
+    // OVERRIDES='{"carrusel2":{"speed":45},"slidecut2":{"height":300,"interval":1000}}'
+    // y salen ya puestos en el JS — ver carruseles-y-slideshows.md.
     gallery: [
       { type: "video", src: "assets/img/lacalle/hero.mp4", poster: "assets/img/lacalle/hero-poster.jpg" },
       [
@@ -305,6 +309,7 @@ const PROJECTS = [
         "assets/img/lacalle/carrusel3-04.webp",
       ],
       "assets/img/lacalle/foto-08.webp",
+      "assets/img/lacalle/foto-09.webp",
     ],
   },
   {
