@@ -117,7 +117,7 @@ const PROJECTS = [
     slug: "afends",
     brand: "Afends",
     category: "Illustration & Content",
-    blurb: "A tattoo flash-inspired capsule collection and documentary content series for Afends' Off-Script range.",
+    blurb: "A tattoo flash-inspired capsule collection and documentary content series for Afends' Spring 2026 range.",
     body: [
       "Afends invited Joaquin Motor — Joaquin Lavori's illustration alter ego, built on his tattoo flash artwork — to design a capsule collection around their Off-Script range, a story about breaking out, staying true, and choosing your own way forward. I pulled directly from the symbolism already running through the work — snakes, chains, roses, flames — and translated it into a range spanning womenswear, menswear, and accessories, from oversized tees to six-panel caps. The collaboration went beyond product into Create Not Destroy, a documentary-style content series built around the artist and his studio, treating his tools and space as part of the story rather than a backdrop. The result plays less like a brand collab and more like a flash sheet stretched onto fabric — freedom, the kind you fight for, worn.",
     ],
