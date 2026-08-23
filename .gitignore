@@ -10,3 +10,8 @@ scripts/
 # Textos de trabajo: el docx de Info que el usuario edita a mano y del que
 # Claude lee para actualizar data.js. No es un asset del sitio.
 assets/info/
+
+# Material de origen de Side B (fotos de film, videos, sueltos). Mismo rol que
+# assets/work/: es la fuente antes de procesar hacia assets/img/side-b/.
+assets/side-b/
+_to_delete/

@@ -387,6 +387,12 @@ button{ font-family: inherit; }
 .sideb-grid .tile-caption{ display:none; }
 /* New in Pencil 2026-08-11: a hairline divider between the grid and the
    shared footer, full-bleed (no margin — sits flush on both sides). */
+/* Side B mobile: galeria vertical, no la grilla de 2 columnas (2026-08-23,
+   el usuario cargo su propio material con la convencion de un proyecto).
+   El contenedor lleva tambien la clase .project-gallery, asi hereda el gap,
+   el padding lateral de 6px y el "sin recorte" (height:auto + object-fit:
+   unset) sin duplicar nada. Las .sideb-grid de arriba quedaron sin uso. */
+.sideb-gallery{ padding-top: 12px; }
 .sideb-footer-divider{ height:1px; background:#C3C3C3; }
 
 /* ---------- Project detail view ----------
@@ -684,6 +690,13 @@ button{ font-family: inherit; }
   .sideb-desktop-photo{ position:relative; border-radius:8px; overflow:hidden; background: var(--border); }
   .sideb-desktop-photo .play-badge{ background:#121212; }
   .sideb-desktop-photo .play-badge svg{ width:18px; height:18px; }
+  /* A proporcion real (2026-08-23, pedido del usuario): las celdas ya no
+     llevan la altura fija del spec de Pencil — cada foto/video se muestra a
+     su propio aspecto, mismo criterio que el Home y el Related Work.
+     --group son los carruseles y slide-cuts, que traen su propia caja. */
+  .sideb-desktop-photo--auto{ height:auto; background:none; }
+  .sideb-desktop-photo--auto img, .sideb-desktop-photo--auto video{ height:auto; object-fit:unset; }
+  .sideb-desktop-photo--group{ height:auto; background:none; border-radius:0; overflow:visible; }
 
   /* Project detail (Work selected Desktop, uDnON): header (title+tagline,
      then a description paragraph) + a 3-col masonry gallery with NO

@@ -67,7 +67,7 @@ function playBadge() {
 // Pencil) until its photos are reviewed and confirmed ready. Add a slug
 // once that project's assets/img/<slug>/ folder is final. See notas.md
 // "El sitio hoy NO renderiza fotos/videos reales" for the full context.
-const REAL_MEDIA_PROJECTS = new Set(["the-movement", "afends", "ceremonia", "lacalle", "roark", "vans", "laguitarrita", "fatima", "lightningbolt", "fortyspotted"]);
+const REAL_MEDIA_PROJECTS = new Set(["the-movement", "afends", "ceremonia", "lacalle", "roark", "vans", "laguitarrita", "fatima", "lightningbolt", "fortyspotted", "side-b"]);
 
 function mediaSrc(media) {
   if (!media) return null;
@@ -95,7 +95,7 @@ function hasRealMedia(media) {
 // BUMP THIS whenever media files are overwritten in place. It is applied
 // here, not in data.js, so the paths in data.js stay clean and hasRealMedia()
 // keeps matching them.
-const MEDIA_V = "20";
+const MEDIA_V = "21";
 function withMediaV(url) {
   if (!url) return url;
   return url + (url.includes("?") ? "&" : "?") + "v=" + MEDIA_V;
@@ -412,6 +412,14 @@ window.addEventListener("resize", () => {
   revealResizeT = setTimeout(() => {
     if (els.infoContent) initReveal(els.infoContent);
     if (els.infoDesktop) initReveal(els.infoDesktop);
+    // Side B tiene los mismos dos arboles (.sideb-content mobile y
+    // .sideb-desktop) y uno esta siempre en display:none, donde scrollWidth
+    // da 0 y initMarquees() no puede calcular la duracion. El que se vuelve
+    // visible al cambiar el viewport ya mide bien: recalcular. initMarquees()
+    // solo escribe animationDuration, es idempotente; initSlideshows() NO lo
+    // es (crea setIntervals) y por eso no va aca.
+    if (els.sidebContent) initMarquees(els.sidebContent);
+    if (els.sidebDesktop) initMarquees(els.sidebDesktop);
   }, 200);
 });
 
@@ -441,7 +449,25 @@ function initMarquees(root) {
   root.querySelectorAll(".project-marquee-track").forEach((track) => {
     const imgs = Array.from(track.querySelectorAll("img"));
     const apply = () => {
-      const halfWidth = track.scrollWidth / 2;
+      let halfWidth = track.scrollWidth / 2;
+      // Un grupo angosto (pocas fotos, o fotos muy verticales) puede dar una
+      // mitad de track MAS CORTA que el contenedor. Como la animacion va de
+      // translateX(0) a -50%, en parte del ciclo se ve el final de la tira y
+      // queda un hueco vacio a la derecha. Duplicar el contenido hasta que
+      // cada mitad tape el ancho del contenedor lo arregla sin tocar los
+      // datos: el track sigue siendo dos mitades identicas, asi que el -50%
+      // sigue cayendo justo. Los grupos que ya son mas anchos que el
+      // contenedor no se tocan (needed === 1).
+      // (2026-08-23, Side B: el carrusel de 2 fotos de 307x660 daba 205px de
+      // mitad contra 378px de viewport mobile.)
+      const ancho = track.parentElement ? track.parentElement.clientWidth : 0;
+      if (halfWidth > 0 && ancho > 0 && halfWidth < ancho) {
+        const needed = Math.ceil(ancho / halfWidth);
+        track.innerHTML = new Array(needed).fill(track.innerHTML).join("");
+        // Calculado, no re-medido: las imagenes recien insertadas pueden no
+        // tener ancho todavia en este mismo frame.
+        halfWidth = halfWidth * needed;
+      }
       const pxPerSec = Number(track.dataset.speed) || MARQUEE_PX_PER_SEC;
       if (halfWidth > 0) track.style.animationDuration = `${halfWidth / pxPerSec}s`;
     };
@@ -881,50 +907,71 @@ function renderInfoDesktop() {
     .join("");
 }
 
+// Side B dejo de ser una grilla de tiles con titulo+categoria el 2026-08-23:
+// el usuario cargo su propio material en assets/side-b/ con la MISMA
+// convencion de nombres que un proyecto (slide-cut, carrusel, video, foto),
+// asi que se renderiza como una galeria — el mismo flujo vertical de la
+// pagina de un proyecto, sin captions. Lo que habia antes eran 6 items con
+// titulo/categoria/blurb inventados en una sesion vieja, apuntando a jpgs de
+// ~300px de la era placeholder de vans/lacalle/fatima/laguitarrita/
+// lightningbolt: se veian borrosos apenas se prendia cada proyecto.
+// Las reglas .sideb-grid de styles.css quedan sin uso (eran la grilla de 2
+// columnas) — se dejan por si alguna vez vuelve esa forma.
 function renderSideB() {
   els.sidebContent.innerHTML = `
     <div class="sideb-title-wrap">
       <p class="sideb-intro">${SIDE_B.introMobile}</p>
     </div>
-    <div class="sideb-grid" id="grid-sideb"></div>
+    <div class="sideb-gallery project-gallery">${SIDE_B.gallery.map(galleryItemHTML).join("")}</div>
     <div class="sideb-footer-divider"></div>
   `;
-  renderGrid(document.getElementById("grid-sideb"), SIDE_B.items, { linkable: false, numbered: false, carousel: false });
   renderSideBDesktop();
+  [els.sidebContent, els.sidebDesktop].forEach((root) => {
+    if (!root) return;
+    initSlideshows(root);
+    initMarquees(root);
+    initLazyVideos(root);
+  });
 }
 
-// Side B Desktop (BI3ZW): NOT a wider version of the mobile grid — a 4-track
-// masonry. Track 1 ("Sidebar") holds the title + full intro copy + 2
-// photos; the other 3 tracks are pure photo columns (3 each), 11 media
-// slots total, no captions/numbers/links anywhere. CSS-hidden below 861px,
-// where .sideb-content (the mobile grid above) is used instead.
-const SIDEB_DESKTOP_TRACKS = {
-  sidebar: { heights: [240, 240], badges: [true, true] },
-  col1: { heights: [240, 200, 230], badges: [true, false, false] },
-  col2: { heights: [190, 260, 210], badges: [false, true, false] },
-  col3: { heights: [220, 180, 260], badges: [false, false, true] },
-};
-function sideBDesktopPhotoHTML(height, badge) {
-  return `<div class="sideb-desktop-photo" style="height:${height}px">${badge ? slideTag() : `<div class="media-placeholder"></div>`}</div>`;
-}
+// Side B Desktop (BI3ZW): NOT a wider version of the mobile flow — a 4-track
+// masonry. Track 1 ("Sidebar") holds the title + full intro copy and then
+// media; the other 3 are pure media columns. No captions/numbers/links
+// anywhere — eso es del spec.
+// Hasta el 2026-08-23 esto eran 11 cajas grises hardcodeadas que nunca
+// miraban los datos. Ahora reparte SIDE_B.gallery round-robin, mismo criterio
+// que renderProjectDesktop(), y **a proporcion real** (pedido del usuario):
+// sin las alturas fijas del spec, cada foto/video a su propio aspecto —
+// mismo criterio ya aplicado al Home y al Related Work.
 function renderSideBDesktop() {
   if (!els.sidebDesktop) return;
-  const track = (key) => {
-    const t = SIDEB_DESKTOP_TRACKS[key];
-    return t.heights.map((h, i) => sideBDesktopPhotoHTML(h, t.badges[i])).join("");
-  };
+  const tracks = [[], [], [], []]; // 0 = sidebar, 1..3 = columnas
+  // El sidebar toma el resto 3 (no el 0) para quedarse con un item menos que
+  // la primera columna: ya arranca mas alto por el bloque de titulo + intro.
+  SIDE_B.gallery.forEach((entry, i) => tracks[[1, 2, 3, 0][i % 4]].push(entry));
+  const cells = (t) => tracks[t].map(sideBDesktopCellHTML).join("");
   els.sidebDesktop.innerHTML = `
     <div class="sideb-desktop-sidebar">
       <div class="sideb-desktop-intro">
         <h1 class="sideb-desktop-title">Side B</h1>
         <p class="sideb-desktop-body">${SIDE_B.intro}</p>
       </div>
-      ${track("sidebar")}
+      ${cells(0)}
     </div>
-    <div class="sideb-desktop-col">${track("col1")}</div>
-    <div class="sideb-desktop-col">${track("col2")}</div>
-    <div class="sideb-desktop-col">${track("col3")}</div>
+    <div class="sideb-desktop-col">${cells(1)}</div>
+    <div class="sideb-desktop-col">${cells(2)}</div>
+    <div class="sideb-desktop-col">${cells(3)}</div>
   `;
+}
+
+// Una celda del masonry de Side B Desktop. Mismo ruteo por tipo que
+// galleryItemHTML()/renderDesktopGalleryCell(), pero sin altura fija.
+function sideBDesktopCellHTML(entry) {
+  const grupo = (html) => `<div class="sideb-desktop-photo sideb-desktop-photo--group">${html}</div>`;
+  if (Array.isArray(entry)) return grupo(marqueeHTML(entry));
+  if (entry && entry.type === "carrusel") return grupo(marqueeHTML(entry.items, entry.height, entry.speed));
+  if (entry && entry.type === "slideshow") return grupo(slideshowHTML(entry.items, entry.height, entry.interval));
+  return `<div class="sideb-desktop-photo sideb-desktop-photo--auto">${slideTag(entry)}</div>`;
 }
 
 // Kept only for the (currently unused) "logos" project type — no PROJECTS
@@ -1342,6 +1389,18 @@ function route() {
     requestAnimationFrame(() => {
       if (els.infoContent) initReveal(els.infoContent);
       if (els.infoDesktop) initReveal(els.infoDesktop);
+    });
+  }
+
+  // Mismo problema que el reveal de Info, por el mismo motivo: renderSideB()
+  // corre una sola vez al cargar, con Side B todavia oculta, y ahi
+  // track.scrollWidth da 0 — initMarquees() no puede calcular los px/s y el
+  // carrusel se queda con la duracion default del CSS. Al entrar a la pagina
+  // ya mide bien.
+  if (key === "sideb") {
+    requestAnimationFrame(() => {
+      if (els.sidebContent) initMarquees(els.sidebContent);
+      if (els.sidebDesktop) initMarquees(els.sidebDesktop);
     });
   }
 }
