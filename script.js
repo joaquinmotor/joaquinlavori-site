@@ -302,7 +302,28 @@ function slideTag(media) {
 // photos side by side, auto-scrolling right-to-left, infinite loop). Plain
 // entries (string/video object) still render as a normal full-width
 // .project-gallery-item via slideTag(), same as before.
-function galleryItemHTML(entry) {
+// Realces por pieza (ver `mediaAccents` en data.js). La clave es el nombre del
+// archivo sin carpeta ni extension: "hero", "foto-06", "video-02".
+function mediaKey(media) {
+  const src = mediaSrc(media);
+  if (!src) return null;
+  return src.split("/").pop().replace(/\.[^.]+$/, "");
+}
+
+// Lo que hay que sumarle al atributo class del contenedor de una pieza con
+// realce (por eso arranca sin comillas y las va abriendo/cerrando: se inyecta
+// adentro de class="..."). `inset` es el margen lateral total contra el borde
+// de la pantalla, en px — styles.css le resta los 6px de padding del
+// contenedor. `reveal` solo marca con data-reveal: la clase .reveal, que es la
+// que esconde y anima, la pone initReveal() desde JS y nunca el HTML, para que
+// si el JS no corre la pieza se vea normal en vez de quedar invisible.
+function accentAttrs(accents, media) {
+  const a = accents && accents[mediaKey(media)];
+  if (!a) return "";
+  return (a.inset ? ' is-inset" style="--inset:' + a.inset + 'px' : "") + (a.reveal ? '" data-reveal="' : "");
+}
+
+function galleryItemHTML(entry, accents) {
   if (Array.isArray(entry)) return marqueeHTML(entry);
   // {type:"carrusel", items:[...], height:N} — same marquee as a plain
   // array (see above), but with an explicit height override instead of the
@@ -313,7 +334,7 @@ function galleryItemHTML(entry) {
   // default height from .project-marquee in styles.css.
   if (entry && entry.type === "carrusel") return marqueeHTML(entry.items, entry.height, entry.speed);
   if (entry && entry.type === "slideshow") return slideshowHTML(entry.items, entry.height, entry.interval);
-  return `<div class="project-gallery-item">${slideTag(entry)}</div>`;
+  return `<div class="project-gallery-item${accentAttrs(accents, entry)}">${slideTag(entry)}</div>`;
 }
 
 // "Slide-cut" group (see data.js comment on PROJECTS[].gallery): one photo
@@ -387,6 +408,12 @@ function initReveal(root) {
     // entra junto. Ver infoColumnsHTML() y .info-column-row en styles.css.
     scope.querySelectorAll(".info-column-row, .info-cta, .info-contact-col"),
     scope.querySelectorAll(".info-desktop-section"),
+    // Generico: cualquier elemento marcado con data-reveal desde el HTML. Hoy
+    // son las piezas con `reveal` en el mediaAccents de un proyecto (data.js).
+    // No necesitan tratamiento aparte para el stagger: estan repartidas por la
+    // pagina y entran en pantalla de a una, asi que el escalonado del observer
+    // les da 0ms igual.
+    scope.querySelectorAll("[data-reveal]"),
   ];
   const todos = [];
   grupos.forEach((g) => {
@@ -401,6 +428,14 @@ function initReveal(root) {
       // listener de resize de abajo los engancha cuando se vuelven visibles.
       if (!el.getClientRects().length) return;
       el.classList.add("reveal");
+      // Forzar la resolucion del estilo inicial. Si no, cuando el observer
+      // agrega .is-in en el MISMO frame — pasa con todo lo que ya esta en
+      // pantalla al momento de observar, por ejemplo el hero de un proyecto
+      // recien abierto — las dos clases caen en el mismo recalculo, la
+      // transicion no tiene valor de partida y la pieza aparece de golpe en
+      // vez de animar. Leer una propiedad computada obliga al navegador a
+      // resolver el estado .reveal (opacity 0 + translateY) antes de seguir.
+      void getComputedStyle(el).opacity;
       todos.push(el);
     });
   });
@@ -898,6 +933,24 @@ function infoColumnsHTML(columns) {
     </div>`;
 }
 
+// El CTA de Info Mobile puede llevar un link (Calendly) sobre una parte de la
+// frase, no sobre la frase entera. Si INFO_CONTENT.ctaLinkUrl esta vacio se
+// devuelve texto plano: el dia que exista la URL es cambiar UN valor y listo,
+// sin tocar el markup. Si el ctaLinkText no aparece tal cual dentro del cta
+// (por ejemplo porque se reescribio la frase en el Word y no el link), tampoco
+// rompe: cae a texto plano.
+function infoCtaHTML(c) {
+  if (!c.ctaLinkText || !c.cta.includes(c.ctaLinkText)) return c.cta;
+  // Mismo campo para las dos etapas: hoy la frase va en negrita, y el dia que
+  // ctaLinkUrl tenga la URL de Calendly pasa a ser un <a> con exactamente el
+  // mismo peso y color, asi el texto no se mueve ni cambia de aspecto al
+  // prender el link. Sin ctaLinkText no se destaca nada y no rompe.
+  const pieza = c.ctaLinkUrl
+    ? `<a class="info-cta-link" href="${c.ctaLinkUrl}" target="_blank" rel="noopener">${c.ctaLinkText}</a>`
+    : `<strong class="info-cta-strong">${c.ctaLinkText}</strong>`;
+  return c.cta.replace(c.ctaLinkText, pieza);
+}
+
 function renderInfo() {
   const c = INFO_CONTENT;
   els.infoContent.innerHTML = `
@@ -923,7 +976,7 @@ function renderInfo() {
     </div>
     <div class="info-right">
       ${infoColumnsHTML(c.columns)}
-      <p class="info-cta">${c.cta}</p>
+      <p class="info-cta">${infoCtaHTML(c)}</p>
       <div class="info-indent-row">
         <div class="info-spacer"></div>
         <div class="info-indent-col info-contact-col">
@@ -982,7 +1035,7 @@ function renderSideB() {
     <div class="sideb-title-wrap">
       <p class="sideb-intro">${SIDE_B.introMobile}</p>
     </div>
-    <div class="sideb-gallery project-gallery">${SIDE_B.gallery.map(galleryItemHTML).join("")}</div>
+    <div class="sideb-gallery project-gallery">${SIDE_B.gallery.map((entry) => galleryItemHTML(entry)).join("")}</div>
     <div class="sideb-footer-divider"></div>
   `;
   renderSideBDesktop();
@@ -1147,7 +1200,7 @@ function renderProject(slug) {
 
   els.projectView.innerHTML = `
     <div class="project-hero-wrap">
-      <div class="project-hero-media">${slideTag(gallery[0])}</div>
+      <div class="project-hero-media${accentAttrs(p.mediaAccents, gallery[0])}">${slideTag(gallery[0])}</div>
     </div>
     <div class="project-info">
       <div class="project-info-header">
@@ -1167,7 +1220,7 @@ function renderProject(slug) {
     </div>
     ${
       restGallery.length
-        ? `<div class="project-gallery">${restGallery.map(galleryItemHTML).join("")}</div>`
+        ? `<div class="project-gallery">${restGallery.map((entry) => galleryItemHTML(entry, p.mediaAccents)).join("")}</div>`
         : ""
     }
     <div class="project-gallery-divider"></div>
@@ -1418,6 +1471,13 @@ function openProject(slug) {
     v.load();
     v.play().catch(() => {});
   });
+
+  // Reveal de las piezas con `reveal` en mediaAccents. Va aca y no en
+  // renderProject() por el mismo motivo que los videos de arriba: ahi el
+  // subarbol todavia esta en display:none, no mide, y initReveal() saltea a
+  // proposito lo que no tiene layout. El rAF le da un frame al cambio de
+  // pagina para que ya midan antes de observarlas.
+  requestAnimationFrame(() => initReveal(els.projectView));
 }
 
 function route() {

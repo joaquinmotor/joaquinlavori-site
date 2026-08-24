@@ -447,6 +447,22 @@ const PROJECTS = [
     link: "https://www.instagram.com/vansargentina/",
     linkLabel: "View site",
     hero: "assets/img/vans/hero.webp",
+    // Realces por pieza (2026-08-23, pedido del usuario: "la foto del hero y
+    // la 35 deberian tener una animacion de slideup como hicimos con los
+    // textos en la parte de INFO, y deberian tener 50px de margen de cada
+    // lado"). La 35 es 35-foto.png en assets/work/06-vans/, que el script
+    // saca como foto-06.webp.
+    // OJO: esto va FUERA de `gallery` a proposito. Ese bloque se regenera
+    // entero con scripts/sync-project.py y cualquier edicion a mano ahi se
+    // pierde en la proxima re-sincronizacion; el script solo reemplaza
+    // `hero:` + `gallery:`, asi que este campo sobrevive.
+    // La clave es el nombre del archivo sin carpeta ni extension.
+    // `inset` es el margen lateral TOTAL contra el borde de la pantalla (el
+    // resto de la galeria va a 6px), en px.
+    mediaAccents: {
+      hero: { inset: 50, reveal: true },
+      "foto-06": { inset: 50, reveal: true },
+    },
     // Gallery order and entry types are DERIVED from assets/work/06-vans/'s own
     // file numbering and names — regenerated with scripts/sync-project.py (see
     // sync-de-proyectos.md), never hand-edited. Last rebuild 2026-08-22: the
@@ -926,7 +942,13 @@ const INFO_CONTENT = {
       values: ['Art Basel Cities, "Eternity" by Maurizio Cattelan (2018)', "VET Academic Excellence, Greystone College (2026)"],
     },
   ],
-  cta: "For new partnerships and general enquiries, reach out on:",
+  cta: "For new partnerships and general enquiries, book a free 15-minute consultation. Always happy to hear what people are working on.",
+  // La parte de la frase que se vuelve link cuando ctaLinkUrl tiene valor.
+  // Tiene que aparecer TAL CUAL adentro de cta o no se linkea nada.
+  ctaLinkText: "book a free 15-minute consultation",
+  // Calendly. Vacio = la frase se muestra como texto plano (ver infoCtaHTML()
+  // en script.js). Poner la URL aca es lo unico que hace falta para prenderlo.
+  ctaLinkUrl: "",
 };
 
 // Info Desktop (X8g8f) — a different layout from Info Mobile, not a reflow
@@ -957,7 +979,7 @@ const INFO_DESKTOP = {
         { title: "Awards", list: INFO_CONTENT.columns[7].values },
         {
           title: "Say Hello",
-          body: "For new partnerships and general enquiries, reach out on hello@joaquin.com or +61 499 372 409. Currently living in NSW, Australia. Got a project in mind? Send a short brief with scope, timeline and budget — I'll get back within two business days to see if it's a fit.",
+          body: "For new partnerships and general enquiries, reach out, always happy to hear what people are working on. hello@joaquin.com or +61 499 372 409. Currently living in NSW, Australia. Got a project in mind? Send a short brief with scope, timeline and budget — I'll get back within two business days to see if it's a fit.",
         },
       ],
     },
