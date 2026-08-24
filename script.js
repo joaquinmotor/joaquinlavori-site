@@ -106,7 +106,7 @@ const LIVE_PROJECTS = PROJECTS.filter((p) => REAL_MEDIA_PROJECTS.has(p.slug));
 // BUMP THIS whenever media files are overwritten in place. It is applied
 // here, not in data.js, so the paths in data.js stay clean and hasRealMedia()
 // keeps matching them.
-const MEDIA_V = "25";
+const MEDIA_V = "26";
 function withMediaV(url) {
   if (!url) return url;
   return url + (url.includes("?") ? "&" : "?") + "v=" + MEDIA_V;
@@ -1073,10 +1073,13 @@ function renderSideB() {
 // mismo criterio ya aplicado al Home y al Related Work.
 function renderSideBDesktop() {
   if (!els.sidebDesktop) return;
-  const tracks = [[], [], [], []]; // 0 = sidebar, 1..3 = columnas
-  // El sidebar toma el resto 3 (no el 0) para quedarse con un item menos que
-  // la primera columna: ya arranca mas alto por el bloque de titulo + intro.
-  SIDE_B.gallery.forEach((entry, i) => tracks[[1, 2, 3, 0][i % 4]].push(entry));
+  // Mismo reparto por tipo que la galeria de un proyecto (ver
+  // repartirEnColumnas): Side B mezcla fotos, carruseles, slide-cuts y videos,
+  // asi que el i % 4 corria el mismo riesgo de apilar un tipo en una columna.
+  // El orden [1,2,3,0] deja al sidebar de ultimo, para que se quede con un
+  // item menos: ya arranca mas alto por el bloque de titulo + intro.
+  const reparto = repartirEnColumnas(SIDE_B.gallery, 4);
+  const tracks = [reparto[3], reparto[0], reparto[1], reparto[2]];
   const cells = (t) => tracks[t].map(sideBDesktopCellHTML).join("");
   els.sidebDesktop.innerHTML = `
     <div class="sideb-desktop-sidebar">
@@ -1287,12 +1290,38 @@ function renderDesktopGalleryCell(item) {
   }
   return `<div class="project-desktop-photo">${slideTag(item.src)}</div>`;
 }
+// Reparto de una galeria en columnas de masonry. NO es i % n: cuando el ritmo
+// del proyecto coincide con la cantidad de columnas, todo un tipo termina
+// apilado en la misma. Ceremonia tenia sus cuatro carruseles en los indices
+// 2, 5, 8 y 11 —todos 3k+2— asi que los cuatro caian en la tercera columna,
+// uno encima del otro (2026-08-24, el usuario: "deberian estar intercalados
+// con las fotos como estan en la version mobile").
+// Cada entrada va a la columna que menos elementos de SU MISMO tipo tenga y, a
+// igualdad, a la que menos tenga en total. Mantiene el orden de lectura, no
+// depende de medir nada (las fotos son lazy: medirlas obligaria a cargarlas
+// todas o a reacomodar la grilla mientras se scrollea) y deja los carruseles y
+// slide-cuts intercalados con las fotos, como en la vista mobile.
+function repartirEnColumnas(gallery, n) {
+  const cols = Array.from({ length: n }, () => []);
+  const porTipo = Array.from({ length: n }, () => ({}));
+  const tipoDe = (g) => (Array.isArray(g) ? "carrusel" : (g && g.type) || "foto");
+  gallery.forEach((g) => {
+    const t = tipoDe(g);
+    let mejor = 0;
+    for (let j = 1; j < n; j++) {
+      const propios = porTipo[j][t] || 0;
+      const mejores = porTipo[mejor][t] || 0;
+      if (propios < mejores || (propios === mejores && cols[j].length < cols[mejor].length)) mejor = j;
+    }
+    cols[mejor].push(g);
+    porTipo[mejor][t] = (porTipo[mejor][t] || 0) + 1;
+  });
+  return cols;
+}
+
 function renderProjectDesktop(p) {
   const gallery = p.gallery && p.gallery.length ? p.gallery : [p.hero];
-  const cols = [[], [], []];
-  gallery.forEach((s, i) => {
-    cols[i % 3].push({ src: s });
-  });
+  const cols = repartirEnColumnas(gallery, 3).map((col) => col.map((s) => ({ src: s })));
   els.projectView.innerHTML = `
     <div class="project-desktop-header">
       <div class="project-desktop-header-row">
@@ -1449,13 +1478,29 @@ function goToPage(key, { animate = true } = {}) {
     // lado del que "viene", asi el gesto del trackpad se siente como el swipe
     // del celu. clearProps al final: dejar un transform inline en .page crea un
     // containing block y puede romper cualquier position:sticky de adentro.
-    if (animate && targetEl && index !== indiceAnterior && typeof gsap !== "undefined") {
-      const sentido = index > indiceAnterior ? 1 : -1;
-      gsap.fromTo(
-        targetEl,
-        { opacity: 0, x: 28 * sentido },
-        { opacity: 1, x: 0, duration: 0.32, ease: "power2.out", onComplete: () => gsap.set(targetEl, { clearProps: "transform,opacity" }) }
-      );
+    if (typeof gsap !== "undefined") {
+      // Limpiar SIEMPRE, y en todas las paginas, antes de animar. Si se cambia
+      // de seccion mientras una transicion anterior corre, esa pagina se queda
+      // con el opacity:0 inline del fromTo y al volver a ella no se ve nada:
+      // ese era el "se traba" que reporto el usuario (2026-08-24).
+      const paginas = document.querySelectorAll(".page");
+      gsap.killTweensOf(paginas);
+      gsap.set(paginas, { clearProps: "transform,opacity" });
+      if (animate && targetEl && index !== indiceAnterior) {
+        const sentido = index > indiceAnterior ? 1 : -1;
+        gsap.fromTo(
+          targetEl,
+          { opacity: 0, x: 40 * sentido },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.5,
+            ease: "power3.out",
+            overwrite: "auto",
+            onComplete: () => gsap.set(targetEl, { clearProps: "transform,opacity" }),
+          }
+        );
+      }
     }
   }
 
@@ -1578,7 +1623,7 @@ function irASeccion(paso) {
 function initDesktopSwipe() {
   let acumulado = 0;
   let trabado = false;
-  let finT;
+  let quietoT;
 
   window.addEventListener(
     "wheel",
@@ -1594,21 +1639,27 @@ function initDesktopSwipe() {
       // dispara con este mismo gesto y nos sacaria de la pagina.
       e.preventDefault();
 
-      clearTimeout(finT);
-      // El trackpad sigue mandando eventos por inercia despues de soltar. Se
-      // considera terminado el gesto cuando pasan 160ms sin eventos: recien
-      // ahi se destraba, para que un solo swipe pase UNA seccion y no tres.
-      finT = setTimeout(() => {
-        acumulado = 0;
-        trabado = false;
-      }, 160);
-
+      // Mientras esta trabado se ignora TODO, incluida la inercia. La version
+      // anterior reiniciaba el temporizador en cada evento, asi que con la
+      // inercia larga del trackpad de Mac el destrabado no llegaba nunca hasta
+      // que el gesto moria del todo: se sentia trabado (2026-08-24).
       if (trabado) return;
+
       acumulado += e.deltaX;
+
+      // Si el gesto se corta sin llegar al umbral, se olvida lo acumulado para
+      // que dos toquecitos en sentidos opuestos no se sumen.
+      clearTimeout(quietoT);
+      quietoT = setTimeout(() => { acumulado = 0; }, 140);
+
       if (Math.abs(acumulado) < SWIPE_DESKTOP_UMBRAL) return;
-      trabado = true;
-      irASeccion(acumulado > 0 ? 1 : -1);
+      const sentido = acumulado > 0 ? 1 : -1;
       acumulado = 0;
+      trabado = true;
+      // Destrabado por tiempo fijo, no por "cuando termine la inercia": pase lo
+      // que pase vuelve a aceptar gestos, no puede quedarse clavado.
+      setTimeout(() => { trabado = false; acumulado = 0; }, 420);
+      irASeccion(sentido);
     },
     { passive: false }
   );

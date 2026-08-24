@@ -402,16 +402,24 @@ const PROJECTS = [
     // convention they are not gallery entries (2026-08-22, confirmed).
     gallery: [
       "assets/img/roark/hero.webp",
-      ["assets/img/roark/carrusel1-01.webp", "assets/img/roark/carrusel1-02.webp"],
-      // height:200 — single-photo carrusel (the 4 knife illustrations), same
-      // 1-item marquee precedent as afends' spreads and Ceremonia's carrusel4.
-      // 200px was the first try; the user then asked for "70px menos de alto"
-      // (2026-08-22), so 130px.
-      { type: "carrusel", items: ["assets/img/roark/carrusel2-01.webp"], height: 130 },
+      [
+        "assets/img/roark/carrusel1-01.webp",
+        "assets/img/roark/carrusel1-02.webp",
+      ],
+      {
+        type: "carrusel",
+        height: 130,
+        items: [
+          "assets/img/roark/carrusel2-01.webp",
+        ],
+      },
       "assets/img/roark/foto-01.webp",
       {
         type: "slideshow",
-        items: ["assets/img/roark/slidecut1-01.webp", "assets/img/roark/slidecut1-02.webp"],
+        items: [
+          "assets/img/roark/slidecut1-01.webp",
+          "assets/img/roark/slidecut1-02.webp",
+        ],
       },
       [
         "assets/img/roark/carrusel3-01.webp",
@@ -420,9 +428,6 @@ const PROJECTS = [
         "assets/img/roark/carrusel3-04.webp",
       ],
       {
-        // speed:70 px/s instead of the global MARQUEE_PX_PER_SEC (55)
-        // — "carrusel 4 tiene que correr apenas mas rapido" (2026-08-22).
-        // ~25% faster; the other three carruseles here keep the default.
         type: "carrusel",
         speed: 70,
         items: [
@@ -635,11 +640,6 @@ const PROJECTS = [
       },
       {
         type: "slideshow",
-        // height:474 — the 6 photos are almost but not quite the same shape
-        // (ratios .79 to .81), so at natural size the box grew and shrank by
-        // ~12px on every cut (2026-08-22, user: "hay como un salto de tamano
-        // en un slide-cut"). 474 is the midpoint of their rendered heights,
-        // so the crop is a few pixels either way.
         height: 474,
         items: [
           "assets/img/fatima/slidecut1-01.webp",
@@ -654,8 +654,6 @@ const PROJECTS = [
       {
         type: "carrusel",
         height: 150,
-        // speed:83 px/s = 1.5x the global MARQUEE_PX_PER_SEC (55) — "0.5 mas
-        // rapido" (2026-08-22). The two panoramic strips keep the default.
         speed: 83,
         items: [
           "assets/img/fatima/carrusel2-01.webp",
@@ -765,6 +763,7 @@ const PROJECTS = [
         ],
       },
       { type: "video", src: "assets/img/lightningbolt/video-01.mp4", poster: "assets/img/lightningbolt/video-01-poster.jpg" },
+      { type: "video", src: "assets/img/lightningbolt/video-02.mp4", poster: "assets/img/lightningbolt/video-02-poster.jpg" },
       [
         "assets/img/lightningbolt/carrusel3-01.webp",
         "assets/img/lightningbolt/carrusel3-02.webp",
