@@ -1255,7 +1255,13 @@ function renderProject(slug) {
 // "work" variant) stays visible alongside this — openProject() re-renders
 // it, this function only fills #project-view. No Pencil "Project Desktop"
 // frame exists separately; this selected-Work-Desktop state fills that role.
-const PROJECT_DESKTOP_GALLERY_HEIGHTS = [240, 200, 230, 190, 260, 210, 220, 180, 260];
+// Las celdas del masonry ya no llevan altura asignada (2026-08-24): cada foto
+// o video se muestra a su propia proporcion, mismo criterio que el Home, Work,
+// Side B y la galeria de mobile. Antes ciclaba por
+// [240, 200, 230, 190, 260, 210, 220, 180, 260] y recortaba todo a esos altos
+// — era lo ultimo que quedaba con crop en el sitio. El unico caso con alto
+// fijo es el placeholder gris (ver .project-desktop-photo:not(:has(.media-real))
+// en styles.css), que no tiene ninguna proporcion propia de la que agarrarse.
 // A masonry cell whose gallery entry is a nested array (a "carrusel" group,
 // see galleryItemHTML()/marqueeHTML() above) renders the same auto-scroll
 // filmstrip as mobile instead of falling through slideTag() to an empty
@@ -1279,13 +1285,13 @@ function renderDesktopGalleryCell(item) {
   if (item.src && item.src.type === "slideshow") {
     return `<div class="project-desktop-photo project-desktop-photo--slideshow">${slideshowHTML(item.src.items, item.src.height, item.src.interval)}</div>`;
   }
-  return `<div class="project-desktop-photo" style="height:${item.height}px">${slideTag(item.src)}</div>`;
+  return `<div class="project-desktop-photo">${slideTag(item.src)}</div>`;
 }
 function renderProjectDesktop(p) {
   const gallery = p.gallery && p.gallery.length ? p.gallery : [p.hero];
   const cols = [[], [], []];
   gallery.forEach((s, i) => {
-    cols[i % 3].push({ src: s, height: PROJECT_DESKTOP_GALLERY_HEIGHTS[i % PROJECT_DESKTOP_GALLERY_HEIGHTS.length] });
+    cols[i % 3].push({ src: s });
   });
   els.projectView.innerHTML = `
     <div class="project-desktop-header">
