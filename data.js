@@ -992,13 +992,22 @@ const INFO_DESKTOP = {
 // Side B — experiments, discarded directions, off-cuts. Placeholder set,
 // reuses existing project imagery until dedicated Side B material is ready.
 const SIDE_B = {
-  // Short kicker-style intro shown on mobile (matches Pencil's Side B Mobile,
-  // yi8Jx). `intro` (below) is the longer version used on Desktop (Side B
-  // Desktop, BI3ZW) — Desktop layout itself isn't built yet, see notas.md.
+  // Version corta, tipo bajada, para mobile (Side B Mobile de Pencil, yi8Jx).
+  // `intro` es la larga, que va en la columna de texto de Side B Desktop
+  // (BI3ZW) — ese layout SI esta construido desde el 2026-08-23, ver
+  // renderSideBDesktop() en script.js.
+  // Reescritas el 2026-08-24: las anteriores las habia escrito Claude en una
+  // sesion vieja y el usuario las bajo por dos motivos — no decian nada del
+  // proceso y enumeraban de a tres ("Experiments, dropped ideas, and pieces
+  // that never found a home"), que es un tic de IA. Las nuevas van en el
+  // registro de su bio (primera persona, frases cortas, sin tripletes) y
+  // apoyan en el lado B del disco como opuesto complementario, no como
+  // descarte: cubren tanto lo que nunca llego a nada como lo que si llego y
+  // quedo afuera de la seleccion principal.
   introMobile:
-    "Experiments, dropped ideas, and pieces that never found a home. The collection keeps every day.",
+    "Same record, other side. Some of this ended up in the work, most of it didn't.",
   intro:
-    "Here you will find an assorted mix of experiments, some failed and some discarded, ideas I loved and then dropped, offshoots of finished projects, half-formed thoughts, and typographic play that never found a home. I keep them here because even the pieces nobody used still carry something worth looking at. The collection keeps growing as I keep making things on the side.",
+    "A record has two sides and the B side was never meant to be the lesser one. Some of what's here ended up in finished work and got cut from the selection later. Most of it never got that far. It all came out of the same hours, and I'd rather show both sides than pretend the first one is the whole story.",
   // El material propio del usuario (assets/side-b/), nombrado con la MISMA
   // convencion que un proyecto: <NN>-<tipo>[-<grupo>]. Se procesa con
   // scripts/sync-project.py ../side-b side-b --build. Reemplaza a los 6
