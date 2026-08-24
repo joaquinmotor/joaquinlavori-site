@@ -1312,24 +1312,18 @@ function renderProjectDesktop(p) {
   initLazyVideos(els.projectView);
 }
 
-// Info page shows a Footer instance with the contact-links block removed
-// (email/phone/Instagram already appear via .info-contact-col above it) —
-// includeContact:false renders just the divider-less copyright/back-to-top
-// row, matching Pencil's per-page override. Every other page keeps the
-// default full footer.
-function footerHTML({ includeContact = true } = {}) {
+// El footer es solo la fila de abajo: copyright a la izquierda, Back to top a
+// la derecha. Nada mas (2026-08-24, el usuario paso una captura: "footer
+// dejemos esto: en side B, y en work, y en home").
+// Antes arriba iba un bloque con email / telefono / Instagram y un divisor,
+// que Info ya se salteaba porque los repite en su propia columna. Ahora no lo
+// lleva ninguna pagina, asi que se fue tambien el parametro includeContact que
+// lo prendia. Los datos siguen en SITE (data.js) y se muestran en la columna de
+// Info y en el sidebar, asi que reponerlo es agregar el bloque de vuelta.
+// Las reglas .footer-contact / .footer-contact-line / .footer-divider quedan
+// en styles.css sin uso, por si vuelve.
+function footerHTML() {
   return `
-    ${
-      includeContact
-        ? `
-    <div class="footer-contact">
-      <a class="footer-contact-line" href="${mailtoUrl("Hello")}">${SITE.email}</a>
-      <a class="footer-contact-line" href="tel:${SITE.phone.replace(/\s+/g, "")}">${SITE.phone}</a>
-      <a class="footer-contact-line" href="${SITE.instagramUrl}" target="_blank" rel="noopener">Instagram</a>
-    </div>
-    <div class="footer-divider"></div>`
-        : ""
-    }
     <div class="footer-bottom">
       <div class="footer-copy">
         <div class="footer-copyright">© ${new Date().getFullYear()} Joaquin Lavori</div>
@@ -1354,7 +1348,7 @@ function initNav() {
   `;
 
   document.querySelectorAll("[data-footer]").forEach((f) => {
-    f.innerHTML = footerHTML({ includeContact: !f.closest("#page-info") });
+    f.innerHTML = footerHTML();
   });
 
   document.addEventListener("click", (e) => {
