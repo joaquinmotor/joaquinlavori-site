@@ -893,11 +893,11 @@ const INFO_CONTENT = {
   sections: [
     {
       title: "So, how do I actually help you?",
-      body: "By building your identity from the ground up. It shows up as brand mentorship, logos, web design, apparel, and campaign material, for brands across fashion, music, food, action sports, and activism.",
+      body: "By building your identity from the ground up. It shows up as brand mentorship, logos, web design, merchandise, and campaign material, for brands across fashion, music, food, action sports, and activism.",
     },
     {
       title: "Where does a brand actually start?",
-      body: "With a clear read of the problem. That becomes a direction and a plan of action, so your project grows on stable ground instead of guesswork.",
+      body: "With a clear read of the situation. That becomes a direction and a plan of action, so your project grows on stable ground instead of guesswork.",
     },
     {
       title: "Who carries that through to the finished piece?",
