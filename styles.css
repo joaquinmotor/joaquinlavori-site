@@ -657,6 +657,15 @@ button{ font-family: inherit; }
 @media (min-width: 861px){
   /* Nav Desktop Master (aZEet): 32px bar, 6px side padding, 16px dividers,
      3px vertical pill-wrap padding (26px pill = 32 - 2*3, matches below). */
+  /* Margen exterior de la pagina en desktop. TIENE QUE DAR EL MISMO NUMERO que
+     el borde izquierdo de la pastilla negra del nav, que sale de sumar el
+     padding lateral de .nav-links (6px) + el de .nav-pill-wrap (4px) = 10px.
+     Antes el contenido iba a 16px y la pastilla a 10px, y se notaba
+     (2026-08-24, el usuario: "esto no esta alineado, deberia estar alineado
+     todo ese margen con la pastilla negra"). Si alguna vez cambian esos dos
+     paddings del nav, hay que recalcular este valor. */
+  :root{ --edge: 10px; }
+
   .site-nav .nav-links{ height: 32px; padding: 0 6px; }
   .nav-divider{ height: 16px; }
   .nav-pill-wrap{ padding: 3px 4px; }
@@ -669,14 +678,14 @@ button{ font-family: inherit; }
     gap: 16px;
     flex: 0 0 var(--sidebar-w);
     width: var(--sidebar-w);
-    padding: 16px 0 16px 16px;
+    padding: 16px 0 16px var(--edge);
     align-self: stretch;
   }
 
   /* Home Desktop (z2Lknd): no hero/intro at all — straight to the sidebar +
      grid. */
   .hero{ display:none; }
-  .home-tile-columns{ gap: 6px; padding: 16px 16px 16px 6px; }
+  .home-tile-columns{ gap: 6px; padding: 16px var(--edge) 16px 6px; }
   .home-tile-column{ gap: 6px; }
   /* 3rd column (9-tile 3x3 grid) is desktop-only; mobile hides it via the
      max-width query further down so Home Mobile keeps its original 6 tiles. */
@@ -687,7 +696,7 @@ button{ font-family: inherit; }
      of all 12 projects, no header text. Replaces the mobile single-column
      list (.grid) entirely at this width — not a scaled-up version of it. */
   .grid{ display:none; }
-  .work-desktop-grid{ display:flex; gap:6px; padding:16px 16px 16px 6px; }
+  .work-desktop-grid{ display:flex; gap:6px; padding:16px var(--edge) 16px 6px; }
   .work-desktop-col{ flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
   .work-desktop-col:nth-child(1) .tile:nth-child(odd) .tile-cover,
   .work-desktop-col:nth-child(3) .tile:nth-child(odd) .tile-cover{ aspect-ratio: 349/197; }
@@ -701,7 +710,7 @@ button{ font-family: inherit; }
      (INFO_DESKTOP in data.js). Sidebar (above) gets 5 extra project cards
      via renderSidebar("info"). */
   .info-content{ display:none; }
-  .info-desktop{ display:flex; gap:6px; padding:16px 16px 16px 6px; }
+  .info-desktop{ display:flex; gap:6px; padding:16px var(--edge) 16px 6px; }
   .info-desktop-col{ flex:1; min-width:0; display:flex; flex-direction:column; gap:16px; }
   .info-desktop-section{ display:flex; flex-direction:column; gap:6px; }
   .info-desktop-heading{ font-family: var(--font-body); font-size:14px; font-weight:700; color:#000000; margin:0; }
@@ -714,8 +723,8 @@ button{ font-family: inherit; }
      columns), no captions anywhere. The persistent sidebar is empty/hidden
      on this page (renderSidebar("sideb")); this track is separate content. */
   .sideb-content{ display:none; }
-  .sideb-desktop{ display:flex; gap:6px; padding:16px 6px; }
-  .sideb-desktop-sidebar{ flex:1; min-width:0; display:flex; flex-direction:column; gap:16px; padding-left:16px; }
+  .sideb-desktop{ display:flex; gap:6px; padding:16px var(--edge); }
+  .sideb-desktop-sidebar{ flex:1; min-width:0; display:flex; flex-direction:column; gap:16px; }
   .sideb-desktop-col{ flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
   .sideb-desktop-intro{ display:flex; flex-direction:column; gap:8px; }
   .sideb-desktop-title{ font-family: var(--font-heading); font-size:14px; font-weight:700; color:#000000; margin:0; }
@@ -735,7 +744,7 @@ button{ font-family: inherit; }
      then a description paragraph) + a 3-col masonry gallery with NO
      captions — a different structure from the mobile Project view, not a
      scaled-up version of it. Sidebar (above) stays visible, "work" variant. */
-  .project-desktop-header{ display:flex; flex-direction:column; gap:32px; padding:16px 16px 0 6px; }
+  .project-desktop-header{ display:flex; flex-direction:column; gap:32px; padding:16px var(--edge) 0 6px; }
   .project-desktop-header-row{ display:flex; justify-content:space-between; gap:24px; }
   .project-desktop-title{ font-family: var(--font-heading); font-size:14px; font-weight:400; color: var(--ink); margin:0; }
   .project-desktop-tagline{ font-family: var(--font-body); font-size:14px; color: var(--ink); text-align:right; max-width:420px; margin:0; }
@@ -745,7 +754,7 @@ button{ font-family: inherit; }
   .project-desktop-description{ font-family: var(--font-body); font-size:16px; line-height:1.5; color:#121212B3; max-width:560px; margin:0; }
   .project-desktop-description p{ margin:0 0 10px; }
   .project-desktop-description p:last-of-type{ margin-bottom:0; }
-  .project-desktop-gallery{ display:flex; gap:6px; padding:16px 16px 16px 6px; }
+  .project-desktop-gallery{ display:flex; gap:6px; padding:16px var(--edge) 16px 6px; }
   .project-desktop-col{ flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
   .project-desktop-photo{ position:relative; background: var(--border); border-radius:8px; overflow:hidden; }
   .project-desktop-photo .play-badge{ background: var(--ink); }
