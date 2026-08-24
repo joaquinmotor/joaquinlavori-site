@@ -463,29 +463,30 @@ const PROJECTS = [
       hero: { inset: 50, reveal: true },
       "foto-06": { inset: 50, reveal: true },
     },
-    // Gallery order and entry types are DERIVED from assets/work/06-vans/'s own
-    // file numbering and names — regenerated with scripts/sync-project.py (see
-    // sync-de-proyectos.md), never hand-edited. Last rebuild 2026-08-22: the
-    // user removed 15-pastilla.svg (the flat "Off The Wall" pill vector) and
-    // the whole 26-30 carrusel-4 group. Notes still standing: "slidecut-1" is
-    // spelled without the hyphen La Calle Bar uses (the parser accepts both),
-    // and 14-carrusel-2 / 33-carrusel are single wide composites wrapped as
-    // 1-item carruseles (same precedent as afends' spreads) — the latter
-    // carries no group number, hence the plain carrusel-NN filenames.
     // Galeria DERIVADA de los nombres de archivo de assets/work/06-vans/,
     // regenerada con scripts/sync-project.py (ver sync-de-proyectos.md), nunca
-    // editada a mano. Re-sincronizada 2026-08-22 con el reorden del usuario.
+    // editada a mano. Re-sincronizada 2026-08-24: el usuario rehizo la carpeta
+    // entera — hero nuevo (01-hero.JPG en vez de .png), video nuevo en el 16
+    // (16-video2.mov, ya no estan 16-video1*.mp4), las tres fotos sueltas del
+    // 18/19/20 pasaron a ser el grupo carrusel-3 (que antes vivia en el 21-24),
+    // 33-carrusel.png se movio al 23, se cayo 31-video.m4v (queda solo
+    // 31-video-opt.mp4), 35-foto paso de .png a .JPG, y entraron 22-foto,
+    // 24-foto y 34-foto.
     // Notas de como esta nombrada la carpeta:
-    //  - 33-carrusel.png no lleva numero de grupo, por eso su salida es
+    //  - 23-carrusel.png no lleva numero de grupo, por eso su salida es
     //    carrusel-01.webp (sin digito) en vez de carruselN-01.webp.
-    //  - 33-carrusel.png y 33-gif.mp4 comparten el numero 33; el desempate es
-    //    alfabetico, asi que el carrusel va antes que el gif.
-    //  - el carrusel del 33 va a height:200 por pedido del usuario (2026-08-22),
-    //    que ademas reporto que "salta y se traba". Su archivo se genera a 600px
-    //    de alto (3x los 200 que se muestran) en vez de los 660 del default, que
-    //    para una tira de 6:1 significaba 4019px de ancho nativo: 20 MB de
-    //    textura para pintar 1.9 MB. Al re-sincronizar vans hay que pasar
-    //    OVERRIDES='{"carrusel": {"height": 200}}' para que el build lo respete.
+    //  - 14-carrusel-2 y 23-carrusel son composiciones anchas envueltas como
+    //    carruseles de 1 solo item (mismo precedente que los spreads de
+    //    afends): no scrollean contra otras fotos, loopean sobre si mismas.
+    //  - "slidecut-1" va sin el guion que usa La Calle Bar; el parser acepta
+    //    las dos formas.
+    //  - el carrusel del 23 va a height:200 por pedido del usuario
+    //    (2026-08-22), que ademas reporto que "salta y se traba". Su archivo se
+    //    genera a 600px de alto (3x los 200 que se muestran) en vez de los 660
+    //    del default: para una tira de 6:1 eso significaba 4019px de ancho
+    //    nativo, 20 MB de textura para pintar 1.9 MB. AL RE-SINCRONIZAR VANS
+    //    HAY QUE PASAR OVERRIDES='{"carrusel": {"height": 200}}', si no el
+    //    build lo saca a 660 y el override se pierde de data.js.
     gallery: [
       "assets/img/vans/hero.webp",
       [
@@ -512,17 +513,13 @@ const PROJECTS = [
       ],
       { type: "video", src: "assets/img/vans/video-01.mp4", poster: "assets/img/vans/video-01-poster.jpg" },
       "assets/img/vans/foto-01.webp",
-      "assets/img/vans/foto-02.webp",
-      "assets/img/vans/foto-03.webp",
-      "assets/img/vans/foto-04.webp",
       [
         "assets/img/vans/carrusel3-01.webp",
         "assets/img/vans/carrusel3-02.webp",
         "assets/img/vans/carrusel3-03.webp",
         "assets/img/vans/carrusel3-04.webp",
       ],
-      { type: "video", src: "assets/img/vans/video-02.mp4", poster: "assets/img/vans/video-02-poster.jpg" },
-      "assets/img/vans/foto-05.webp",
+      "assets/img/vans/foto-02.webp",
       {
         type: "carrusel",
         height: 200,
@@ -530,7 +527,11 @@ const PROJECTS = [
           "assets/img/vans/carrusel-01.webp",
         ],
       },
+      "assets/img/vans/foto-03.webp",
+      { type: "video", src: "assets/img/vans/video-02.mp4", poster: "assets/img/vans/video-02-poster.jpg" },
+      "assets/img/vans/foto-04.webp",
       { type: "video", src: "assets/img/vans/gif.mp4", poster: "assets/img/vans/gif-poster.jpg" },
+      "assets/img/vans/foto-05.webp",
       "assets/img/vans/foto-06.webp",
       [
         "assets/img/vans/carrusel4-01.webp",
