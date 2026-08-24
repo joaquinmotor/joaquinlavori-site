@@ -805,7 +805,7 @@ button{ font-family: inherit; }
      tagline flotaba contra el borde derecho sin coincidir con ninguna columna. */
   .project-desktop-header-row{ display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: var(--gutter); }
   .project-desktop-title{ font-family: var(--font-heading); font-size:14px; font-weight:700; color: var(--ink); margin:0; }
-  .project-desktop-tagline{ grid-column: 2; font-family: var(--font-body); font-size:14px; color: var(--ink); text-align:right; margin:0; }
+  .project-desktop-tagline{ grid-column: 2; font-family: var(--font-body); font-size:14px; color: var(--ink); text-align:left; margin:0; }
   /* Was a single <p>; now wraps one <p> per p.body entry (script.js,
      2026-08-12) so a paragraph break in the source .docx (multiple body[]
      items) shows as a real paragraph break here too, not just on mobile. */
