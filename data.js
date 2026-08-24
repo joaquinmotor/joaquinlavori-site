@@ -1076,13 +1076,18 @@ const SIDE_B = {
     },
     "assets/img/side-b/foto-18.webp",
     "assets/img/side-b/foto-19.webp",
+    {
+      type: "slideshow",
+      items: [
+        "assets/img/side-b/slidecut6-01.webp",
+        "assets/img/side-b/slidecut6-02.webp",
+        "assets/img/side-b/slidecut6-03.webp",
+        "assets/img/side-b/slidecut6-04.webp",
+        "assets/img/side-b/slidecut6-05.webp",
+      ],
+    },
     "assets/img/side-b/foto-20.webp",
     "assets/img/side-b/foto-21.webp",
     "assets/img/side-b/foto-22.webp",
-    "assets/img/side-b/foto-23.webp",
-    "assets/img/side-b/foto-24.webp",
-    "assets/img/side-b/foto-25.webp",
-    "assets/img/side-b/foto-26.webp",
-    "assets/img/side-b/foto-27.webp",
   ],
 };
