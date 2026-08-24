@@ -726,28 +726,36 @@ const HOME_FEATURED_COUNT = 10;
 // proyecto en el home") instead of at the foot of the taller left column,
 // which is where plain alternation sent it.
 const HOME_BASE_TILES = 6;
+// El reparto depende del viewport, asi que esta funcion se vuelve a llamar al
+// cruzar el breakpoint (ver el listener de resize al final del archivo).
+//  - Mobile (tZLyC): dos columnas con la alternancia exacta de Pencil. La
+//    tercera queda vacia y ademas CSS-oculta.
+//  - Desktop (z2Lknd): los MISMOS proyectos destacados repartidos en las tres
+//    columnas. Antes la tercera se llenaba con `items.slice(HOME_FEATURED_COUNT,
+//    +3)`, o sea los que siguen al ultimo destacado — que hoy son justo los que
+//    estan en placeholder, asi que al filtrarlos (2026-08-23) la columna quedo
+//    vacia. El usuario: "en el home, las 3 columnas de la derecha tienen que
+//    mostrar los proyectos".
 function renderHomeGrid(items) {
   const featured = items.slice(0, HOME_FEATURED_COUNT);
-  const onLeft = (i) => (i < HOME_BASE_TILES ? i % 2 === 0 : (i - HOME_BASE_TILES) % 2 === 1);
-  const left = featured.filter((_, i) => onLeft(i));
-  const right = featured.filter((_, i) => !onLeft(i));
-  // Mismo filtro que Work: sin esto la tercera columna de Home Desktop toma
-  // justo los 3 proyectos que siguen al ultimo featured, que hoy son los que
-  // todavia estan en placeholder.
-  const third = items.slice(HOME_FEATURED_COUNT, HOME_FEATURED_COUNT + 3).filter((p) => REAL_MEDIA_PROJECTS.has(p.slug));
   const tile = (item) =>
     tileHTML(item, items.indexOf(item), { carousel: false, fantasyCaption: true, coverOverride: item.homeCover });
-  els.gridHomeLeft.innerHTML = left.map(tile).join("");
-  els.gridHomeRight.innerHTML = right.map(tile).join("");
-  initTileCarousels(els.gridHomeLeft);
-  initTileCarousels(els.gridHomeRight);
-  initLazyVideos(els.gridHomeLeft);
-  initLazyVideos(els.gridHomeRight);
-  if (els.gridHomeThird) {
-    els.gridHomeThird.innerHTML = third.map(tile).join("");
-    initTileCarousels(els.gridHomeThird);
-    initLazyVideos(els.gridHomeThird);
+
+  let cols;
+  if (isMobile()) {
+    const onLeft = (i) => (i < HOME_BASE_TILES ? i % 2 === 0 : (i - HOME_BASE_TILES) % 2 === 1);
+    cols = [featured.filter((_, i) => onLeft(i)), featured.filter((_, i) => !onLeft(i)), []];
+  } else {
+    cols = [[], [], []];
+    featured.forEach((p, i) => cols[i % 3].push(p));
   }
+
+  [els.gridHomeLeft, els.gridHomeRight, els.gridHomeThird].forEach((el, i) => {
+    if (!el) return;
+    el.innerHTML = cols[i].map(tile).join("");
+    initTileCarousels(el);
+    initLazyVideos(el);
+  });
 }
 
 // Work Desktop unselected (Ghq1t): the full 12-project catalog as a 3-column
@@ -1014,7 +1022,6 @@ function renderInfoDesktop() {
       (col) => `
       <div class="info-desktop-col">
         ${col.sections.map(infoDesktopSectionHTML).join("")}
-        <div class="info-desktop-photo">${slideTag()}</div>
       </div>`
     )
     .join("");
@@ -1597,9 +1604,41 @@ function initSwipe() {
 }
 
 window.addEventListener("hashchange", route);
+
+// Casi todo el sitio decide su layout con isMobile() EN EL MOMENTO de
+// renderizar — renderHomeGrid reparte en 2 o 3 columnas, renderProject elige
+// entre la vista mobile y renderProjectDesktop — y despues nunca se rehace.
+// Achicar la ventana andaba de casualidad, porque el CSS esconde el arbol de
+// desktop y muestra el de mobile; pero al agrandar de vuelta el arbol de
+// desktop seguia con el HTML que se habia armado para mobile (o directamente
+// vacio). De ahi el reporte del usuario: "ahora se achica y se ve bien pero
+// cuando agrando no se ve bien".
+// Se rehace TODO solo cuando efectivamente se cruza el breakpoint, no en cada
+// pixel del arrastre: reconstruir la pagina entera en cada evento de resize
+// seria carisimo y ademas cortaria los videos que estan reproduciendose.
+let eraMobile = isMobile();
+let resizeT;
 window.addEventListener("resize", () => {
   setNavHeight();
   goToPage(pageOrder[currentPageIndex], { animate: false });
+  clearTimeout(resizeT);
+  resizeT = setTimeout(() => {
+    const ahora = isMobile();
+    if (ahora === eraMobile) return;
+    eraMobile = ahora;
+    // clearSlideshows() antes de re-renderizar: los setInterval de los
+    // slide-cut quedan colgados de nodos que estan por desaparecer.
+    clearSlideshows();
+    renderHomeGrid(PROJECTS);
+    renderGrid(els.gridWork, LIVE_PROJECTS, { carousel: false, fantasyCaption: true });
+    renderWorkDesktopGrid(LIVE_PROJECTS);
+    renderInfo();
+    renderSideB();
+    // route() vuelve a armar la ruta actual con el layout que corresponde
+    // (incluido el detalle de un proyecto abierto, que es el caso donde mas
+    // se notaba: el masonry de 3 columnas no existia hasta recargar).
+    route();
+  }, 180);
 });
 
 initNav();
