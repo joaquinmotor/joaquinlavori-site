@@ -692,6 +692,13 @@ button{ font-family: inherit; }
     padding-inline: var(--edge);
     align-items:start;
   }
+  /* La columna de la izquierda se despega del scroll de la derecha
+     (2026-08-24). En Home su contenido es corto, no llega a scrollear y queda
+     fija mientras se mueven las columnas de proyectos. En Info es mas largo
+     —suma las 5 tarjetas de proyecto— asi que scrollea por su cuenta, y las
+     dos partes se mueven independientes.
+     align-self VA EN start, no stretch: estirado a la altura de la fila el
+     sticky no tiene contra que pegarse y no hace nada. */
   .sidebar{
     display:flex;
     flex-direction:column;
@@ -699,7 +706,11 @@ button{ font-family: inherit; }
     grid-column: 1;
     width:auto;
     padding: 16px 0;
-    align-self: stretch;
+    align-self: start;
+    position: sticky;
+    top: var(--nav-h);
+    max-height: calc(100vh - var(--nav-h));
+    overflow-y: auto;
   }
   .main{ grid-column: 2 / -1; min-width:0; }
   /* Side B esconde el sidebar (renderSidebar("sideb") lo deja vacio), asi que
@@ -720,7 +731,12 @@ button{ font-family: inherit; }
      of all 12 projects, no header text. Replaces the mobile single-column
      list (.grid) entirely at this width — not a scaled-up version of it. */
   .grid{ display:none; }
-  .work-desktop-grid{ display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: var(--gutter); padding:16px 0; }
+  /* Cuatro columnas: el catalogo de Work no lleva sidebar (2026-08-24, el
+     usuario: "el logo, mi about y la columna de la izquierda no va, van 4
+     columnas de los proyectos"), asi que main ocupa los 4 tracks via
+     :has(> .sidebar:empty). Con un proyecto abierto el sidebar vuelve y la
+     galeria del detalle sigue siendo de 3. */
+  .work-desktop-grid{ display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: var(--gutter); padding:16px 0; }
   .work-desktop-col{ min-width:0; display:flex; flex-direction:column; gap: var(--gutter); }
   .work-desktop-col:nth-child(1) .tile:nth-child(odd) .tile-cover,
   .work-desktop-col:nth-child(3) .tile:nth-child(odd) .tile-cover{ aspect-ratio: 349/197; }
@@ -728,6 +744,8 @@ button{ font-family: inherit; }
   .work-desktop-col:nth-child(3) .tile:nth-child(even) .tile-cover{ aspect-ratio: 349/177; }
   .work-desktop-col:nth-child(2) .tile:nth-child(odd) .tile-cover{ aspect-ratio: 349/177; }
   .work-desktop-col:nth-child(2) .tile:nth-child(even) .tile-cover{ aspect-ratio: 349/197; }
+  .work-desktop-col:nth-child(4) .tile:nth-child(odd) .tile-cover{ aspect-ratio: 349/177; }
+  .work-desktop-col:nth-child(4) .tile:nth-child(even) .tile-cover{ aspect-ratio: 349/197; }
   /* ...pero solo mientras el tile siga en placeholder. Con foto real manda la
      proporcion del archivo, mismo criterio que el Home (2026-08-24, el
      usuario: "en work, los cover de los proyectos no son fijos, son como en
@@ -805,7 +823,13 @@ button{ font-family: inherit; }
   .next-project-row{ padding: 16px 48px 56px; }
   .logos-detail-grid{ grid-template-columns: repeat(3,1fr); margin: 0 48px 56px; }
 
-  .site-footer{ flex-direction:row; justify-content:space-between; align-items:flex-end; padding: 32px 48px; }
+  /* El footer va debajo de las columnas de la derecha y con el mismo formato
+     apilado que en mobile: los contactos, el divisor a todo el ancho y abajo
+     el copyright a la izquierda con Back to top a la derecha (2026-08-24, el
+     usuario paso una captura). Antes en desktop era una fila con 48px de
+     padding lateral, que ademas lo desalineaba de las columnas. Vive adentro
+     de main, asi que ya arranca donde arrancan ellas. */
+  .site-footer{ padding: 32px 0; }
 }
 
 /* ---------- JQ personal seal badge (2026-08-12, user request) ----------

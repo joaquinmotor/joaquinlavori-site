@@ -271,8 +271,14 @@ function sidebarProjectsHTML() {
     .join("");
 }
 
-function renderSidebar(key) {
-  if (key === "sideb") {
+// `proyectoAbierto` distingue las dos caras de la pestaña Work: el CATALOGO
+// no lleva sidebar (2026-08-24, el usuario: "en la seccion de work, el logo,
+// mi about y la columna de la izquierda no va, van 4 columnas de los
+// proyectos"), pero el DETALLE de un proyecto si — es el spec Work selected
+// Desktop de Pencil (uDnON) y no se pidio tocarlo. Con el sidebar vacio,
+// :has(> .sidebar:empty) en styles.css le da a main los 4 tracks.
+function renderSidebar(key, proyectoAbierto) {
+  if (key === "sideb" || (key === "work" && !proyectoAbierto)) {
     els.sidebar.innerHTML = "";
     return;
   }
@@ -764,8 +770,10 @@ function renderHomeGrid(items) {
 // list) is used instead. All 12 PROJECTS fill exactly 3x4 tiles.
 function renderWorkDesktopGrid(items) {
   if (!els.gridWorkDesktop) return;
-  const cols = [[], [], []];
-  items.forEach((item, i) => cols[i % 3].push(item));
+  // Cuatro columnas, no tres: el catalogo se queda con el ancho completo al
+  // no tener sidebar (ver renderSidebar).
+  const cols = [[], [], [], []];
+  items.forEach((item, i) => cols[i % 4].push(item));
   els.gridWorkDesktop.innerHTML = cols
     .map(
       (col, ci) => `
@@ -1419,7 +1427,7 @@ function goToPage(key, { animate = true } = {}) {
   const index = Math.max(0, pageOrder.indexOf(key));
   currentPageIndex = index;
   setActiveNav(key);
-  renderSidebar(key);
+  renderSidebar(key, els.pageWork.classList.contains("is-project-open"));
 
   const targetEl = document.getElementById(`page-${key}`);
 
@@ -1442,6 +1450,8 @@ function goToPage(key, { animate = true } = {}) {
 function closeProject() {
   els.pageWork.classList.remove("is-project-open");
   els.projectView.classList.remove("is-open");
+  // Volver al catalogo = volver a las 4 columnas sin sidebar.
+  renderSidebar("work", false);
 }
 
 // Opening a project always "pins" it to the Work tab (Pencil's Work
@@ -1456,6 +1466,9 @@ function openProject(slug) {
   renderProject(slug);
   els.pageWork.classList.add("is-project-open");
   goToPage("work");
+  // goToPage() ya pinto el sidebar leyendo la clase de arriba, pero se deja
+  // explicito: el detalle SI lleva sidebar, a diferencia del catalogo.
+  renderSidebar("work", true);
   const scroller = els.pageWork.querySelector(".page-scroll");
   if (scroller) scroller.scrollTo(0, 0);
   if (isMobile()) {
