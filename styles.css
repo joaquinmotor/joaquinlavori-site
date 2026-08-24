@@ -798,9 +798,14 @@ button{ font-family: inherit; }
      captions — a different structure from the mobile Project view, not a
      scaled-up version of it. Sidebar (above) stays visible, "work" variant. */
   .project-desktop-header{ display:flex; flex-direction:column; gap:32px; padding:16px 0 0; }
-  .project-desktop-header-row{ display:flex; justify-content:space-between; gap:24px; }
-  .project-desktop-title{ font-family: var(--font-heading); font-size:14px; font-weight:400; color: var(--ink); margin:0; }
-  .project-desktop-tagline{ font-family: var(--font-body); font-size:14px; color: var(--ink); text-align:right; max-width:420px; margin:0; }
+  /* La fila del encabezado usa las MISMAS 3 columnas que la galeria de abajo:
+     el titulo cae en la primera y el tagline queda emblocado en la segunda, o
+     sea entre el 2do y el 3er divisor del nav (2026-08-24, pedido del usuario).
+     Antes era un flex con space-between y un max-width de 420px, asi que el
+     tagline flotaba contra el borde derecho sin coincidir con ninguna columna. */
+  .project-desktop-header-row{ display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: var(--gutter); }
+  .project-desktop-title{ font-family: var(--font-heading); font-size:14px; font-weight:700; color: var(--ink); margin:0; }
+  .project-desktop-tagline{ grid-column: 2; font-family: var(--font-body); font-size:14px; color: var(--ink); text-align:right; margin:0; }
   /* Was a single <p>; now wraps one <p> per p.body entry (script.js,
      2026-08-12) so a paragraph break in the source .docx (multiple body[]
      items) shows as a real paragraph break here too, not just on mobile. */
