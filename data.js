@@ -1007,22 +1007,22 @@ const SIDE_B = {
   // vans/lacalle/fatima/laguitarrita/lightningbolt, que se renderizaban
   // borrosas apenas se prendia cada proyecto (2026-08-23).
   gallery: [
+    "assets/img/side-b/foto-01.webp",
+    "assets/img/side-b/foto-02.webp",
+    "assets/img/side-b/foto-03.webp",
     {
       type: "slideshow",
       items: [
         "assets/img/side-b/slidecut1-01.webp",
         "assets/img/side-b/slidecut1-02.webp",
         "assets/img/side-b/slidecut1-03.webp",
-        "assets/img/side-b/slidecut1-04.webp",
-        "assets/img/side-b/slidecut1-05.webp",
-        "assets/img/side-b/slidecut1-06.webp",
-        "assets/img/side-b/slidecut1-07.webp",
       ],
     },
+    { type: "video", src: "assets/img/side-b/video-01.mp4", poster: "assets/img/side-b/video-01-poster.jpg" },
     [
       "assets/img/side-b/carrusel1-01.webp",
       "assets/img/side-b/carrusel1-02.webp",
-  ],
+    ],
     {
       type: "slideshow",
       items: [
@@ -1032,31 +1032,48 @@ const SIDE_B = {
         "assets/img/side-b/slidecut2-04.webp",
       ],
     },
-    { type: "video", src: "assets/img/side-b/video-01.mp4", poster: "assets/img/side-b/video-01-poster.jpg" },
-    "assets/img/side-b/foto-01.webp",
-    "assets/img/side-b/foto-02.webp",
-    "assets/img/side-b/foto-03.webp",
     "assets/img/side-b/foto-04.webp",
     "assets/img/side-b/foto-05.webp",
     "assets/img/side-b/foto-06.webp",
+    "assets/img/side-b/foto-07.webp",
+    "assets/img/side-b/foto-08.webp",
+    "assets/img/side-b/foto-09.webp",
+    { type: "video", src: "assets/img/side-b/video-02.mp4", poster: "assets/img/side-b/video-02-poster.jpg" },
+    "assets/img/side-b/foto-10.webp",
+    "assets/img/side-b/foto-11.webp",
     {
       type: "slideshow",
       items: [
         "assets/img/side-b/slidecut3-01.webp",
         "assets/img/side-b/slidecut3-02.webp",
+        "assets/img/side-b/slidecut3-03.webp",
       ],
     },
-    "assets/img/side-b/foto-07.webp",
-    "assets/img/side-b/foto-08.webp",
-    "assets/img/side-b/foto-09.webp",
-    "assets/img/side-b/foto-10.webp",
-    "assets/img/side-b/foto-11.webp",
     "assets/img/side-b/foto-12.webp",
     "assets/img/side-b/foto-13.webp",
+    {
+      type: "slideshow",
+      items: [
+        "assets/img/side-b/slidecut4-01.webp",
+        "assets/img/side-b/slidecut4-02.webp",
+        "assets/img/side-b/slidecut4-03.webp",
+        "assets/img/side-b/slidecut4-04.webp",
+        "assets/img/side-b/slidecut4-05.webp",
+      ],
+    },
     "assets/img/side-b/foto-14.webp",
     "assets/img/side-b/foto-15.webp",
     "assets/img/side-b/foto-16.webp",
     "assets/img/side-b/foto-17.webp",
+    {
+      type: "slideshow",
+      items: [
+        "assets/img/side-b/slidecut5-01.webp",
+        "assets/img/side-b/slidecut5-02.webp",
+        "assets/img/side-b/slidecut5-03.webp",
+        "assets/img/side-b/slidecut5-04.webp",
+      ],
+    },
     "assets/img/side-b/foto-18.webp",
     "assets/img/side-b/foto-19.webp",
     "assets/img/side-b/foto-20.webp",
@@ -1067,7 +1084,5 @@ const SIDE_B = {
     "assets/img/side-b/foto-25.webp",
     "assets/img/side-b/foto-26.webp",
     "assets/img/side-b/foto-27.webp",
-    "assets/img/side-b/foto-28.webp",
-    "assets/img/side-b/foto-29.webp",
   ],
 };

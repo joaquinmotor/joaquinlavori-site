@@ -106,7 +106,7 @@ const LIVE_PROJECTS = PROJECTS.filter((p) => REAL_MEDIA_PROJECTS.has(p.slug));
 // BUMP THIS whenever media files are overwritten in place. It is applied
 // here, not in data.js, so the paths in data.js stay clean and hasRealMedia()
 // keeps matching them.
-const MEDIA_V = "22";
+const MEDIA_V = "23";
 function withMediaV(url) {
   if (!url) return url;
   return url + (url.includes("?") ? "&" : "?") + "v=" + MEDIA_V;
