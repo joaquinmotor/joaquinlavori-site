@@ -457,11 +457,13 @@ const PROJECTS = [
     // pierde en la proxima re-sincronizacion; el script solo reemplaza
     // `hero:` + `gallery:`, asi que este campo sobrevive.
     // La clave es el nombre del archivo sin carpeta ni extension.
-    // `inset` es el margen lateral TOTAL contra el borde de la pantalla (el
-    // resto de la galeria va a 6px), en px.
+    // El 2026-08-24 el usuario saco el `inset: 50` que tenian las dos: quedan
+    // al ancho normal de la galeria (6px de padding lateral, como el resto) y
+    // conservan solo el reveal. El campo `inset` sigue soportado en
+    // accentAttrs()/styles.css por si vuelve.
     mediaAccents: {
-      hero: { inset: 50, reveal: true },
-      "foto-06": { inset: 50, reveal: true },
+      hero: { reveal: true },
+      "foto-06": { reveal: true },
     },
     // Galeria DERIVADA de los nombres de archivo de assets/work/06-vans/,
     // regenerada con scripts/sync-project.py (ver sync-de-proyectos.md), nunca
