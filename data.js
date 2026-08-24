@@ -1083,11 +1083,11 @@ const SIDE_B = {
         "assets/img/side-b/slidecut6-02.webp",
         "assets/img/side-b/slidecut6-03.webp",
         "assets/img/side-b/slidecut6-04.webp",
-        "assets/img/side-b/slidecut6-05.webp",
       ],
     },
     "assets/img/side-b/foto-20.webp",
     "assets/img/side-b/foto-21.webp",
     "assets/img/side-b/foto-22.webp",
+    "assets/img/side-b/foto-23.webp",
   ],
 };
