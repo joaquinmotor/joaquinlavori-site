@@ -1419,6 +1419,7 @@ function setNavHeight() {
 
 function goToPage(key, { animate = true } = {}) {
   const index = Math.max(0, pageOrder.indexOf(key));
+  const indiceAnterior = currentPageIndex;
   currentPageIndex = index;
   setActiveNav(key);
   renderSidebar(key, els.pageWork.classList.contains("is-project-open"));
@@ -1436,6 +1437,20 @@ function goToPage(key, { animate = true } = {}) {
     }
   } else {
     document.querySelectorAll(".page").forEach((p) => p.classList.toggle("is-active", p === targetEl));
+    // En desktop las paginas no viven en una tira que se arrastra (eso es solo
+    // mobile): se muestra una y se esconden las otras. Para que el cambio no
+    // sea un corte seco, la que entra hace un desplazamiento corto desde el
+    // lado del que "viene", asi el gesto del trackpad se siente como el swipe
+    // del celu. clearProps al final: dejar un transform inline en .page crea un
+    // containing block y puede romper cualquier position:sticky de adentro.
+    if (animate && targetEl && index !== indiceAnterior && typeof gsap !== "undefined") {
+      const sentido = index > indiceAnterior ? 1 : -1;
+      gsap.fromTo(
+        targetEl,
+        { opacity: 0, x: 28 * sentido },
+        { opacity: 1, x: 0, duration: 0.32, ease: "power2.out", onComplete: () => gsap.set(targetEl, { clearProps: "transform,opacity" }) }
+      );
+    }
   }
 
   revealTiles(targetEl, key);
@@ -1537,6 +1552,71 @@ function route() {
       if (els.sidebDesktop) initMarquees(els.sidebDesktop);
     });
   }
+}
+
+// El swipe entre secciones del celu (initSwipe, mas abajo) es touch y en
+// desktop no existe. El gesto equivalente en un trackpad de Mac es el swipe
+// horizontal de dos dedos, que el navegador manda como eventos `wheel` con
+// deltaX (2026-08-24, pedido del usuario). Se suman las flechas del teclado
+// para quien no tenga trackpad.
+const SWIPE_DESKTOP_UMBRAL = 90; // px acumulados antes de pasar de seccion
+function irASeccion(paso) {
+  const i = currentPageIndex + paso;
+  if (i < 0 || i > pageOrder.length - 1) return;
+  // Se cambia el hash y no se llama a goToPage() directo: asi pasa por route(),
+  // que es lo que ademas cierra un proyecto abierto al volver a Work, igual
+  // que cuando se hace click en el nav.
+  location.hash = NAV[i].hash;
+}
+
+function initDesktopSwipe() {
+  let acumulado = 0;
+  let trabado = false;
+  let finT;
+
+  window.addEventListener(
+    "wheel",
+    (e) => {
+      if (isMobile()) return;
+      // Solo gestos claramente horizontales: si no, es scroll vertical normal
+      // y no hay que tocarlo.
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+      // El sidebar de Info tiene su propio scroll; y por las dudas, cualquier
+      // cosa que scrollee horizontal de verdad se queda con el gesto.
+      if (e.target.closest && e.target.closest(".sidebar")) return;
+      // preventDefault frena el "volver atras" del navegador, que en Mac se
+      // dispara con este mismo gesto y nos sacaria de la pagina.
+      e.preventDefault();
+
+      clearTimeout(finT);
+      // El trackpad sigue mandando eventos por inercia despues de soltar. Se
+      // considera terminado el gesto cuando pasan 160ms sin eventos: recien
+      // ahi se destraba, para que un solo swipe pase UNA seccion y no tres.
+      finT = setTimeout(() => {
+        acumulado = 0;
+        trabado = false;
+      }, 160);
+
+      if (trabado) return;
+      acumulado += e.deltaX;
+      if (Math.abs(acumulado) < SWIPE_DESKTOP_UMBRAL) return;
+      trabado = true;
+      irASeccion(acumulado > 0 ? 1 : -1);
+      acumulado = 0;
+    },
+    { passive: false }
+  );
+
+  window.addEventListener("keydown", (e) => {
+    if (isMobile()) return;
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    // No robarle las flechas a un input ni a nada editable.
+    const t = e.target;
+    if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+    e.preventDefault();
+    irASeccion(e.key === "ArrowRight" ? 1 : -1);
+  });
 }
 
 function initSwipe() {
@@ -1662,4 +1742,5 @@ renderInfo();
 renderSideB();
 setNavHeight();
 initSwipe();
+initDesktopSwipe();
 route();

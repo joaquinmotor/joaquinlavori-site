@@ -16,6 +16,11 @@
 }
 
 *{ box-sizing: border-box; }
+/* El swipe horizontal de dos dedos en Mac dispara el "volver atras" del
+   navegador. En desktop ese gesto lo usamos para cambiar de seccion (ver
+   initDesktopSwipe en script.js), asi que se apaga el overscroll horizontal
+   ademas del preventDefault del handler. */
+html, body{ overscroll-behavior-x: none; }
 [hidden]{ display:none !important; }
 
 html, body{
