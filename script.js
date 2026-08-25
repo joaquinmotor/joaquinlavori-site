@@ -1103,7 +1103,7 @@ function renderSideBDesktop() {
   // reparto con esa altura ya ocupada y recibe menos media que los otros tres.
   // El numero es una estimacion del bloque de texto, no hace falta que sea
   // exacto: solo inclina el reparto.
-  const tracks = repartirEnColumnas(SIDE_B.gallery, 4, [260, 0, 0, 0]);
+  const tracks = repartirEnColumnas(SIDE_B.gallery, 4, anchoColumna(4, 4), [260, 0, 0, 0]);
   const cells = (t) => tracks[t].map(sideBDesktopCellHTML).join("");
   els.sidebDesktop.innerHTML = `
     <div class="sideb-desktop-sidebar">
@@ -1321,9 +1321,18 @@ function renderDesktopGalleryCell(item) {
 // clientWidth y no innerWidth: el primero no cuenta la barra de scroll.
 const EDGE_DESKTOP = 10;
 const GUTTER_DESKTOP = 9;
-function anchoColumnaDesktop() {
+function anchoTrackDesktop() {
   const w = document.documentElement.clientWidth;
   return (w - 2 * EDGE_DESKTOP - 3 * GUTTER_DESKTOP) / 4;
+}
+
+// Ancho de una columna cuando un contenedor que ocupa `tracks` tracks del grid
+// se subdivide en `n` columnas. La galeria de un proyecto ocupa 3 tracks (main
+// va de la 2 a la 4) y los reparte en 2; Side B ocupa los 4 y los reparte en 4.
+function anchoColumna(tracks, n) {
+  const T = anchoTrackDesktop();
+  const contenido = tracks * T + (tracks - 1) * GUTTER_DESKTOP;
+  return (contenido - (n - 1) * GUTTER_DESKTOP) / n;
 }
 
 // Cuanto va a medir de alto una entrada en una columna de `ancho` px.
@@ -1351,11 +1360,10 @@ function altoEstimado(entry, ancho) {
 // de media-dims.js la altura de cada celda se calcula de antemano.
 // `iniciales` permite arrancar una columna con altura ya ocupada (Side B mete
 // el titulo y la intro arriba de su primer track).
-function repartirEnColumnas(gallery, n, iniciales) {
+function repartirEnColumnas(gallery, n, ancho, iniciales) {
   const cols = Array.from({ length: n }, () => []);
   const altos = (iniciales || []).slice(0, n);
   while (altos.length < n) altos.push(0);
-  const ancho = anchoColumnaDesktop();
   gallery.forEach((g) => {
     let mejor = 0;
     for (let j = 1; j < n; j++) if (altos[j] < altos[mejor] - 0.5) mejor = j;
@@ -1367,7 +1375,15 @@ function repartirEnColumnas(gallery, n, iniciales) {
 
 function renderProjectDesktop(p) {
   const gallery = p.gallery && p.gallery.length ? p.gallery : [p.hero];
-  const cols = repartirEnColumnas(gallery, 3).map((col) => col.map((s) => ({ src: s })));
+  // Dos columnas, no tres (2026-08-25, pedido del usuario): adentro de un
+  // proyecto las fotos se ven mas grandes. main ocupa 3 tracks del grid y los
+  // reparte en 2, asi que el corte entre columnas cae en el medio del track del
+  // medio y NO sobre un divisor del nav — es la unica parte del sitio donde la
+  // grilla de 4 tracks no se respeta, a proposito.
+  const COLS_GALERIA = 2;
+  const cols = repartirEnColumnas(gallery, COLS_GALERIA, anchoColumna(3, COLS_GALERIA)).map((col) =>
+    col.map((s) => ({ src: s }))
+  );
   els.projectView.innerHTML = `
     <div class="project-desktop-header">
       <div class="project-desktop-header-row">
