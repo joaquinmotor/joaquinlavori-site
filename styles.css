@@ -819,7 +819,12 @@ button{ font-family: inherit; }
      usuario: "dentro de cada seccion de work, las fotos no tienen tamaño fijo,
      se adaptan proporcional a su tamaño como venimos haciendo"). El alto fijo
      queda SOLO para el placeholder gris, que no tiene proporcion propia. */
-  .project-desktop-photo:not(:has(.media-real)){ height:220px; }
+  /* OJO con la condicion: tiene que mirar si hay un PLACEHOLDER, no si falta
+     .media-real. Las imagenes que arma marqueeHTML()/slideshowHTML() son <img>
+     pelados, sin esa clase, asi que un :not(:has(.media-real)) tambien les
+     pegaba a los carruseles y slide-cuts y les clavaba 220px: los banners de
+     Ceremonia, que van a 30px, quedaban con 190px de aire abajo (2026-08-25). */
+  .project-desktop-photo:has(.media-placeholder){ height:220px; }
   .project-desktop-photo .media-real{ height:auto; object-fit:unset; }
   .project-desktop-photo .play-badge{ background: var(--ink); }
   .project-desktop-photo .play-badge svg{ width:18px; height:18px; }
