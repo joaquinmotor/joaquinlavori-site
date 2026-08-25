@@ -633,6 +633,12 @@ button{ font-family: inherit; }
 .page-sidebar-card p{ font-family: var(--font-body); font-size:14px; line-height:1.4; color:#000000; margin:0; }
 .page-sidebar-project{ display:flex; flex-direction:column; gap:6px; }
 .page-sidebar-project .tile-cover{ position:relative; overflow:hidden; border-radius:8px; background: var(--border); }
+/* Cover a la proporcion de su propio hero, sin alto fijo (2026-08-25). El
+   aspect-ratio de .tile .tile-cover es para los tiles que siguen en
+   placeholder; con foto real manda el archivo, mismo criterio que el Home,
+   Work y la galeria del proyecto. */
+.page-sidebar-project .tile-cover:has(.media-real){ aspect-ratio: unset; height: auto; }
+.page-sidebar-project .tile-cover .media-real{ height: auto; object-fit: unset; }
 .page-sidebar-project .tile-caption-text{ margin:0; }
 
 /* ---------- Footer (all pages) ----------
@@ -717,6 +723,13 @@ button{ font-family: inherit; }
     max-height: calc(100vh - var(--nav-h));
     overflow-y: auto;
   }
+  /* flex:none en los hijos, si no NO SCROLLEA: los encoge. Es la trampa
+     clasica de un flex column con max-height — antes de desbordar, flexbox
+     achica todo lo que tenga flex-shrink (o sea, todo). Con el contenido de
+     Info a 2905px en una caja de 868, la foto del badge —que tiene height
+     fijo de 240px y ningun contenido que la sostenga— se aplastaba a 0
+     (2026-08-25). */
+  .sidebar > *{ flex: none; }
   .main{ grid-column: 2 / -1; min-width:0; }
   /* Side B esconde el sidebar (renderSidebar("sideb") lo deja vacio), asi que
      ahi el contenido se queda con los 4 tracks. */

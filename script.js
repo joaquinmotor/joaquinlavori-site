@@ -273,15 +273,26 @@ function sidebarCardsHTML() {
     .join('<div class="page-sidebar-divider"></div>');
 }
 
-const SIDEBAR_PROJECT_HEIGHTS = [200, 170, 210, 180, 230];
+// Las 5 tarjetas de proyecto de la columna izquierda de Info.
+// Sin alto fijo: cada cover se muestra a la proporcion de su propio hero, igual
+// que en el Home, en Work y en la galeria (2026-08-25, pedido del usuario).
+// Antes ciclaban por SIDEBAR_PROJECT_HEIGHTS y recortaban.
+// El caption tambien pasa a ser el real —marca + blurb del proyecto— en vez del
+// texto de maqueta de Pencil ("Vans / Serie de ilustraciones y desarrollo de
+// personajes"), que se repetia identico en las cinco tarjetas. Es el mismo
+// arreglo que se hizo en Work el 2026-08-23.
 function sidebarProjectsHTML() {
-  return PROJECTS.slice(0, 5)
+  return LIVE_PROJECTS.slice(0, 5)
     .map(
-      (p, i) => `
-      <div class="page-sidebar-project">
-        <div class="tile-cover" style="height:${SIDEBAR_PROJECT_HEIGHTS[i]}px">${slideTag(p.hero)}</div>
-        <p class="tile-caption-text">${fantasyCaptionHTML("tile-caption-title", "tile-caption-desc")}</p>
-      </div>`
+      (p) => `
+      <a class="page-sidebar-project" href="#/project/${p.slug}">
+        <div class="tile-cover">${slideTag(p.hero)}</div>
+        <p class="tile-caption-text">${
+          p.blurb
+            ? realCaptionHTML("tile-caption-title", "tile-caption-desc", p)
+            : fantasyCaptionHTML("tile-caption-title", "tile-caption-desc")
+        }</p>
+      </a>`
     )
     .join("");
 }
