@@ -217,8 +217,6 @@ const MEDIA_DIMS = {
   "assets/img/lightningbolt/slidecut2-06.webp": [1600,2400],
   "assets/img/lightningbolt/video-01-poster.jpg": [1200,1600],
   "assets/img/lightningbolt/video-01.mp4": [1200,1600],
-  "assets/img/lightningbolt/video-02-poster.jpg": [1200,1600],
-  "assets/img/lightningbolt/video-02.mp4": [1200,1600],
   "assets/img/roark/carrusel1-01.webp": [284,660],
   "assets/img/roark/carrusel1-02.webp": [284,660],
   "assets/img/roark/carrusel2-01.webp": [314,390],

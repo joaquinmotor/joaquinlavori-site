@@ -763,7 +763,6 @@ const PROJECTS = [
         ],
       },
       { type: "video", src: "assets/img/lightningbolt/video-01.mp4", poster: "assets/img/lightningbolt/video-01-poster.jpg" },
-      { type: "video", src: "assets/img/lightningbolt/video-02.mp4", poster: "assets/img/lightningbolt/video-02-poster.jpg" },
       [
         "assets/img/lightningbolt/carrusel3-01.webp",
         "assets/img/lightningbolt/carrusel3-02.webp",

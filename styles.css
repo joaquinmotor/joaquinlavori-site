@@ -257,6 +257,12 @@ button{ font-family: inherit; }
    formato que tienen en el home"). */
 .tile p.tile-caption-text,
 .page-sidebar-project p.tile-caption-text{ margin:0; font-family: var(--font-body); font-size:16px; line-height:22px; color: var(--ink); }
+/* ...pero en el sidebar va al tamanio del sidebar, 14px, que es el del bloque
+   About y el que usa el resto de esa columna. A 16px cantaba al lado del texto
+   de arriba (2026-08-25, el usuario: "en INFO la columna de la izquierda parece
+   que tiene texto mas grande"). El peso y el color se mantienen como en el
+   Home: eso es lo que hace que se lean igual. */
+.page-sidebar-project p.tile-caption-text{ font-size:14px; line-height:19px; }
 .tile .tile-caption-title,
 .page-sidebar-project .tile-caption-title{ font-weight:500; color: var(--ink); }
 .tile .tile-caption-desc,
