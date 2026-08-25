@@ -1074,7 +1074,7 @@ function renderInfoDesktop() {
 function renderSideB() {
   els.sidebContent.innerHTML = `
     <div class="sideb-title-wrap">
-      <p class="sideb-intro">${SIDE_B.introMobile}</p>
+      <p class="sideb-intro">${SIDE_B.intro}</p>
     </div>
     <div class="sideb-gallery project-gallery">${SIDE_B.gallery.map((entry) => galleryItemHTML(entry)).join("")}</div>
     <div class="sideb-footer-divider"></div>
