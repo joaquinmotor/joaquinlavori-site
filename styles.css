@@ -248,9 +248,19 @@ button{ font-family: inherit; }
    ".tile .tile-caption" / ".tile p" rules above (equal-or-higher
    specificity is required — a bare class here would silently lose). */
 .tile .tile-caption--fantasy{ display:block; }
-.tile p.tile-caption-text{ margin:0; font-family: var(--font-body); font-size:16px; line-height:22px; color: var(--ink); }
-.tile .tile-caption-title{ font-weight:500; color: var(--ink); }
-.tile .tile-caption-desc{ font-weight:300; color: color-mix(in srgb, var(--ink) 70%, transparent); }
+/* Las tarjetas de proyecto de la columna izquierda de Info no son .tile, asi
+   que se quedaban afuera de estas tres reglas y su caption caia al default del
+   navegador: line-height normal en vez de 22px y todo en peso 400, sin la
+   diferencia entre la marca y la descripcion. Se agrega su selector en vez de
+   sacar el .tile, para no tocar de rebote ningun otro caption del sitio
+   (2026-08-25, el usuario: "los textos de cada proyecto tienen que respetar el
+   formato que tienen en el home"). */
+.tile p.tile-caption-text,
+.page-sidebar-project p.tile-caption-text{ margin:0; font-family: var(--font-body); font-size:16px; line-height:22px; color: var(--ink); }
+.tile .tile-caption-title,
+.page-sidebar-project .tile-caption-title{ font-weight:500; color: var(--ink); }
+.tile .tile-caption-desc,
+.page-sidebar-project .tile-caption-desc{ font-weight:300; color: color-mix(in srgb, var(--ink) 70%, transparent); }
 
 /* Logos tile: text-only, no photo */
 .tile.logos-tile .tile-cover{
@@ -639,7 +649,6 @@ button{ font-family: inherit; }
    Work y la galeria del proyecto. */
 .page-sidebar-project .tile-cover:has(.media-real){ aspect-ratio: unset; height: auto; }
 .page-sidebar-project .tile-cover .media-real{ height: auto; object-fit: unset; }
-.page-sidebar-project .tile-caption-text{ margin:0; }
 
 /* ---------- Footer (all pages) ----------
    Matches Pencil's reusable Footer component (TKUqY): Contact lines
