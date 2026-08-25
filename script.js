@@ -14,7 +14,7 @@
 // top pill nav (logo + HOME/WORK/INFO/SIDE B) is shared across both
 // breakpoints. See notas.md for the full audit/build history.
 
-/* global NAV, SITE, PROJECTS, INFO_CONTENT, INFO_DESKTOP, SIDE_B, gsap */
+/* global NAV, SITE, PROJECTS, INFO_CONTENT, INFO_DESKTOP, SIDE_B, MEDIA_DIMS, gsap */
 
 const MOBILE_BREAKPOINT = 860;
 const pageOrder = NAV.map((n) => n.key);
@@ -112,6 +112,21 @@ function withMediaV(url) {
   return url + (url.includes("?") ? "&" : "?") + "v=" + MEDIA_V;
 }
 
+// Tamanio nativo de un archivo, de media-dims.js (lo genera scripts/gen-dims.py).
+function dimsDe(media) {
+  const src = mediaSrc(media);
+  return (typeof MEDIA_DIMS !== "undefined" && src && MEDIA_DIMS[src]) || null;
+}
+
+// width/height en el tag. No fijan el tamanio —el CSS manda con width:100% y
+// height:auto— pero le dan al navegador la proporcion para reservar la caja
+// antes de bajar el archivo. Sin esto, como las fotos son lazy, cada una hacia
+// saltar el layout al entrar en pantalla.
+function dimsAttr(media) {
+  const d = dimsDe(media);
+  return d ? ` width="${d[0]}" height="${d[1]}"` : "";
+}
+
 function realMediaTag(media) {
   if (media && typeof media === "object" && media.type === "video") {
     // preload="none" + data-src, NO src: el video no se baja hasta que
@@ -123,9 +138,9 @@ function realMediaTag(media) {
     // El atributo autoplay se deja puesto a proposito: sin src no hace nada, y
     // cuando el observer asigna el src el video arranca solo, sin depender de
     // que el .play() programatico sea aceptado (Safari es quisquilloso con eso).
-    return `<video class="media-real" data-src="${withMediaV(media.src)}" poster="${withMediaV(media.poster)}" muted autoplay loop playsinline preload="none" fetchpriority="low"></video>`;
+    return `<video class="media-real"${dimsAttr(media.src)} data-src="${withMediaV(media.src)}" poster="${withMediaV(media.poster)}" muted autoplay loop playsinline preload="none" fetchpriority="low"></video>`;
   }
-  return `<img class="media-real" src="${withMediaV(media)}" alt="" loading="lazy" />`;
+  return `<img class="media-real"${dimsAttr(media)} src="${withMediaV(media)}" alt="" loading="lazy" />`;
 }
 
 // The big Home hero (mobile) stays placeholder-only on purpose (2026-08-11,
@@ -1073,13 +1088,11 @@ function renderSideB() {
 // mismo criterio ya aplicado al Home y al Related Work.
 function renderSideBDesktop() {
   if (!els.sidebDesktop) return;
-  // Mismo reparto por tipo que la galeria de un proyecto (ver
-  // repartirEnColumnas): Side B mezcla fotos, carruseles, slide-cuts y videos,
-  // asi que el i % 4 corria el mismo riesgo de apilar un tipo en una columna.
-  // El orden [1,2,3,0] deja al sidebar de ultimo, para que se quede con un
-  // item menos: ya arranca mas alto por el bloque de titulo + intro.
-  const reparto = repartirEnColumnas(SIDE_B.gallery, 4);
-  const tracks = [reparto[3], reparto[0], reparto[1], reparto[2]];
+  // El primer track arranca con el titulo y la intro larga, asi que entra al
+  // reparto con esa altura ya ocupada y recibe menos media que los otros tres.
+  // El numero es una estimacion del bloque de texto, no hace falta que sea
+  // exacto: solo inclina el reparto.
+  const tracks = repartirEnColumnas(SIDE_B.gallery, 4, [260, 0, 0, 0]);
   const cells = (t) => tracks[t].map(sideBDesktopCellHTML).join("");
   els.sidebDesktop.innerHTML = `
     <div class="sideb-desktop-sidebar">
@@ -1290,31 +1303,53 @@ function renderDesktopGalleryCell(item) {
   }
   return `<div class="project-desktop-photo">${slideTag(item.src)}</div>`;
 }
-// Reparto de una galeria en columnas de masonry. NO es i % n: cuando el ritmo
-// del proyecto coincide con la cantidad de columnas, todo un tipo termina
-// apilado en la misma. Ceremonia tenia sus cuatro carruseles en los indices
-// 2, 5, 8 y 11 —todos 3k+2— asi que los cuatro caian en la tercera columna,
-// uno encima del otro (2026-08-24, el usuario: "deberian estar intercalados
-// con las fotos como estan en la version mobile").
-// Cada entrada va a la columna que menos elementos de SU MISMO tipo tenga y, a
-// igualdad, a la que menos tenga en total. Mantiene el orden de lectura, no
-// depende de medir nada (las fotos son lazy: medirlas obligaria a cargarlas
-// todas o a reacomodar la grilla mientras se scrollea) y deja los carruseles y
-// slide-cuts intercalados con las fotos, como en la vista mobile.
-function repartirEnColumnas(gallery, n) {
+// Ancho de una columna en desktop, calculado y no medido: la pagina es una
+// grilla de 4 tracks iguales con --edge afuera y --gutter entre medio (ver
+// styles.css). Se puede saber sin que nada este renderizado todavia, que es
+// justo lo que hace falta para repartir ANTES de escribir el HTML.
+// clientWidth y no innerWidth: el primero no cuenta la barra de scroll.
+const EDGE_DESKTOP = 10;
+const GUTTER_DESKTOP = 9;
+function anchoColumnaDesktop() {
+  const w = document.documentElement.clientWidth;
+  return (w - 2 * EDGE_DESKTOP - 3 * GUTTER_DESKTOP) / 4;
+}
+
+// Cuanto va a medir de alto una entrada en una columna de `ancho` px.
+// Las fotos y videos salen de su proporcion nativa (media-dims.js); los
+// carruseles y slide-cuts tienen caja propia.
+function altoEstimado(entry, ancho) {
+  if (Array.isArray(entry)) return 220;
+  if (entry && entry.type === "carrusel") return entry.height || 220;
+  if (entry && entry.type === "slideshow") {
+    if (entry.height) return entry.height;
+    const d = dimsDe(entry.items && entry.items[0]);
+    return d ? ancho * (d[1] / d[0]) : 300;
+  }
+  const d = dimsDe(entry);
+  return d ? ancho * (d[1] / d[0]) : 220;
+}
+
+// Masonry de verdad: cada entrada va a la columna MAS CORTA en ese momento.
+// Antes se repartia por cantidad (primero i % n, despues por tipo) y las
+// columnas terminaban con alturas muy distintas: en vans la primera cortaba
+// mucho antes que las otras dos y quedaba un hueco enorme, y lo mismo pasaba en
+// Forty Spotted, La Guitarrita y Fatima (2026-08-25).
+// No hace falta medir nada en pantalla —lo que obligaria a cargar todas las
+// fotos o a reacomodar la grilla mientras se scrollea—: con el tamanio nativo
+// de media-dims.js la altura de cada celda se calcula de antemano.
+// `iniciales` permite arrancar una columna con altura ya ocupada (Side B mete
+// el titulo y la intro arriba de su primer track).
+function repartirEnColumnas(gallery, n, iniciales) {
   const cols = Array.from({ length: n }, () => []);
-  const porTipo = Array.from({ length: n }, () => ({}));
-  const tipoDe = (g) => (Array.isArray(g) ? "carrusel" : (g && g.type) || "foto");
+  const altos = (iniciales || []).slice(0, n);
+  while (altos.length < n) altos.push(0);
+  const ancho = anchoColumnaDesktop();
   gallery.forEach((g) => {
-    const t = tipoDe(g);
     let mejor = 0;
-    for (let j = 1; j < n; j++) {
-      const propios = porTipo[j][t] || 0;
-      const mejores = porTipo[mejor][t] || 0;
-      if (propios < mejores || (propios === mejores && cols[j].length < cols[mejor].length)) mejor = j;
-    }
+    for (let j = 1; j < n; j++) if (altos[j] < altos[mejor] - 0.5) mejor = j;
     cols[mejor].push(g);
-    porTipo[mejor][t] = (porTipo[mejor][t] || 0) + 1;
+    altos[mejor] += altoEstimado(g, ancho) + GUTTER_DESKTOP;
   });
   return cols;
 }
