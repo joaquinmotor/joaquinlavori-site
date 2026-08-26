@@ -106,7 +106,7 @@ const LIVE_PROJECTS = PROJECTS.filter((p) => REAL_MEDIA_PROJECTS.has(p.slug));
 // BUMP THIS whenever media files are overwritten in place. It is applied
 // here, not in data.js, so the paths in data.js stay clean and hasRealMedia()
 // keeps matching them.
-const MEDIA_V = "29";
+const MEDIA_V = "30";
 function withMediaV(url) {
   if (!url) return url;
   return url + (url.includes("?") ? "&" : "?") + "v=" + MEDIA_V;
@@ -364,7 +364,7 @@ function galleryItemHTML(entry, accents) {
   // Plain-array carrusel groups elsewhere (the-movement, afends, and
   // Ceremonia's own carrusel4) are untouched by this — they keep the
   // default height from .project-marquee in styles.css.
-  if (entry && entry.type === "carrusel") return marqueeHTML(entry.items, entry.height, entry.speed);
+  if (entry && entry.type === "carrusel") return marqueeHTML(entry.items, entry.height, entry.speed, entry.heightDesktop);
   if (entry && entry.type === "slideshow") return slideshowHTML(entry.items, entry.height, entry.interval);
   return `<div class="project-gallery-item${accentAttrs(accents, entry)}">${slideTag(entry)}</div>`;
 }
@@ -626,7 +626,12 @@ function initSlideshows(root) {
 // therefore where the -50% loop point lands — depends on every image's
 // intrinsic size being known immediately, not resolved gradually as the
 // user scrolls into each one.
-function marqueeHTML(items, height, speed) {
+// `heightDesktop` es un alto que aplica SOLO en desktop, sin tocar el mobile
+// (2026-08-27, the-movement: sus dos carruseles a 200px en la version web y a
+// los 220 de siempre en el celu). No puede ir por el style inline como
+// `height`, que manda en los dos lados: se emite como custom property y la
+// regla que la usa vive dentro del media query de desktop.
+function marqueeHTML(items, height, speed, heightDesktop) {
   // fetchpriority="high" + decoding="async" (2026-08-22, user report: "a las
   // fotos de los carruseles les cuesta cargar"). These images can't be lazy
   // (see the note above), so they all request the moment a project opens —
@@ -640,12 +645,16 @@ function marqueeHTML(items, height, speed) {
   const itemsHTML = items
     .map((src) => `<div class="project-marquee-item"><img src="${withMediaV(src)}" alt="" fetchpriority="high" decoding="async" /></div>`)
     .join("");
-  const style = height ? ` style="height:${height}px"` : "";
+  const estilos = [];
+  if (height) estilos.push(`height:${height}px`);
+  if (heightDesktop) estilos.push(`--marquee-h-desktop:${heightDesktop}px`);
+  const style = estilos.length ? ` style="${estilos.join(";")}"` : "";
+  const claseH = heightDesktop ? " project-marquee--h-desktop" : "";
   // Optional per-group scroll speed in px/s, overriding MARQUEE_PX_PER_SEC
   // (2026-08-22, user request: Roark's carrusel4 "tiene que correr apenas
   // mas rapido"). Read back by initMarquees() off the data attribute.
   const speedAttr = speed ? ` data-speed="${speed}"` : "";
-  return `<div class="project-marquee"${style}><div class="project-marquee-track"${speedAttr}>${itemsHTML}${itemsHTML}</div></div>`;
+  return `<div class="project-marquee${claseH}"${style}><div class="project-marquee-track"${speedAttr}>${itemsHTML}${itemsHTML}</div></div>`;
 }
 
 function carouselHTML(slides, { max } = {}) {
@@ -1124,7 +1133,7 @@ function renderSideBDesktop() {
 function sideBDesktopCellHTML(entry) {
   const grupo = (html) => `<div class="sideb-desktop-photo sideb-desktop-photo--group">${html}</div>`;
   if (Array.isArray(entry)) return grupo(marqueeHTML(entry));
-  if (entry && entry.type === "carrusel") return grupo(marqueeHTML(entry.items, entry.height, entry.speed));
+  if (entry && entry.type === "carrusel") return grupo(marqueeHTML(entry.items, entry.height, entry.speed, entry.heightDesktop));
   if (entry && entry.type === "slideshow") return grupo(slideshowHTML(entry.items, entry.height, entry.interval));
   return `<div class="sideb-desktop-photo sideb-desktop-photo--auto">${slideTag(entry)}</div>`;
 }
@@ -1307,7 +1316,7 @@ function renderDesktopGalleryCell(item) {
   // above, mirrored here so Desktop's masonry respects the custom height too
   // instead of falling back to the fixed 220px (2026-08-12, Ceremonia).
   if (item.src && item.src.type === "carrusel") {
-    return `<div class="project-desktop-photo project-desktop-photo--marquee">${marqueeHTML(item.src.items, item.src.height, item.src.speed)}</div>`;
+    return `<div class="project-desktop-photo project-desktop-photo--marquee">${marqueeHTML(item.src.items, item.src.height, item.src.speed, item.src.heightDesktop)}</div>`;
   }
   if (item.src && item.src.type === "slideshow") {
     return `<div class="project-desktop-photo project-desktop-photo--slideshow">${slideshowHTML(item.src.items, item.src.height, item.src.interval)}</div>`;
@@ -1340,7 +1349,7 @@ function anchoColumna(tracks, n) {
 // carruseles y slide-cuts tienen caja propia.
 function altoEstimado(entry, ancho) {
   if (Array.isArray(entry)) return 220;
-  if (entry && entry.type === "carrusel") return entry.height || 220;
+  if (entry && entry.type === "carrusel") return entry.heightDesktop || entry.height || 220;
   if (entry && entry.type === "slideshow") {
     if (entry.height) return entry.height;
     const d = dimsDe(entry.items && entry.items[0]);

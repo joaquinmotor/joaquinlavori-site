@@ -864,6 +864,11 @@ button{ font-family: inherit; }
      masonry's randomized per-cell height — no background needed either,
      the filmstrip photos fill it edge to edge. */
   .project-desktop-photo--marquee{ height:auto; background:none; }
+  /* Alto propio para desktop, sin tocar el mobile: lo pone `heightDesktop` en
+     data.js (ver marqueeHTML en script.js). Vive dentro del media query, asi
+     que en el celu el carrusel conserva su alto normal. Le gana a la regla
+     base de .project-marquee por venir despues en el archivo. */
+  .project-marquee--h-desktop{ height: var(--marquee-h-desktop); }
   .project-desktop-photo--slideshow{ height:auto; background:none; }
 
   /* Kept for the (currently unused) "logos" project type. */

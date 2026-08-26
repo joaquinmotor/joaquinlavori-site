@@ -97,20 +97,28 @@ const PROJECTS = [
       "assets/img/the-movement/logo.webp",
       "assets/img/the-movement/foto-01.webp",
       { type: "video", src: "assets/img/the-movement/video-01.mp4", poster: "assets/img/the-movement/video-01-poster.jpg" },
-      [
-        "assets/img/the-movement/carrusel1-01.webp",
-        "assets/img/the-movement/carrusel1-02.webp",
-        "assets/img/the-movement/carrusel1-03.webp",
-        "assets/img/the-movement/carrusel1-04.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 200,
+        items: [
+          "assets/img/the-movement/carrusel1-01.webp",
+          "assets/img/the-movement/carrusel1-02.webp",
+          "assets/img/the-movement/carrusel1-03.webp",
+          "assets/img/the-movement/carrusel1-04.webp",
+        ],
+      },
       { type: "video", src: "assets/img/the-movement/video-02.mp4", poster: "assets/img/the-movement/video-02-poster.jpg" },
       "assets/img/the-movement/team.webp",
       { type: "video", src: "assets/img/the-movement/celu.mp4", poster: "assets/img/the-movement/celu-poster.jpg" },
-      [
-        "assets/img/the-movement/carrusel2-01.webp",
-        "assets/img/the-movement/carrusel2-02.webp",
-        "assets/img/the-movement/carrusel2-03.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 200,
+        items: [
+          "assets/img/the-movement/carrusel2-01.webp",
+          "assets/img/the-movement/carrusel2-02.webp",
+          "assets/img/the-movement/carrusel2-03.webp",
+        ],
+      },
     ],
   },
   {
