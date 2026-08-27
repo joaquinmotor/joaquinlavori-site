@@ -1085,7 +1085,12 @@ button{ font-family: inherit; }
   .project-view.is-open{ transform:translateY(0); opacity:1; }
 
   .main{ width:100%; overflow:hidden; height: calc(100dvh - var(--nav-h)); }
-  .pages-track{ display:flex; height:100%; will-change: transform; }
+  /* touch-action reparte los ejes con el navegador: la vertical la maneja el
+     (scroll normal), la horizontal es nuestra. Sin esto el navegador puede
+     quedarse con el gesto horizontal a mitad de camino y mandar un touchcancel
+     —ver el handler en initSwipe()—. pinch-zoom explicito para no perder el
+     zoom con dos dedos sobre las fotos. */
+  .pages-track{ display:flex; height:100%; will-change: transform; touch-action: pan-y pinch-zoom; }
   /* Home Desktop's 3rd tile column (3x3 grid) doesn't exist on mobile —
      Home Mobile keeps its original 6-tile, 2-column layout. */
   .home-tile-column:nth-child(3){ display:none; }

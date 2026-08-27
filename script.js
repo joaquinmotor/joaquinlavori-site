@@ -1727,6 +1727,16 @@ function route() {
 
   goToPage(key);
 
+  initSeccion(key);
+}
+
+// Lo que hay que (re)armar cada vez que se ENTRA a una seccion, no cuando se
+// renderiza. Vivia adentro de route(), y ese era el bug: llegar por swipe no
+// pasa por route() —el swipe sincroniza la URL con replaceState a proposito,
+// para no cerrar un proyecto abierto— asi que entrando con el dedo los textos
+// de Info y las fotos de Side B no revelaban y los carruseles se quedaban con
+// la duracion default del CSS.
+function initSeccion(key) {
   // El reveal de Info se arma ACA y no en renderInfo(): renderInfo() corre una
   // sola vez al cargar el sitio, cuando la seccion Info todavia esta oculta, y
   // initReveal() saltea a proposito lo que no tiene layout (ver su comentario).
@@ -1876,6 +1886,23 @@ function initSwipe() {
     { passive: false }
   );
 
+  // Sin esto la tira se quedaba VARADA entre dos secciones. touchcancel lo
+  // dispara el navegador cuando se queda con el gesto para el —esconder la
+  // barra de direcciones, un overscroll, una notificacion— y en ese caso
+  // touchend NO llega nunca: el ultimo gsap.set() del touchmove queda como
+  // posicion final, media seccion de cada lado, y ahi se queda. Scrollear para
+  // arriba y para abajo no lo saca (esos gestos ni entran al handler), asi que
+  // parece que el swipe dejo de andar. Reproducido a 390px el 2026-08-27:
+  // tras el cancel la tira quedaba en x=-1050 con las paginas en -780/-1170.
+  // Volver a la seccion actual, que es lo que hace un swipe que no llego al
+  // umbral.
+  track.addEventListener("touchcancel", () => {
+    if (!dragging) return;
+    dragging = false;
+    axis = null;
+    goToPage(pageOrder[currentPageIndex]);
+  });
+
   track.addEventListener("touchend", (e) => {
     if (!dragging) return;
     dragging = false;
@@ -1887,6 +1914,7 @@ function initSwipe() {
       targetIndex = Math.max(0, Math.min(pageOrder.length - 1, targetIndex));
     }
     goToPage(pageOrder[targetIndex]);
+    initSeccion(pageOrder[targetIndex]);
     // A swipe is just a page peek — unlike a real nav click it must not
     // close a project pinned open on Work (see openProject/route()), so
     // sync the URL silently instead of going through hashchange routing.
