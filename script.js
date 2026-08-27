@@ -1852,7 +1852,16 @@ function initSwipe() {
       axis = null;
       dragging = false;
       baseX = -currentPageIndex * window.innerWidth;
-      if (typeof gsap !== "undefined") gsap.killTweensOf(track);
+      // Auto-reparacion. Si la tira no esta donde le corresponde a la seccion
+      // actual, se acomoda ANTES de empezar el gesto. Cualquier arrastre que
+      // haya quedado a medias —un touchcancel que no llego, un tween cortado,
+      // un resize en el medio— se arregla solo en el siguiente toque en vez de
+      // dejar el swipe trabado para siempre. Si ya estaba en su lugar, este
+      // set no hace nada.
+      if (typeof gsap !== "undefined") {
+        gsap.killTweensOf(track);
+        gsap.set(track, { x: baseX });
+      }
     },
     { passive: true }
   );
@@ -1866,8 +1875,17 @@ function initSwipe() {
       const dy = t.clientY - startY;
 
       if (!axis) {
-        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
-        axis = Math.abs(dx) > Math.abs(dy) * 1.2 ? "x" : "y";
+        // No decidir el eje con el primer pixel. Un dedo real casi nunca
+        // arranca perfectamente horizontal, y en una seccion larga y de puro
+        // texto como Info la micro-deriva inicial suele ser vertical: con el
+        // umbral viejo (8px, y ademas exigiendole a la horizontal ganar por
+        // 1.2) alcanzaba con eso para que el gesto quedara marcado como scroll
+        // y el swipe no respondiera. Se espera a que UNO de los dos ejes tenga
+        // 10px de verdad y gana el mas grande, sin handicap.
+        const ax = Math.abs(dx);
+        const ay = Math.abs(dy);
+        if (ax < 10 && ay < 10) return;
+        axis = ax > ay ? "x" : "y";
         dragging = axis === "x";
       }
       if (axis !== "x") return;
