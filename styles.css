@@ -69,6 +69,7 @@ button{ font-family: inherit; }
   transition: background .3s var(--ease-soft), backdrop-filter .3s var(--ease-soft);
 }
 .site-nav.is-scrolled{
+  background: rgba(243, 243, 243, 0.72); /* fallback: --bg al 72% */
   background: color-mix(in srgb, var(--bg) 72%, transparent);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -117,7 +118,7 @@ button{ font-family: inherit; }
   color: var(--ink);
   transition: color .2s var(--ease-soft);
 }
-.nav-segment:hover .nav-pill{ background: color-mix(in srgb, var(--ink) 8%, transparent); }
+.nav-segment:hover .nav-pill{ background: rgba(18, 18, 18, 0.08); background: color-mix(in srgb, var(--ink) 8%, transparent); }
 .nav-segment.active .nav-pill{ background: var(--ink); }
 .nav-segment.active .nav-label{ color: var(--bg); }
 .nav-segment:hover.active .nav-pill{ background: var(--ink); }
@@ -283,7 +284,7 @@ button{ font-family: inherit; }
 .tile .tile-caption-title,
 .page-sidebar-project .tile-caption-title{ font-weight:500; color: var(--ink); }
 .tile .tile-caption-desc,
-.page-sidebar-project .tile-caption-desc{ font-weight:300; color: color-mix(in srgb, var(--ink) 70%, transparent); }
+.page-sidebar-project .tile-caption-desc{ font-weight:300; color: #121212B3; color: color-mix(in srgb, var(--ink) 70%, transparent); }
 
 /* Logos tile: text-only, no photo */
 .tile.logos-tile .tile-cover{
@@ -615,7 +616,7 @@ button{ font-family: inherit; }
    static text tool; here plain CSS word-wrap does the same job). */
 .project-related-caption{ margin:0; padding-top:6px; font-family: var(--font-body); font-size:16px; line-height:22px; }
 .project-related-title{ font-weight:500; color: var(--ink); }
-.project-related-desc{ font-weight:300; color: color-mix(in srgb, var(--ink) 70%, transparent); }
+.project-related-desc{ font-weight:300; color: #121212B3; color: color-mix(in srgb, var(--ink) 70%, transparent); }
 
 .project-footer-divider{ height:1px; background:#C3C3C3; }
 
@@ -1084,13 +1085,18 @@ button{ font-family: inherit; }
   }
   .project-view.is-open{ transform:translateY(0); opacity:1; }
 
-  .main{ width:100%; overflow:hidden; height: calc(100dvh - var(--nav-h)); }
+  /* Los pares de declaraciones de aca y de las de color-mix/touch-action mas
+     arriba son fallbacks, no duplicados: si el navegador no entiende la
+     segunda, la descarta y se queda con la primera. Sin esto, un Safari
+     anterior al 15.4 tira la linea del dvh entera, .main queda sin alto y la
+     tira de secciones no mide nada (2026-08-27). */
+  .main{ width:100%; overflow:hidden; height: calc(100vh - var(--nav-h)); height: calc(100dvh - var(--nav-h)); }
   /* touch-action reparte los ejes con el navegador: la vertical la maneja el
      (scroll normal), la horizontal es nuestra. Sin esto el navegador puede
      quedarse con el gesto horizontal a mitad de camino y mandar un touchcancel
      —ver el handler en initSwipe()—. pinch-zoom explicito para no perder el
      zoom con dos dedos sobre las fotos. */
-  .pages-track{ display:flex; height:100%; will-change: transform; touch-action: pan-y pinch-zoom; }
+  .pages-track{ display:flex; height:100%; will-change: transform; touch-action: pan-y; touch-action: pan-y pinch-zoom; }
   /* Home Desktop's 3rd tile column (3x3 grid) doesn't exist on mobile —
      Home Mobile keeps its original 6-tile, 2-column layout. */
   .home-tile-column:nth-child(3){ display:none; }
