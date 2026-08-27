@@ -430,7 +430,9 @@ const MARQUEE_PX_PER_SEC = 55;
 // que entra solo arranca en 0ms.
 // La clase .reveal se agrega ACA y no en el HTML a proposito: si este JS no
 // corre, el texto queda visible en vez de invisible.
-const REVEAL_STAGGER_MS = 70;
+// Ver el bloque --reveal-* en :root (styles.css): esto es la cuarta pata
+// del mismo set y se ajusta con esos.
+const REVEAL_STAGGER_MS = 110;
 function initReveal(root) {
   const scope = root || document;
   const grupos = [
@@ -1520,8 +1522,10 @@ function revealTiles(pageEl, key) {
   if (!tiles.length || typeof gsap === "undefined") return;
   gsap.fromTo(
     tiles,
-    { opacity: 0, y: 16 },
-    { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", stagger: 0.04, overwrite: true }
+    { opacity: 0, y: 22 },
+    // Mismo pedido que el .reveal de CSS (2026-08-27): mas lento y mas suave.
+    // power2.out es el equivalente en gsap del cubic-out de --reveal-ease.
+    { opacity: 1, y: 0, duration: 0.9, ease: "power2.out", stagger: 0.07, overwrite: true }
   );
 }
 

@@ -13,6 +13,23 @@
   --font-body: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-caption: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
   --ease-soft: cubic-bezier(.22,.68,.24,1);
+
+  /* Slide-up de entrada (.reveal). Los cuatro valores juntos aca porque se
+     ajustan como un set: subir la duracion sin subir el recorrido hace que la
+     pieza flote en el lugar, y al reves queda apurada.
+     2026-08-27, pedido del usuario ("mas suave en general, mas despacio"):
+     fade 550->900ms, movimiento 800->1300ms, recorrido 20->28px, escalonado
+     70->110ms (REVEAL_STAGGER_MS en script.js).
+     El ease tambien cambio, y es la mitad del asunto: venia de un expo-out
+     (.16,1,.3,1), que gasta casi todo el recorrido en los primeros 150ms y
+     despues arrastra una cola larguisima. Estirarle la duracion a eso no lo
+     hace mas lento, lo hace mas pegajoso —la pieza llega enseguida y despues
+     se queda quieta pareciendo trabada—. Un cubic-out reparte el movimiento a
+     lo largo de toda la duracion, que es lo que se lee como "despacio". */
+  --reveal-ease: cubic-bezier(.33,1,.68,1);
+  --reveal-shift: 28px;
+  --reveal-fade: 900ms;
+  --reveal-move: 1300ms;
 }
 
 *{ box-sizing: border-box; }
@@ -1088,13 +1105,13 @@ button{ font-family: inherit; }
    "se ve pero no se mueve" que costo diagnosticar). */
 .reveal{
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(var(--reveal-shift));
   will-change: opacity, transform;
 }
 /* La transicion vive SOLO en el estado final, NO en .reveal (2026-08-23).
    Puesta en .reveal, el instante en que initReveal() agrega la clase ya es un
    cambio de opacity 1 -> 0 CON transicion: el elemento arranca a desvanecerse
-   durante 550ms. Para los bloques que entran por scroll no se nota, porque el
+   durante todo el fade. Para los bloques que entran por scroll no se nota, porque el
    observer tarda en dispararse; pero para todo lo que YA esta en pantalla
    cuando se observa — el hero de un proyecto recien abierto — .is-in llega un
    frame despues, el fade de vuelta arranca de un valor casi lleno y no se ve
@@ -1103,12 +1120,12 @@ button{ font-family: inherit; }
    El fade dura menos que el movimiento a proposito: el texto ya se puede leer
    mientras todavia se esta acomodando. Con las dos duraciones iguales el
    bloque llega arriba justo cuando termina de aparecer y se siente pastoso.
-   Valores ajustados a mano en el tuner del 2026-08-23. */
+   Los valores viven en :root, arriba de todo. */
 .reveal.is-in{
   opacity: 1;
   transform: none;
-  transition: opacity 550ms cubic-bezier(0.16, 1, 0.3, 1),
-              transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity var(--reveal-fade) var(--reveal-ease),
+              transform var(--reveal-move) var(--reveal-ease);
   transition-delay: var(--reveal-delay, 0ms);
 }
 @media (prefers-reduced-motion: reduce){
