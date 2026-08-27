@@ -99,7 +99,7 @@ const PROJECTS = [
       { type: "video", src: "assets/img/the-movement/video-01.mp4", poster: "assets/img/the-movement/video-01-poster.jpg" },
       {
         type: "carrusel",
-        heightDesktop: 200,
+        heightDesktop: 300,
         items: [
           "assets/img/the-movement/carrusel1-01.webp",
           "assets/img/the-movement/carrusel1-02.webp",
@@ -112,7 +112,7 @@ const PROJECTS = [
       { type: "video", src: "assets/img/the-movement/celu.mp4", poster: "assets/img/the-movement/celu-poster.jpg" },
       {
         type: "carrusel",
-        heightDesktop: 200,
+        heightDesktop: 300,
         items: [
           "assets/img/the-movement/carrusel2-01.webp",
           "assets/img/the-movement/carrusel2-02.webp",
@@ -162,16 +162,20 @@ const PROJECTS = [
     //    slide-cut de un solo item al final, que es donde lo pone su numero.
     gallery: [
       "assets/img/afends/hero.webp",
-      [
-        "assets/img/afends/carrusel1-01.webp",
-        "assets/img/afends/carrusel1-02.webp",
-        "assets/img/afends/carrusel1-03.webp",
-        "assets/img/afends/carrusel1-04.webp",
-        "assets/img/afends/carrusel1-05.webp",
-        "assets/img/afends/carrusel1-06.webp",
-        "assets/img/afends/carrusel1-07.webp",
-        "assets/img/afends/carrusel1-08.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/afends/carrusel1-01.webp",
+          "assets/img/afends/carrusel1-02.webp",
+          "assets/img/afends/carrusel1-03.webp",
+          "assets/img/afends/carrusel1-04.webp",
+          "assets/img/afends/carrusel1-05.webp",
+          "assets/img/afends/carrusel1-06.webp",
+          "assets/img/afends/carrusel1-07.webp",
+          "assets/img/afends/carrusel1-08.webp",
+        ],
+      },
       {
         type: "slideshow",
         items: [
@@ -195,14 +199,22 @@ const PROJECTS = [
         ],
       },
       { type: "video", src: "assets/img/afends/video-02.mp4", poster: "assets/img/afends/video-02-poster.jpg" },
-      [
-        "assets/img/afends/carrusel01-01.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/afends/carrusel01-01.webp",
+        ],
+      },
       "assets/img/afends/foto-01.webp",
       { type: "video", src: "assets/img/afends/video-03.mp4", poster: "assets/img/afends/video-03-poster.jpg" },
-      [
-        "assets/img/afends/carrusel02-01.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/afends/carrusel02-01.webp",
+        ],
+      },
       {
         type: "slideshow",
         items: [
@@ -213,21 +225,29 @@ const PROJECTS = [
           "assets/img/afends/slidecut5-05.webp",
         ],
       },
-      [
-        "assets/img/afends/carrusel03-01.webp",
-        "assets/img/afends/carrusel03-02.webp",
-        "assets/img/afends/carrusel03-03.webp",
-        "assets/img/afends/carrusel03-04.webp",
-        "assets/img/afends/carrusel03-05.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/afends/carrusel03-01.webp",
+          "assets/img/afends/carrusel03-02.webp",
+          "assets/img/afends/carrusel03-03.webp",
+          "assets/img/afends/carrusel03-04.webp",
+          "assets/img/afends/carrusel03-05.webp",
+        ],
+      },
       "assets/img/afends/foto-02.webp",
-      [
-        "assets/img/afends/carrusel04-01.webp",
-        "assets/img/afends/carrusel04-02.webp",
-        "assets/img/afends/carrusel04-03.webp",
-        "assets/img/afends/carrusel04-04.webp",
-        "assets/img/afends/carrusel04-05.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/afends/carrusel04-01.webp",
+          "assets/img/afends/carrusel04-02.webp",
+          "assets/img/afends/carrusel04-03.webp",
+          "assets/img/afends/carrusel04-04.webp",
+          "assets/img/afends/carrusel04-05.webp",
+        ],
+      },
       {
         type: "slideshow",
         items: [
@@ -247,13 +267,17 @@ const PROJECTS = [
           "assets/img/afends/slidecut7-03.webp",
         ],
       },
-      [
-        "assets/img/afends/carrusel5-01.webp",
-        "assets/img/afends/carrusel5-02.webp",
-        "assets/img/afends/carrusel5-03.webp",
-        "assets/img/afends/carrusel5-04.webp",
-        "assets/img/afends/carrusel5-05.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/afends/carrusel5-01.webp",
+          "assets/img/afends/carrusel5-02.webp",
+          "assets/img/afends/carrusel5-03.webp",
+          "assets/img/afends/carrusel5-04.webp",
+          "assets/img/afends/carrusel5-05.webp",
+        ],
+      },
       {
         type: "slideshow",
         items: [
@@ -439,10 +463,14 @@ const PROJECTS = [
     // convention they are not gallery entries (2026-08-22, confirmed).
     gallery: [
       "assets/img/roark/hero.webp",
-      [
-        "assets/img/roark/carrusel1-01.webp",
-        "assets/img/roark/carrusel1-02.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/roark/carrusel1-01.webp",
+          "assets/img/roark/carrusel1-02.webp",
+        ],
+      },
       {
         type: "carrusel",
         height: 130,
@@ -458,20 +486,17 @@ const PROJECTS = [
           "assets/img/roark/slidecut1-02.webp",
         ],
       },
-      [
-        "assets/img/roark/carrusel3-01.webp",
-        "assets/img/roark/carrusel3-02.webp",
-        "assets/img/roark/carrusel3-03.webp",
-        "assets/img/roark/carrusel3-04.webp",
-      ],
       {
         type: "carrusel",
-        speed: 70,
+        heightDesktop: 300,
         items: [
-          "assets/img/roark/carrusel4-01.webp",
-          "assets/img/roark/carrusel4-02.webp",
-          "assets/img/roark/carrusel4-03.webp",
-          "assets/img/roark/carrusel4-04.webp",
+          "assets/img/roark/carrusel3-01.webp",
+          "assets/img/roark/carrusel3-02.webp",
+          "assets/img/roark/carrusel3-03.webp",
+          "assets/img/roark/carrusel3-04.webp",
+          "assets/img/roark/carrusel3-05.webp",
+          "assets/img/roark/carrusel3-06.webp",
+          "assets/img/roark/carrusel3-07.webp",
         ],
       },
       "assets/img/roark/foto-02.webp",
@@ -533,13 +558,17 @@ const PROJECTS = [
     //    build lo saca a 660 y el override se pierde de data.js.
     gallery: [
       "assets/img/vans/hero.webp",
-      [
-        "assets/img/vans/carrusel1-01.webp",
-        "assets/img/vans/carrusel1-02.webp",
-        "assets/img/vans/carrusel1-03.webp",
-        "assets/img/vans/carrusel1-04.webp",
-        "assets/img/vans/carrusel1-05.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/vans/carrusel1-01.webp",
+          "assets/img/vans/carrusel1-02.webp",
+          "assets/img/vans/carrusel1-03.webp",
+          "assets/img/vans/carrusel1-04.webp",
+          "assets/img/vans/carrusel1-05.webp",
+        ],
+      },
       {
         type: "slideshow",
         items: [
@@ -552,21 +581,30 @@ const PROJECTS = [
           "assets/img/vans/slidecut1-07.webp",
         ],
       },
-      [
-        "assets/img/vans/carrusel2-01.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/vans/carrusel2-01.webp",
+        ],
+      },
       { type: "video", src: "assets/img/vans/video-01.mp4", poster: "assets/img/vans/video-01-poster.jpg" },
       "assets/img/vans/foto-01.webp",
-      [
-        "assets/img/vans/carrusel3-01.webp",
-        "assets/img/vans/carrusel3-02.webp",
-        "assets/img/vans/carrusel3-03.webp",
-        "assets/img/vans/carrusel3-04.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/vans/carrusel3-01.webp",
+          "assets/img/vans/carrusel3-02.webp",
+          "assets/img/vans/carrusel3-03.webp",
+          "assets/img/vans/carrusel3-04.webp",
+        ],
+      },
       "assets/img/vans/foto-02.webp",
       {
         type: "carrusel",
         height: 200,
+        heightDesktop: 300,
         items: [
           "assets/img/vans/carrusel-01.webp",
         ],
@@ -577,9 +615,13 @@ const PROJECTS = [
       { type: "video", src: "assets/img/vans/gif.mp4", poster: "assets/img/vans/gif-poster.jpg" },
       "assets/img/vans/foto-05.webp",
       "assets/img/vans/foto-06.webp",
-      [
-        "assets/img/vans/carrusel4-01.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/vans/carrusel4-01.webp",
+        ],
+      },
     ],
   },
   {
@@ -603,11 +645,15 @@ const PROJECTS = [
     gallery: [
       "assets/img/laguitarrita/hero.webp",
       "assets/img/laguitarrita/foto-01.webp",
-      [
-        "assets/img/laguitarrita/carrusel1-01.webp",
-        "assets/img/laguitarrita/carrusel1-02.webp",
-        "assets/img/laguitarrita/carrusel1-03.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/laguitarrita/carrusel1-01.webp",
+          "assets/img/laguitarrita/carrusel1-02.webp",
+          "assets/img/laguitarrita/carrusel1-03.webp",
+        ],
+      },
       {
         type: "slideshow",
         height: 280,
@@ -618,21 +664,29 @@ const PROJECTS = [
         ],
       },
       { type: "video", src: "assets/img/laguitarrita/video-01.mp4", poster: "assets/img/laguitarrita/video-01-poster.jpg" },
-      [
-        "assets/img/laguitarrita/carrusel2-01.webp",
-        "assets/img/laguitarrita/carrusel2-02.webp",
-        "assets/img/laguitarrita/carrusel2-03.webp",
-        "assets/img/laguitarrita/carrusel2-04.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/laguitarrita/carrusel2-01.webp",
+          "assets/img/laguitarrita/carrusel2-02.webp",
+          "assets/img/laguitarrita/carrusel2-03.webp",
+          "assets/img/laguitarrita/carrusel2-04.webp",
+        ],
+      },
       { type: "video", src: "assets/img/laguitarrita/video-02.mp4", poster: "assets/img/laguitarrita/video-02-poster.jpg" },
-      [
-        "assets/img/laguitarrita/carrusel3-01.webp",
-        "assets/img/laguitarrita/carrusel3-02.webp",
-        "assets/img/laguitarrita/carrusel3-03.webp",
-        "assets/img/laguitarrita/carrusel3-04.webp",
-        "assets/img/laguitarrita/carrusel3-05.webp",
-        "assets/img/laguitarrita/carrusel3-06.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/laguitarrita/carrusel3-01.webp",
+          "assets/img/laguitarrita/carrusel3-02.webp",
+          "assets/img/laguitarrita/carrusel3-03.webp",
+          "assets/img/laguitarrita/carrusel3-04.webp",
+          "assets/img/laguitarrita/carrusel3-05.webp",
+          "assets/img/laguitarrita/carrusel3-06.webp",
+        ],
+      },
     ],
   },
   {
@@ -775,13 +829,17 @@ const PROJECTS = [
           "assets/img/lightningbolt/slidecut1-07.webp",
         ],
       },
-      [
-        "assets/img/lightningbolt/carrusel1-01.webp",
-        "assets/img/lightningbolt/carrusel1-02.webp",
-        "assets/img/lightningbolt/carrusel1-03.webp",
-        "assets/img/lightningbolt/carrusel1-04.webp",
-        "assets/img/lightningbolt/carrusel1-05.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/lightningbolt/carrusel1-01.webp",
+          "assets/img/lightningbolt/carrusel1-02.webp",
+          "assets/img/lightningbolt/carrusel1-03.webp",
+          "assets/img/lightningbolt/carrusel1-04.webp",
+          "assets/img/lightningbolt/carrusel1-05.webp",
+        ],
+      },
       "assets/img/lightningbolt/foto-02.webp",
       {
         type: "carrusel",
@@ -809,11 +867,15 @@ const PROJECTS = [
         ],
       },
       { type: "video", src: "assets/img/lightningbolt/video-01.mp4", poster: "assets/img/lightningbolt/video-01-poster.jpg" },
-      [
-        "assets/img/lightningbolt/carrusel3-01.webp",
-        "assets/img/lightningbolt/carrusel3-02.webp",
-        "assets/img/lightningbolt/carrusel3-03.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/lightningbolt/carrusel3-01.webp",
+          "assets/img/lightningbolt/carrusel3-02.webp",
+          "assets/img/lightningbolt/carrusel3-03.webp",
+        ],
+      },
     ],
   },
   {
@@ -840,24 +902,36 @@ const PROJECTS = [
     gallery: [
       "assets/img/fortyspotted/hero.webp",
       "assets/img/fortyspotted/foto-01.webp",
-      [
-        "assets/img/fortyspotted/carrusel1-01.webp",
-        "assets/img/fortyspotted/carrusel1-02.webp",
-        "assets/img/fortyspotted/carrusel1-03.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/fortyspotted/carrusel1-01.webp",
+          "assets/img/fortyspotted/carrusel1-02.webp",
+          "assets/img/fortyspotted/carrusel1-03.webp",
+        ],
+      },
       "assets/img/fortyspotted/foto-02.webp",
       "assets/img/fortyspotted/foto-03.webp",
-      [
-        "assets/img/fortyspotted/carrusel2-01.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/fortyspotted/carrusel2-01.webp",
+        ],
+      },
       "assets/img/fortyspotted/foto-04.webp",
       "assets/img/fortyspotted/foto-05.webp",
       "assets/img/fortyspotted/foto-06.webp",
-      [
-        "assets/img/fortyspotted/carrusel3-01.webp",
-        "assets/img/fortyspotted/carrusel3-02.webp",
-        "assets/img/fortyspotted/carrusel3-03.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/fortyspotted/carrusel3-01.webp",
+          "assets/img/fortyspotted/carrusel3-02.webp",
+          "assets/img/fortyspotted/carrusel3-03.webp",
+        ],
+      },
       "assets/img/fortyspotted/foto-07.webp",
       {
         type: "carrusel",
@@ -876,9 +950,13 @@ const PROJECTS = [
           "assets/img/fortyspotted/slidecut1-05.webp",
         ],
       },
-      [
-        "assets/img/fortyspotted/carrusel5-01.webp",
-      ],
+      {
+        type: "carrusel",
+        heightDesktop: 300,
+        items: [
+          "assets/img/fortyspotted/carrusel5-01.webp",
+        ],
+      },
     ],
   },
   {

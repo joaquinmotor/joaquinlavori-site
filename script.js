@@ -106,7 +106,7 @@ const LIVE_PROJECTS = PROJECTS.filter((p) => REAL_MEDIA_PROJECTS.has(p.slug));
 // BUMP THIS whenever media files are overwritten in place. It is applied
 // here, not in data.js, so the paths in data.js stay clean and hasRealMedia()
 // keeps matching them.
-const MEDIA_V = "30";
+const MEDIA_V = "31";
 function withMediaV(url) {
   if (!url) return url;
   return url + (url.includes("?") ? "&" : "?") + "v=" + MEDIA_V;
@@ -645,11 +645,17 @@ function marqueeHTML(items, height, speed, heightDesktop) {
   const itemsHTML = items
     .map((src) => `<div class="project-marquee-item"><img src="${withMediaV(src)}" alt="" fetchpriority="high" decoding="async" /></div>`)
     .join("");
+  // Los dos altos viajan como custom properties y se aplican desde CSS, NO por
+  // style inline. Con el alto de mobile inline, un grupo que tuviera los dos
+  // —el carrusel del 23 de vans: 200 en mobile, 300 en desktop— se quedaba en
+  // 200 en las dos vistas, porque un estilo inline le gana a cualquier regla de
+  // hoja de estilos (2026-08-27). Siendo las dos reglas de clase, gana la del
+  // media query por venir despues en el archivo.
   const estilos = [];
-  if (height) estilos.push(`height:${height}px`);
+  if (height) estilos.push(`--marquee-h:${height}px`);
   if (heightDesktop) estilos.push(`--marquee-h-desktop:${heightDesktop}px`);
   const style = estilos.length ? ` style="${estilos.join(";")}"` : "";
-  const claseH = heightDesktop ? " project-marquee--h-desktop" : "";
+  const claseH = (height ? " project-marquee--h" : "") + (heightDesktop ? " project-marquee--h-desktop" : "");
   // Optional per-group scroll speed in px/s, overriding MARQUEE_PX_PER_SEC
   // (2026-08-22, user request: Roark's carrusel4 "tiene que correr apenas
   // mas rapido"). Read back by initMarquees() off the data attribute.

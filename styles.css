@@ -514,6 +514,10 @@ button{ font-family: inherit; }
    track is the group rendered twice back to back, animated exactly -50%
    so the loop point is seamless. */
 .project-marquee{ height:220px; overflow:hidden; }
+/* Alto propio del grupo (campo `height` en data.js). Va por clase y no por
+   style inline: un inline le ganaria a la regla de desktop de mas abajo y un
+   grupo con los dos altos se quedaria siempre con el de mobile. */
+.project-marquee--h{ height: var(--marquee-h); }
 .project-marquee-track{
   display:flex;
   height:100%;
