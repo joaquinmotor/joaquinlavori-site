@@ -433,6 +433,16 @@ const MARQUEE_PX_PER_SEC = 55;
 // Ver el bloque --reveal-* en :root (styles.css): esto es la cuarta pata
 // del mismo set y se ajusta con esos.
 const REVEAL_STAGGER_MS = 110;
+// El will-change de .reveal le pide al navegador una capa de composicion por
+// elemento. Con los 12 bloques de Info no se notaba, pero Side B suma decenas
+// de fotos y sostener esas capas para siempre cuesta memoria de video al pedo:
+// una vez que la pieza termino de entrar ya no se mueve nunca mas. Se suelta al
+// terminar la transicion (transitionend dispara una vez por propiedad; alcanza
+// con la primera).
+function soltarWillChange(el) {
+  el.addEventListener("transitionend", () => { el.style.willChange = "auto"; }, { once: true });
+}
+
 function initReveal(root) {
   const scope = root || document;
   const grupos = [
@@ -448,6 +458,12 @@ function initReveal(root) {
     // pagina y entran en pantalla de a una, asi que el escalonado del observer
     // les da 0ms igual.
     scope.querySelectorAll("[data-reveal]"),
+    // Side B: las fotos entran con el mismo slide-up al aparecer en pantalla
+    // (2026-08-27, pedido del usuario). Van los dos arboles —el de mobile y el
+    // masonry de desktop—; el que esta en display:none lo saltea el filtro de
+    // getClientRects() de mas abajo y lo engancha el resize.
+    scope.querySelectorAll(".sideb-gallery .project-gallery-item"),
+    scope.querySelectorAll(".sideb-desktop-photo"),
   ];
   const todos = [];
   grupos.forEach((g) => {
@@ -492,6 +508,7 @@ function initReveal(root) {
       if (el.classList.contains("is-in")) return;
       if (el.getBoundingClientRect().bottom < 0) {
         el.classList.add("is-in");
+        el.style.willChange = "auto"; // ver soltarWillChange(): aca no hay transicion que esperar
         io.unobserve(el);
       }
     });
@@ -505,6 +522,7 @@ function initReveal(root) {
       // golpe y sin tope el ultimo bloque esperaria casi un segundo.
       e.target.style.setProperty("--reveal-delay", Math.min(i, 4) * REVEAL_STAGGER_MS + "ms");
       e.target.classList.add("is-in");
+      soltarWillChange(e.target);
       io.unobserve(e.target); // una sola vez: no re-anima al volver a scrollear
     });
   }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
@@ -527,8 +545,8 @@ window.addEventListener("resize", () => {
     // visible al cambiar el viewport ya mide bien: recalcular. initMarquees()
     // solo escribe animationDuration, es idempotente; initSlideshows() NO lo
     // es (crea setIntervals) y por eso no va aca.
-    if (els.sidebContent) initMarquees(els.sidebContent);
-    if (els.sidebDesktop) initMarquees(els.sidebDesktop);
+    if (els.sidebContent) { initMarquees(els.sidebContent); initReveal(els.sidebContent); }
+    if (els.sidebDesktop) { initMarquees(els.sidebDesktop); initReveal(els.sidebDesktop); }
   }, 200);
 });
 
@@ -1461,6 +1479,20 @@ function initNav() {
     </nav>
   `;
 
+  // Un <a href="#/work"> apretado cuando el hash YA es #/work no dispara
+  // hashchange —para el navegador no cambio nada— asi que route() no corre y la
+  // seccion se queda tal cual estaba. Ahora que entrar a una seccion arranca
+  // arriba de todo (ver goToPage), eso se lee como que el boton no responde:
+  // "apreto en WORK y se queda trabado en el ultimo scroll que deje"
+  // (2026-08-27, reporte del usuario). Se rutea a mano.
+  els.siteNav.addEventListener("click", (e) => {
+    const a = e.target.closest(".nav-segment");
+    if (!a) return;
+    if (a.getAttribute("href") !== (location.hash || "#/")) return;
+    e.preventDefault();
+    route();
+  });
+
   document.querySelectorAll("[data-footer]").forEach((f) => {
     f.innerHTML = footerHTML();
   });
@@ -1585,6 +1617,21 @@ function goToPage(key, { animate = true } = {}) {
     }
   }
 
+  // Entrar a una seccion arranca arriba de todo. En desktop hay que decirlo:
+  // las cuatro paginas viven en el MISMO documento y solo se muestra una por
+  // vez (display), asi que el scroll es uno solo —el de la ventana— compartido
+  // por todas. Al cambiar de seccion la nueva heredaba la posicion de la
+  // anterior y aparecia por la mitad (2026-08-27: "cuando apreto en WORK se
+  // queda trabado en el ultimo scroll que deje"). No es el swipe: pasaba igual
+  // desde el nav, el swipe solo termina en la misma funcion.
+  // En mobile NO se toca: ahi cada .page tiene su propio .page-scroll, o sea
+  // cada seccion se acuerda de donde estaba, que es lo que se espera al pasar
+  // de una a otra con el dedo.
+  // animate === false es el re-armado por resize (ver el listener del final),
+  // que no es una navegacion: ahi mover el scroll seria arrebatarselo al que
+  // esta agrandando la ventana.
+  if (!isMobile() && animate) resetScrollPagina(targetEl);
+
   revealTiles(targetEl, key);
 }
 
@@ -1596,11 +1643,11 @@ function goToPage(key, { animate = true } = {}) {
 // abajo en la grilla de Work— abria el proyecto ya scrolleado, y the-movement
 // —que esta arriba— no (2026-08-27, reporte del usuario).
 // El sidebar tambien va: en desktop tiene su propio overflow-y.
-function resetScrollWork() {
+function resetScrollPagina(pageEl) {
   window.scrollTo(0, 0);
   document.documentElement.scrollTop = 0;
   document.body.scrollTop = 0;
-  els.pageWork.querySelectorAll(".page-scroll, .sidebar").forEach((el) => {
+  (pageEl || document).querySelectorAll(".page-scroll, .sidebar").forEach((el) => {
     el.scrollTop = 0;
   });
 }
@@ -1613,7 +1660,7 @@ function closeProject() {
   renderSidebar("work", false);
   // Solo si venia de un proyecto: closeProject() corre en CADA navegacion a
   // Work (ver route()), y ahi no hay que tocarle el scroll al catalogo.
-  if (estabaAbierto) resetScrollWork();
+  if (estabaAbierto) resetScrollPagina(els.pageWork);
 }
 
 // Opening a project always "pins" it to the Work tab (Pencil's Work
@@ -1631,7 +1678,7 @@ function openProject(slug) {
   // goToPage() ya pinto el sidebar leyendo la clase de arriba, pero se deja
   // explicito: el detalle SI lleva sidebar, a diferencia del catalogo.
   renderSidebar("work", true);
-  resetScrollWork();
+  resetScrollPagina(els.pageWork);
   if (isMobile()) {
     requestAnimationFrame(() => els.projectView.classList.add("is-open"));
   } else if (typeof gsap !== "undefined") {
@@ -1700,8 +1747,8 @@ function route() {
   // ya mide bien.
   if (key === "sideb") {
     requestAnimationFrame(() => {
-      if (els.sidebContent) initMarquees(els.sidebContent);
-      if (els.sidebDesktop) initMarquees(els.sidebDesktop);
+      if (els.sidebContent) { initMarquees(els.sidebContent); initReveal(els.sidebContent); }
+      if (els.sidebDesktop) { initMarquees(els.sidebDesktop); initReveal(els.sidebDesktop); }
     });
   }
 }
