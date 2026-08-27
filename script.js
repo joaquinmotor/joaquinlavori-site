@@ -1584,11 +1584,32 @@ function goToPage(key, { animate = true } = {}) {
   revealTiles(targetEl, key);
 }
 
+// Abrir o cerrar un proyecto tiene que empezar arriba de todo. Resetear el
+// .page-scroll de Work no alcanzaba: ese div SOLO es un scroller propio en
+// mobile (≤860px, ver styles.css); en desktop no tiene overflow y quien
+// scrollea es la ventana, asi que el scrollTo(0,0) no hacia nada y el detalle
+// heredaba la posicion del catalogo. Por eso entrar a forty spotted —que esta
+// abajo en la grilla de Work— abria el proyecto ya scrolleado, y the-movement
+// —que esta arriba— no (2026-08-27, reporte del usuario).
+// El sidebar tambien va: en desktop tiene su propio overflow-y.
+function resetScrollWork() {
+  window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+  els.pageWork.querySelectorAll(".page-scroll, .sidebar").forEach((el) => {
+    el.scrollTop = 0;
+  });
+}
+
 function closeProject() {
+  const estabaAbierto = els.pageWork.classList.contains("is-project-open");
   els.pageWork.classList.remove("is-project-open");
   els.projectView.classList.remove("is-open");
   // Volver al catalogo = volver a las 4 columnas sin sidebar.
   renderSidebar("work", false);
+  // Solo si venia de un proyecto: closeProject() corre en CADA navegacion a
+  // Work (ver route()), y ahi no hay que tocarle el scroll al catalogo.
+  if (estabaAbierto) resetScrollWork();
 }
 
 // Opening a project always "pins" it to the Work tab (Pencil's Work
@@ -1606,8 +1627,7 @@ function openProject(slug) {
   // goToPage() ya pinto el sidebar leyendo la clase de arriba, pero se deja
   // explicito: el detalle SI lleva sidebar, a diferencia del catalogo.
   renderSidebar("work", true);
-  const scroller = els.pageWork.querySelector(".page-scroll");
-  if (scroller) scroller.scrollTo(0, 0);
+  resetScrollWork();
   if (isMobile()) {
     requestAnimationFrame(() => els.projectView.classList.add("is-open"));
   } else if (typeof gsap !== "undefined") {
