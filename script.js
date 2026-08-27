@@ -1466,6 +1466,38 @@ function footerHTML() {
   `;
 }
 
+// Quien scrollea DE VERDAD arriba de `el`, no el primer contenedor que matchee
+// un selector. El "Back to top" buscaba el .page-scroll mas cercano, y ese div
+// SOLO es un scroller en mobile: en desktop no tiene overflow y quien scrollea
+// es la ventana, asi que el scrollTo() caia en un elemento que no scrollea y no
+// pasaba nada (2026-08-27, reporte del usuario en Safari; en realidad fallaba
+// en cualquier navegador de escritorio). Se sube por el arbol hasta encontrar
+// un elemento que desborde Y tenga overflow-y propio; si no hay ninguno, la
+// ventana.
+function scrollerReal(el) {
+  let n = el;
+  while (n && n !== document.body && n !== document.documentElement) {
+    if (n.scrollHeight > n.clientHeight + 1) {
+      const oy = getComputedStyle(n).overflowY;
+      if (oy === "auto" || oy === "scroll") return n;
+    }
+    n = n.parentElement;
+  }
+  return window;
+}
+
+// Safari no soporto el objeto de opciones de scrollTo() hasta el 15.4: se lo
+// comia entero y no scrolleaba nada, ni suave ni de golpe. Como no hay forma de
+// preguntar por esa API, se usa como proxy el soporte de la propiedad CSS
+// scroll-behavior, que llego en la misma version. Sin ella, salto seco.
+function irAlTope(scroller) {
+  if ("scrollBehavior" in document.documentElement.style) {
+    scroller.scrollTo({ top: 0, behavior: "smooth" });
+  } else {
+    scroller.scrollTo(0, 0);
+  }
+}
+
 function initNav() {
   els.siteNav.innerHTML = `
     <nav class="nav-links">
@@ -1509,8 +1541,7 @@ function initNav() {
   document.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-back-to-top]");
     if (!btn) return;
-    const scroller = btn.closest(".page-scroll") || btn.closest(".project-view") || window;
-    scroller.scrollTo({ top: 0, behavior: "smooth" });
+    irAlTope(scrollerReal(btn));
   });
 
   // Clicking the WORK nav pill is the explicit way back to the catalog.
