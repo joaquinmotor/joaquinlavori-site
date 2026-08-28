@@ -41,6 +41,16 @@
   --font-caption: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
   --ease-soft: cubic-bezier(.22,.68,.24,1);
 
+  /* Proporcion nativa de la pieza del sello (assets/img/home/hero.webp,
+     2411x1647). Aparece en tres cajas de proporciones distintas —hero de Home
+     mobile, hero de Info mobile, foto del sidebar desktop— y antes cada una
+     tenia la suya, porque lo que iba adentro se componia por CSS y se estiraba
+     sin costo. Ahora es una imagen fija: si la caja no respeta su proporcion,
+     `object-fit: cover` le come los bordes, y el sello llega casi al borde
+     vertical del arte, asi que recortar 15% de alto (lo que pedia la caja del
+     hero de Info) le cortaba la pastilla. Las tres cajas toman esta variable. */
+  --seal-ar: 2411 / 1647;
+
   /* Slide-up de entrada (.reveal). Los cuatro valores juntos aca porque se
      ajustan como un set: subir la duracion sin subir el recorrido hace que la
      pieza flote en el lugar, y al reves queda apurada.
@@ -172,8 +182,8 @@ button{ font-family: inherit; }
   position:relative;
   overflow:hidden;
   border-radius: 8px;
-  aspect-ratio: 1.575;
-  background: var(--border);
+  aspect-ratio: var(--seal-ar);
+  background: #F0ECE4;
 }
 .hero-media-cover{ width:100%; height:100%; }
 .hero-media-cover img, .hero-media-cover video{ transition: transform .6s var(--ease-soft); }
@@ -398,7 +408,7 @@ button{ font-family: inherit; }
    independent paddings that shouldn't stack). No bottom margin — Pencil's
    bio text starts flush against the hero (see notas.md 2026-08-11). */
 .info-hero-wrap{ margin: -6px -6px 0; padding: 6px; width: calc(100% + 12px); }
-.info-hero-media{ position:relative; height:220px; border-radius:8px; overflow:hidden; background: var(--border); }
+.info-hero-media{ position:relative; aspect-ratio: var(--seal-ar); border-radius:8px; overflow:hidden; background: #F0ECE4; }
 .info-hero-media .play-badge{ background: var(--ink); }
 .info-hero-media .play-badge svg{ width:18px; height:18px; }
 .info-left{ display:flex; flex-direction:column; }
@@ -688,7 +698,7 @@ button{ font-family: inherit; }
    adds 5 project preview cards below; Side B empties it entirely (its own
    body is a photo masonry instead, not sidebar + content). */
 .sidebar:empty{ display:none; }
-.page-sidebar-photo{ position:relative; height:240px; border-radius:8px; overflow:hidden; background: var(--border); }
+.page-sidebar-photo{ position:relative; aspect-ratio: var(--seal-ar); border-radius:8px; overflow:hidden; background: #F0ECE4; }
 .page-sidebar-divider{ height:1px; background: rgba(0,0,0,0.15); }
 .page-sidebar-card{ display:flex; flex-direction:column; gap:6px; }
 .page-sidebar-card-header{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; font-family: var(--font-body); font-size:14px; }
@@ -790,9 +800,11 @@ button{ font-family: inherit; }
   /* flex:none en los hijos, si no NO SCROLLEA: los encoge. Es la trampa
      clasica de un flex column con max-height — antes de desbordar, flexbox
      achica todo lo que tenga flex-shrink (o sea, todo). Con el contenido de
-     Info a 2905px en una caja de 868, la foto del badge —que tiene height
-     fijo de 240px y ningun contenido que la sostenga— se aplastaba a 0
-     (2026-08-25). */
+     Info a 2905px en una caja de 868, la foto del badge se aplastaba a 0
+     (2026-08-25). Entonces tenia un height fijo de 240px y nada adentro que la
+     sostuviera; hoy tiene aspect-ratio y una imagen real, pero la regla se
+     queda igual: flexbox encoge por igual todo lo que tenga flex-shrink, y una
+     caja con aspect-ratio no es una excepcion. */
   .sidebar > *{ flex: none; }
   .main{ grid-column: 2 / -1; min-width:0; }
   /* Side B esconde el sidebar (renderSidebar("sideb") lo deja vacio), asi que
@@ -955,64 +967,32 @@ button{ font-family: inherit; }
    request) — assets/img/badge/jq-seal.png replaced in place, no code
    changes needed for the swap itself since every call site just references
    that filename. */
+/* La pieza ya no se COMPONE aca (2026-08-28). Hasta hoy el sello se armaba por
+   CSS: fondo beige, una capa de ruido por encima y el PNG del monograma en el
+   medio. El usuario entrego la pieza terminada como un solo archivo —sello,
+   campo beige, trama de monogramas y lineas diagonales, todo horneado— asi que
+   esto es un <img> y nada mas.
+
+   Se fueron con ese cambio: .jq-badge-stage (envolvia el sello y la elipse de
+   contacto que ya no existe) y el ::after de ruido del wrap, que ahora estaria
+   tirando GRANO ENCIMA del arte del usuario — la pieza trae su propia textura y
+   sumarle otra es meterse donde no nos llaman.
+
+   El fondo del wrap es el mismo beige del campo de la imagen (#F0ECE4,
+   muestreado de sus esquinas): se ve mientras el .webp carga y en cualquier
+   pixel de redondeo del borde, asi que igualarlo evita un flash de color
+   distinto. */
 .jq-badge-wrap{
   position:relative;
   width:100%; height:100%;
-  display:flex; align-items:center; justify-content:center;
-  background: #F3EFE6;
+  background: #F0ECE4;
   overflow:hidden;
 }
-.jq-badge-wrap::after{
-  content:"";
-  position:absolute; inset:0;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.9 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-  opacity: 0.025;
-  mix-blend-mode: multiply;
-  pointer-events: none;
-}
-.jq-badge-stage{
-  position: relative;
-  height: 64%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
 .jq-badge-img{
-  height:100%;
-  width:auto;
-  object-fit:contain;
+  width:100%; height:100%;
+  object-fit: cover;
   display:block;
-  /* Sombra paralela (2026-08-28, pedido del usuario: "sacarle el destello al
-     logo y agregarle una mini sombra paralela atras"). `drop-shadow` sigue el
-     ALPHA REAL del PNG, asi que la sombra sale con la silueta del sello y no
-     con su caja rectangular — por eso este efecto no necesita ni mascara ni
-     clip-path, a diferencia del destello que estaba antes aca (ver el bloque
-     de advertencia arriba de badgeTag() en script.js).
-
-     3px sobre un sello que mide ~150px de alto en los tres lugares donde
-     aparece (hero de Home mobile, hero de Info mobile, foto del sidebar
-     desktop) es un 2%: se lee como registro corrido de imprenta, que es lo que
-     pide una sombra paralela, sin despegar la pieza del fondo.
-
-     El blur de 1px no es para difuminar, es para que la curva del sello no
-     quede escalonada: con 0 el borde diagonal se ve dentado.
-
-     Color calido (26,20,16) y no el --ink neutro: el fondo de la tarjeta es
-     #F3EFE6, beige, y un negro neutro al 18% encima de eso vira a gris frio.
-     Asi resuelve a ~(204,200,192), que se queda en la misma familia. */
-  filter: drop-shadow(3px 3px 1px rgba(26,20,16,.18));
 }
-
-/* La elipse de contacto que vivia debajo del sello (.jq-badge-shadow) se saco
-   junto con el destello. Una sombra paralela y una sombra de contacto son dos
-   idiomas distintos —una dice "capa impresa corrida", la otra "objeto parado
-   sobre una superficie"— y juntas se leen como dos fuentes de luz peleadas.
-   Elegida la paralela, que es la que se pidio, la elipse sobraba.
-
-   Con el destello tambien se fue el clip-path poligonal de 118 puntos que lo
-   recortaba a la silueta del sello. Si alguna vez hace falta algo asi de
-   nuevo, esta en el historial de git (buscar "jq-badge-shine"): trazarlo de
-   nuevo a mano es caro. */
 
 /* ---------- Mobile-only (≤860px): swipe track ---------- */
 @media (max-width: 860px){

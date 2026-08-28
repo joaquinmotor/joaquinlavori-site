@@ -14,4 +14,8 @@ assets/info/
 # Material de origen de Side B (fotos de film, videos, sueltos). Mismo rol que
 # assets/work/: es la fuente antes de procesar hacia assets/img/side-b/.
 assets/side-b/
+
+# Idem para la pieza del sello: el usuario deja el export de Illustrator aca y
+# scripts/ lo procesa hacia assets/img/home/. Lo versionado es el .webp.
+assets/home/
 _to_delete/

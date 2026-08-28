@@ -187,16 +187,19 @@ function coverTag() {
 // O sea: cualquier variante que combine mascara + transform animado, o
 // gradiente animado adentro de la tira de paginas, ya se probo y fallo.
 //
-// La sombra: `drop-shadow` sobre el <img> sigue el alpha real del PNG, asi
-// que la sombra sale con la silueta del sello y no con su caja rectangular.
-// Por eso no hace falta ningun mask ni clip-path para esto — es la razon por
-// la que la sombra nunca tuvo los problemas que tuvo el destello.
+// ⚠️ LA SOMBRA PARALELA SE PERDIO EN ESTE CAMBIO, y no por descuido. Cuando el
+// sello era un PNG con alpha, un `drop-shadow` sobre el <img> seguia la silueta
+// real de la pastilla. Ahora la pieza es un rectangulo opaco con el fondo y la
+// trama adentro: un drop-shadow ahi dibuja la sombra del RECTANGULO, que es
+// otra cosa (una tarjeta levantada, no un registro corrido de imprenta). No hay
+// forma de recuperarla desde CSS sin volver a separar las capas.
+// Las dos salidas reales, si se quiere de vuelta: hornearla en el PNG desde
+// Illustrator, o exportar el fondo SIN el sello y volver a componer —fondo por
+// CSS, sello como <img> encima con su drop-shadow—. Se le aviso al usuario.
 function badgeTag() {
   return `
     <div class="jq-badge-wrap">
-      <div class="jq-badge-stage">
-        <img class="jq-badge-img" src="assets/img/badge/jq-seal.png" alt="Joaquin Lavori — personal seal, Est. 1987" />
-      </div>
+      <img class="jq-badge-img" src="${withMediaV("assets/img/home/hero.webp")}" alt="Joaquin Lavori — sello personal, Est. 1987, Buenos Aires" />
     </div>`;
 }
 
