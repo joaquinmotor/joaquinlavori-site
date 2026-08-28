@@ -1486,16 +1486,56 @@ function scrollerReal(el) {
   return window;
 }
 
-// Safari no soporto el objeto de opciones de scrollTo() hasta el 15.4: se lo
-// comia entero y no scrolleaba nada, ni suave ni de golpe. Como no hay forma de
-// preguntar por esa API, se usa como proxy el soporte de la propiedad CSS
-// scroll-behavior, que llego en la misma version. Sin ella, salto seco.
-function irAlTope(scroller) {
-  if ("scrollBehavior" in document.documentElement.style) {
-    scroller.scrollTo({ top: 0, behavior: "smooth" });
-  } else {
-    scroller.scrollTo(0, 0);
+// El scroll suave NATIVO no es confiable para este boton (2026-08-28, reporte
+// del usuario: "el back to top a veces no anda"). Falla de tres formas, todas
+// silenciosas: Safari anterior al 15.4 se come el objeto de opciones entero y
+// no scrollea nada; en iOS un scrollTo() sobre un contenedor que todavia tiene
+// inercia viva se descarta; y en cualquier navegador alcanza con que el dedo o
+// la rueda toquen la pantalla durante el viaje para que se cancele a mitad de
+// camino. Ninguna avisa: el boton simplemente "no anda".
+// Se anima a mano con requestAnimationFrame. No depende de ninguna heuristica
+// del navegador, no se puede descartar, y termina siempre en 0 exacto.
+let tweenTope = null;
+
+// Por las dudas el scroller elegido no fuera el unico que se movio (o no fuera
+// el correcto): "back to top" significa arriba de todo, en todos los sentidos.
+function limpiarRestoScroll(scroller) {
+  if (scroller !== window && (window.scrollY || document.documentElement.scrollTop)) {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
   }
+}
+
+function irAlTope(scroller) {
+  const leer = () =>
+    scroller === window
+      ? window.scrollY || document.documentElement.scrollTop || 0
+      : scroller.scrollTop;
+  const escribir = (v) => {
+    if (scroller === window) window.scrollTo(0, v);
+    else scroller.scrollTop = v;
+  };
+
+  if (tweenTope) cancelAnimationFrame(tweenTope);
+  const desde = leer();
+  if (desde <= 0) { limpiarRestoScroll(scroller); return; }
+
+  // Escribir la posicion actual mata la inercia pendiente antes de arrancar.
+  escribir(desde);
+  const t0 = performance.now();
+  // Un viaje largo no puede durar lo mismo que uno corto, pero tampoco tiene
+  // sentido que Side B (9000px) tarde tres segundos: se acota entre 260 y 650ms.
+  const dur = Math.min(650, Math.max(260, desde * 0.35));
+  const paso = (t) => {
+    const k = Math.min(1, (t - t0) / dur);
+    escribir(Math.round(desde * Math.pow(1 - k, 3)));
+    if (k < 1) { tweenTope = requestAnimationFrame(paso); return; }
+    tweenTope = null;
+    escribir(0);
+    limpiarRestoScroll(scroller);
+  };
+  tweenTope = requestAnimationFrame(paso);
 }
 
 function initNav() {
@@ -1813,6 +1853,13 @@ function initDesktopSwipe() {
   let acumulado = 0;
   let trabado = false;
   let quietoT;
+  let seguridadT;
+  // Piso de la envolvente de deltas mientras dura un gesto: la inercia de macOS
+  // DECAE, un empujon nuevo del usuario arranca fuerte. Comparar contra este
+  // piso es lo que deja distinguir "cola del gesto anterior" de "gesto nuevo".
+  let piso = 0;
+
+  const destrabar = () => { trabado = false; acumulado = 0; piso = 0; };
 
   window.addEventListener(
     "wheel",
@@ -1828,26 +1875,39 @@ function initDesktopSwipe() {
       // dispara con este mismo gesto y nos sacaria de la pagina.
       e.preventDefault();
 
-      // Mientras esta trabado se ignora TODO, incluida la inercia. La version
-      // anterior reiniciaba el temporizador en cada evento, asi que con la
-      // inercia larga del trackpad de Mac el destrabado no llegaba nunca hasta
-      // que el gesto moria del todo: se sentia trabado (2026-08-24).
-      if (trabado) return;
+      const abs = Math.abs(e.deltaX);
+
+      // Fin de gesto = la rueda se queda quieta. Se re-arma en CADA evento,
+      // inercia incluida: mientras el trackpad siga mandando deltas seguimos
+      // dentro del mismo gesto y no tiene que volver a contar.
+      clearTimeout(quietoT);
+      quietoT = setTimeout(destrabar, 130);
+
+      // El destrabado por tiempo fijo (420ms) era el problema de fondo
+      // (2026-08-28). La inercia del trackpad de Mac dura mas que eso: a los
+      // 420ms seguian llegando deltas de la MISMA pasada, el acumulador se
+      // volvia a llenar solo y el sitio saltaba dos secciones de un swipe.
+      // Y al reves, un segundo swipe deliberado caia dentro de la ventana
+      // trabada y no pasaba nada: "se queda trabado".
+      if (trabado) {
+        // Un delta que vuelve a crecer de golpe respecto del piso es el usuario
+        // empujando otra vez, no la cola de lo anterior: se destraba en el acto.
+        if (abs > Math.max(8, piso * 1.8)) destrabar();
+        else { piso = Math.min(piso, abs); return; }
+      }
 
       acumulado += e.deltaX;
-
-      // Si el gesto se corta sin llegar al umbral, se olvida lo acumulado para
-      // que dos toquecitos en sentidos opuestos no se sumen.
-      clearTimeout(quietoT);
-      quietoT = setTimeout(() => { acumulado = 0; }, 140);
+      piso = abs;
 
       if (Math.abs(acumulado) < SWIPE_DESKTOP_UMBRAL) return;
       const sentido = acumulado > 0 ? 1 : -1;
       acumulado = 0;
       trabado = true;
-      // Destrabado por tiempo fijo, no por "cuando termine la inercia": pase lo
-      // que pase vuelve a aceptar gestos, no puede quedarse clavado.
-      setTimeout(() => { trabado = false; acumulado = 0; }, 420);
+      piso = abs;
+      // Red de seguridad: pase lo que pase vuelve a aceptar gestos, no puede
+      // quedarse clavado si el navegador deja de mandar el evento de cierre.
+      clearTimeout(seguridadT);
+      seguridadT = setTimeout(destrabar, 1200);
       irASeccion(sentido);
     },
     { passive: false }
@@ -1872,6 +1932,19 @@ function initSwipe() {
   let axis = null;
   let dragging = false;
   let baseX = 0;
+  // El scroller vertical bajo el dedo y donde estaba cuando el dedo bajo. Sirve
+  // para saber si el NAVEGADOR ya se quedo con el gesto (ver touchmove).
+  let scrollerDedo = null;
+  let scrollDedo0 = 0;
+
+  // Volver a la seccion actual. Es lo que hace un swipe que no llego al umbral,
+  // y tambien la salida de emergencia de cualquier gesto que se corte.
+  const acomodar = () => {
+    if (!dragging) return;
+    dragging = false;
+    axis = null;
+    goToPage(pageOrder[currentPageIndex]);
+  };
 
   track.addEventListener(
     "touchstart",
@@ -1883,6 +1956,8 @@ function initSwipe() {
       axis = null;
       dragging = false;
       baseX = -currentPageIndex * window.innerWidth;
+      scrollerDedo = (e.target.closest && e.target.closest(".page-scroll")) || null;
+      scrollDedo0 = scrollerDedo ? scrollerDedo.scrollTop : 0;
       // Auto-reparacion. Si la tira no esta donde le corresponde a la seccion
       // actual, se acomoda ANTES de empezar el gesto. Cualquier arrastre que
       // haya quedado a medias —un touchcancel que no llego, un tween cortado,
@@ -1906,17 +1981,26 @@ function initSwipe() {
       const dy = t.clientY - startY;
 
       if (!axis) {
-        // No decidir el eje con el primer pixel. Un dedo real casi nunca
-        // arranca perfectamente horizontal, y en una seccion larga y de puro
-        // texto como Info la micro-deriva inicial suele ser vertical: con el
-        // umbral viejo (8px, y ademas exigiendole a la horizontal ganar por
-        // 1.2) alcanzaba con eso para que el gesto quedara marcado como scroll
-        // y el swipe no respondiera. Se espera a que UNO de los dos ejes tenga
-        // 10px de verdad y gana el mas grande, sin handicap.
+        // Aca hay una CARRERA con el navegador, y esa carrera es la causa del
+        // "el swipe se queda trabado" (2026-08-28). `touch-action: pan-y` le
+        // deja la vertical al navegador, y el navegador la decide con su propio
+        // umbral (~5px en iOS): si el arranca a scrollear antes de que nosotros
+        // lleguemos al nuestro, el gesto ya es suyo — nuestro preventDefault()
+        // llega tarde y varios navegadores encima mandan un touchcancel. Desde
+        // afuera se ve como que el swipe no responde y hay que intentarlo dos o
+        // tres veces.
+        //
+        // Dos cambios. Primero: si el scroller YA se movio, el navegador se
+        // quedo con el gesto y no hay nada que discutir — es vertical. Eso es un
+        // hecho medible, no una heuristica de umbrales. Segundo: con esa
+        // certeza cubriendo el caso vertical, el umbral propio puede bajar de
+        // 10px a 6 para llegar antes en el caso horizontal, y los empates van
+        // para la horizontal en vez de contra ella.
+        if (scrollerDedo && scrollerDedo.scrollTop !== scrollDedo0) { axis = "y"; return; }
         const ax = Math.abs(dx);
         const ay = Math.abs(dy);
-        if (ax < 10 && ay < 10) return;
-        axis = ax > ay ? "x" : "y";
+        if (ax < 6 && ay < 6) return;
+        axis = ax >= ay ? "x" : "y";
         dragging = axis === "x";
       }
       if (axis !== "x") return;
@@ -1945,14 +2029,19 @@ function initSwipe() {
   // tras el cancel la tira quedaba en x=-1050 con las paginas en -780/-1170.
   // Volver a la seccion actual, que es lo que hace un swipe que no llego al
   // umbral.
-  track.addEventListener("touchcancel", () => {
-    if (!dragging) return;
-    dragging = false;
-    axis = null;
-    goToPage(pageOrder[currentPageIndex]);
-  });
+  // Van en WINDOW, no en el track (2026-08-28). Si el nodo bajo el dedo
+  // desaparece o se oculta a mitad del gesto —un slide-cut rota cada 500ms, un
+  // re-render de seccion— el touchend no encuentra camino de vuelta hasta el
+  // track y no llega nunca: la tira queda parada entre dos secciones. En window
+  // el evento llega siempre. El `if (!dragging) return` de cada handler hace
+  // que los toques que no son nuestros sigan siendo inofensivos.
+  window.addEventListener("touchcancel", acomodar);
+  window.addEventListener("pointercancel", acomodar);
+  // Un cambio de pestania o de app en el medio del gesto tampoco deja touchend.
+  window.addEventListener("blur", acomodar);
+  document.addEventListener("visibilitychange", () => { if (document.hidden) acomodar(); });
 
-  track.addEventListener("touchend", (e) => {
+  window.addEventListener("touchend", (e) => {
     if (!dragging) return;
     dragging = false;
     const t = e.changedTouches[0];
