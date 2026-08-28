@@ -1,10 +1,37 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,400&display=swap');
 
 :root{
-  --bg: #F3F3F3;
+  /* Fondo, y los dos grises que lo acompanian. Se recalibran JUNTOS: mover el
+     fondo solo deja a los otros dos contrastando distinto contra el.
+
+     2026-08-28, feedback recibido por el usuario: "demasiado claro, demasiado
+     brilloso". El fondo venia de #F3F3F3, que es L* 95.8 — cinco puntos del
+     blanco puro — y ademas neutro exacto (R=G=B). Esa combinacion es la que
+     quema: un gris neutro a esa luminancia se lee como pantalla prendida, no
+     como papel. Ahora L* 93.4, con un b* de +1 (apenas 236/236/234): la nota
+     calida es tan chica que el sitio sigue leyendose neutro, pero alcanza para
+     sacarle el filo de monitor. Se eligio esta version sobre las mas calidas.
+
+     Los otros dos se movieron para mantener EL MISMO ratio de contraste contra
+     el fondo nuevo, no para bajar en paralelo — si no, un fondo mas oscuro con
+     grises iguales aplasta la separacion entre los tres. Sale casi lo mismo
+     calculandolo por delta L* que por ratio de contraste, buena senial:
+       --border          #DDDDDD -> #D6D6D4   (ratio 1.22 en los dos casos)
+       --ink-secondary   #6E6E6E -> #6A6A68   (ratio 4.59 en los dos casos)
+     Y les entra la misma temperatura que al fondo: contra un fondo con b*
+     positivo, un gris neutro puro se ve azulado.
+
+     --ink no se toca. A L* 7 la temperatura no se percibe, y su contraste
+     contra el fondo pasa de 17.0 a 15.9 — sigue sobrado. Ojo igual: la pastilla
+     negra del nav es un bloque solido de contraste maximo y es la otra fuente
+     posible de "brilloso" si el reporte vuelve.
+
+     El fondo tambien esta en el <meta name="theme-color"> de index.html (la
+     barra del navegador en mobile): van siempre juntos. */
+  --bg: #ECECEA;
   --ink: #121212;
-  --ink-secondary: #6E6E6E;
-  --border: #DDDDDD;
+  --ink-secondary: #6A6A68;
+  --border: #D6D6D4;
   --tile-gap: 48px;
   --row-gap: 64px;
   --nav-h: 60px;
