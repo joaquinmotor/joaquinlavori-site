@@ -943,8 +943,10 @@ button{ font-family: inherit; }
    sidebar photo — see badgeTag() in script.js for exactly which three call
    sites use it (the sidebar one repeats visually across Home/Work-selected/
    Info Desktop since it's one shared component, not three separate spots).
-   Static piece — no bounce/float (removed 2026-08-12 per user request), a
-   periodic light glint sweeps across the mark instead (.jq-badge-shine).
+   Pieza estatica: el bounce se saco el 2026-08-12 y el destello que barria el
+   sello el 2026-08-28, los dos a pedido del usuario. Hoy no anima nada — antes
+   de volver a ponerle un destello, leer la advertencia arriba de badgeTag() en
+   script.js: ese efecto rompio de tres formas distintas.
    Background is a warm beige (#F3EFE6), not var(--border) gray —
    deliberately different from the plain gray placeholder these boxes used
    to be, so it reads as a finished piece rather than a "still waiting on
@@ -975,129 +977,42 @@ button{ font-family: inherit; }
   flex-direction:column;
   align-items:center;
 }
-.jq-badge-shine-wrap{
-  position:relative;
-  height:100%;
-  display:flex;
-}
 .jq-badge-img{
   height:100%;
   width:auto;
   object-fit:contain;
   display:block;
-  filter: drop-shadow(0 2px 3px rgba(18,18,18,.10));
+  /* Sombra paralela (2026-08-28, pedido del usuario: "sacarle el destello al
+     logo y agregarle una mini sombra paralela atras"). `drop-shadow` sigue el
+     ALPHA REAL del PNG, asi que la sombra sale con la silueta del sello y no
+     con su caja rectangular — por eso este efecto no necesita ni mascara ni
+     clip-path, a diferencia del destello que estaba antes aca (ver el bloque
+     de advertencia arriba de badgeTag() en script.js).
+
+     3px sobre un sello que mide ~150px de alto en los tres lugares donde
+     aparece (hero de Home mobile, hero de Info mobile, foto del sidebar
+     desktop) es un 2%: se lee como registro corrido de imprenta, que es lo que
+     pide una sombra paralela, sin despegar la pieza del fondo.
+
+     El blur de 1px no es para difuminar, es para que la curva del sello no
+     quede escalonada: con 0 el borde diagonal se ve dentado.
+
+     Color calido (26,20,16) y no el --ink neutro: el fondo de la tarjeta es
+     #F3EFE6, beige, y un negro neutro al 18% encima de eso vira a gris frio.
+     Asi resuelve a ~(204,200,192), que se queda en la misma familia. */
+  filter: drop-shadow(3px 3px 1px rgba(26,20,16,.18));
 }
-/* Light glint (2026-08-12, third and current architecture — see the long
-   comment above badgeTag() in script.js for the full history of why this
-   went through three rewrites in one day: (1) CSS -webkit-mask-image + an
-   animated-transform child died on iOS Safari specifically, (2) an inline
-   SVG native <mask> + SMIL <animateTransform> rendered correctly in
-   isolation but the animated gradient silently never painted a single
-   pixel inside this app's actual DOM (confirmed via direct pixel sampling
-   over the badge's own ink — a real, reproducible Chromium bug tied to
-   this specific compositing context, not a guess). This version drops
-   masking of any kind — no CSS mask, no SVG mask — so it can't trigger
-   either failure mode. The bar is a plain `background: linear-gradient`
-   on a div, moved by a CSS `@keyframes` transform, with
-   `mix-blend-mode: screen`. It doesn't need to be shaped to the badge's
-   silhouette: screen-blending a light gradient over the near-white
-   `#F3EFE6` wrap background is close to a no-op by the blend math itself
-   (screen of a light base stays close to that base), so in practice the
-   sweep only reads as visible where it crosses the badge's own dark ink —
-   the same "only lights up the mark" effect the mask used to provide
-   explicitly, here as a side effect of the blend math. `.jq-badge-wrap`'s
-   existing `overflow:hidden` keeps the (deliberately oversized, rotated)
-   bar from spilling past the badge's rectangular box — same containment
-   role it played for the very first (pre-SVG) version of this effect.
-   Verified in this sandbox (Chromium only — no WebKit browser available
-   here) by sampling a dark-ink pixel across a full 8s cycle: flat at
-   rest, a real jump mid-sweep, flat again after — a clean rest state, not
-   just "the gradient happens to be transparent there". Still can't be
-   confirmed on real iOS Safari locally; removing the CSS mask (the
-   specific ingredient the original WebKit bug needed) is an informed bet
-   that it avoids that failure mode, not a confirmed fix on hardware. */
-.jq-badge-shine{
-  position:absolute;
-  inset:0;
-  overflow:hidden;
-  pointer-events:none;
-  mix-blend-mode: screen;
-  /* Crop to the seal's actual oval/pill silhouette (2026-08-12, user
-     request — without this the glint reads as lighting up a rectangle
-     around the mark, not the mark itself). Traced from the real alpha
-     channel of jq-seal.png (118 points sampled from the opaque boundary
-     at 60 row-slices, top-to-bottom then bottom-to-top, as % of the
-     image's own box) rather than a plain CSS ellipse() — the seal isn't
-     a true ellipse (it bulges more through the vertical middle than an
-     ellipse of the same width/height would), so a hand-picked ellipse()
-     visibly mismatched the real edge. This is a plain geometric clip
-     (not an alpha mask) so it doesn't reintroduce the -webkit-mask-image
-     + animated-transform combination that broke on iOS Safari (see the
-     long history above badgeTag() in script.js) — clip-path here is
-     static (the polygon itself never animates, only the bar inside it
-     does), functionally the same role .jq-badge-wrap's own overflow:hidden
-     already played for the very first version of this effect, just
-     shaped instead of rectangular. If jq-seal.png is ever swapped for
-     artwork with a different silhouette, this polygon needs re-tracing
-     to match (percentages are relative to this element's own box, which
-     is sized to match .jq-badge-img exactly via inset:0). */
-  clip-path: polygon(
-    64.15% 1.72%, 70.47% 3.30%, 75.22% 5.01%, 78.73% 6.60%, 81.90% 8.31%,
-    84.53% 10.03%, 86.64% 11.61%, 88.58% 13.32%, 90.33% 15.04%, 91.74% 16.62%,
-    93.15% 18.34%, 94.20% 19.92%, 95.25% 21.64%, 96.13% 23.35%, 96.84% 24.93%,
-    97.54% 26.65%, 98.07% 28.23%, 98.42% 29.95%, 98.77% 31.66%, 99.12% 33.25%,
-    99.12% 34.96%, 99.30% 36.68%, 99.30% 38.26%, 99.30% 39.97%, 99.30% 41.56%,
-    99.30% 43.27%, 99.30% 44.99%, 99.30% 46.57%, 99.30% 48.28%, 99.30% 49.87%,
-    99.30% 51.58%, 99.30% 53.30%, 99.30% 54.88%, 99.30% 56.60%, 99.30% 58.31%,
-    99.30% 59.89%, 99.30% 61.61%, 99.30% 63.19%, 99.12% 64.91%, 99.12% 66.62%,
-    98.77% 68.21%, 98.42% 69.92%, 98.07% 71.64%, 97.54% 73.22%, 96.84% 74.93%,
-    96.13% 76.52%, 95.25% 78.23%, 94.38% 79.95%, 93.15% 81.53%, 91.92% 83.25%,
-    90.51% 84.83%, 88.75% 86.54%, 86.82% 88.26%, 84.71% 89.84%, 82.07% 91.56%,
-    78.91% 93.27%, 75.40% 94.85%, 70.65% 96.57%, 64.50% 98.15%, 35.33% 98.15%,
-    29.17% 96.57%, 24.43% 94.85%, 20.91% 93.27%, 17.75% 91.56%, 15.11% 89.84%,
-    13.01% 88.26%, 11.07% 86.54%, 9.31% 84.83%, 7.91% 83.25%, 6.50% 81.53%,
-    5.45% 79.95%, 4.39% 78.23%, 3.51% 76.52%, 2.81% 74.93%, 2.28% 73.22%,
-    1.76% 71.64%, 1.23% 69.92%, 1.05% 68.21%, 0.70% 66.62%, 0.53% 64.91%,
-    0.53% 63.19%, 0.53% 61.61%, 0.53% 59.89%, 0.53% 58.31%, 0.53% 56.60%,
-    0.53% 54.88%, 0.53% 53.30%, 0.53% 51.58%, 0.53% 49.87%, 0.53% 48.28%,
-    0.53% 46.57%, 0.53% 44.99%, 0.53% 43.27%, 0.53% 41.56%, 0.53% 39.97%,
-    0.53% 38.26%, 0.53% 36.68%, 0.53% 34.96%, 0.70% 33.25%, 1.05% 31.66%,
-    1.41% 29.95%, 1.76% 28.23%, 2.28% 26.65%, 2.99% 24.93%, 3.69% 23.35%,
-    4.57% 21.64%, 5.62% 19.92%, 6.68% 18.34%, 7.91% 16.62%, 9.31% 15.04%,
-    11.07% 13.32%, 13.18% 11.61%, 15.29% 10.03%, 17.93% 8.31%, 21.09% 6.60%,
-    24.60% 5.01%, 29.35% 3.30%, 35.68% 1.72%
-  );
-}
-.jq-badge-shine-bar{
-  position:absolute;
-  top:-45%;
-  left:0;
-  width:60%;
-  height:190%;
-  transform: rotate(18deg) translateX(-260%);
-  background: linear-gradient(
-    to right,
-    rgba(255,255,255,0) 0%,
-    rgba(255,255,255,0.22) 30%,
-    rgba(255,255,255,0.85) 50%,
-    rgba(255,255,255,0.22) 70%,
-    rgba(255,255,255,0) 100%
-  );
-  animation: jqBadgeShine 8s cubic-bezier(0.65,0,0.35,1) infinite;
-}
-@keyframes jqBadgeShine{
-  0%, 50% { transform: rotate(18deg) translateX(-260%); }
-  100% { transform: rotate(18deg) translateX(260%); }
-}
-.jq-badge-shadow{
-  width:46%;
-  height:10px;
-  margin-top:-6px;
-  border-radius:50%;
-  background: radial-gradient(ellipse at center, rgba(18,18,18,.22) 0%, rgba(18,18,18,.10) 50%, rgba(18,18,18,0) 78%);
-  filter: blur(2px);
-  flex-shrink:0;
-}
+
+/* La elipse de contacto que vivia debajo del sello (.jq-badge-shadow) se saco
+   junto con el destello. Una sombra paralela y una sombra de contacto son dos
+   idiomas distintos —una dice "capa impresa corrida", la otra "objeto parado
+   sobre una superficie"— y juntas se leen como dos fuentes de luz peleadas.
+   Elegida la paralela, que es la que se pidio, la elipse sobraba.
+
+   Con el destello tambien se fue el clip-path poligonal de 118 puntos que lo
+   recortaba a la silueta del sello. Si alguna vez hace falta algo asi de
+   nuevo, esta en el historial de git (buscar "jq-badge-shine"): trazarlo de
+   nuevo a mano es caro. */
 
 /* ---------- Mobile-only (≤860px): swipe track ---------- */
 @media (max-width: 860px){

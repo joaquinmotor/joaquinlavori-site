@@ -159,78 +159,43 @@ function coverTag() {
 // Info hero (mobile, renderInfo's info-hero-media), and the shared desktop
 // sidebar photo (renderSidebar's page-sidebar-photo) — which by itself
 // repeats across Home Desktop, Work selected Desktop (project view keeps
-// the sidebar mounted, see renderProjectDesktop) and Info Desktop. Static
-// piece (2026-08-12: bounce removed per user request) with a soft contact
-// shadow and a periodic light glint that sweeps across the mark itself.
+// the sidebar mounted, see renderProjectDesktop) and Info Desktop.
 //
-// The glint mechanism has gone through THREE architectures in one day
-// (2026-08-12) chasing two separate, confirmed rendering bugs — worth
-// recording in full since a future "it's not animating" report should
-// start from here, not from scratch:
-//   1) Original: CSS `-webkit-mask-image`/`mask-image` (masked to the
-//      badge's own alpha) on a div, with an animated `transform` on a
-//      child bar. Worked at first, then broke on iOS Safari specifically
-//      (confirmed live): first froze on one bright stuck frame, then after
-//      a GPU-layer-promotion attempt (translate3d/will-change/backface-
-//      visibility) it stopped rendering the animation at all. This is a
-//      known WebKit trigger: CSS masking of an HTML element + an animated
-//      transform on a descendant.
-//   2) Rewrite to an inline SVG with a native <mask> (from the badge PNG's
-//      alpha) and SMIL <animateTransform> on a gradient <rect> — a
-//      completely different rendering pipeline from (1), chosen to
-//      sidestep that WebKit bug class. It didn't: verified in this sandbox
-//      (Chromium only, no WebKit available) that the <animateTransform>
-//      genuinely progresses (getCTM() sampled across the full cycle showed
-//      real movement) and the mask/gradient both render correctly in
-//      total isolation, but INSIDE THE ACTUAL APP the gradient-filled rect
-//      never painted a single differing pixel across the whole 8s cycle —
-//      confirmed by sampling raw pixel color directly over the darkest ink
-//      stroke of the badge every 200-400ms for a full cycle: constant
-//      (20,11,0) the entire time, vs. a plain SOLID-color rect (no
-//      gradient) animating correctly in the exact same DOM position. So:
-//      solid SVG fills animate fine here, but a gradient fill on an
-//      animated/masked shape silently never repaints — a real Chromium
-//      bug specific to this app's compositing context (the page track
-//      this sits inside carries `will-change: transform` for the swipe
-//      gesture, which is suspected but not confirmed as the trigger).
-//      Static (non-animated) gradients DID paint, just proving the
-//      gradient definition itself was fine — only the animated case inside
-//      this DOM ever silently failed to paint.
-//   3) Current: back to plain CSS, but *without* any masking at all. A
-//      `background: linear-gradient(...)` bar on a div, moved by a CSS
-//      `@keyframes` transform, blended with `mix-blend-mode: screen`. No
-//      `-webkit-mask-image` (avoids bug #1's trigger) and no SVG animate/
-//      gradient combo (avoids bug #2). It doesn't need masking to the
-//      badge's silhouette to look right: `mix-blend-mode: screen` over a
-//      light backdrop is nearly a no-op by the blend math itself (screen
-//      of a light base stays close to that base regardless of the blend
-//      layer), so the sweep is only meaningfully visible where it crosses
-//      genuinely dark/saturated pixels — i.e. the ink strokes — which is
-//      exactly the same "only lights up the mark" look the mask used to
-//      provide on purpose, just achieved as a side effect of the blend
-//      math instead of an explicit clip. Containment to the badge's
-//      rectangular box (so the bar can't spill into neighboring layout)
-//      comes from `.jq-badge-wrap`'s own `overflow:hidden`, same as
-//      before. Verified in this sandbox (Chromium) by sampling the same
-//      dark-ink pixel across a full cycle: constant at rest, then a real,
-//      strong jump (from near-black to a mid-grey) exactly mid-sweep, and
-//      back to the original value after — a clean rest state on both ends
-//      of the cycle. Since this is plain CSS (no mask, no SVG SMIL), it's
-//      the simplest of the three approaches and, unlike (2), was actually
-//      confirmed working end-to-end in this exact app before shipping —
-//      but only in Chromium; iOS Safari still can't be verified locally
-//      (no WebKit browser in this sandbox), so it remains an informed bet
-//      that removing the CSS mask (the specific ingredient bug #1 needed)
-//      avoids that failure mode, not a confirmed fix on real hardware.
+// Pieza estatica: el bounce se saco el 2026-08-12 y el destello el
+// 2026-08-28, los dos a pedido del usuario. Hoy el sello no anima nada.
+//
+// ⚠️ NO VOLVER A PONER EL DESTELLO SIN LEER ESTO. Ese efecto se reescribio
+// TRES veces en un solo dia (2026-08-12) persiguiendo dos bugs de rendering
+// confirmados, y las tres arquitecturas quedaron documentadas en el commit
+// que lo saco — buscar "jqBadgeShine" en el historial de git antes de
+// intentar nada. Resumen de por que no es un efecto barato:
+//   1) CSS `-webkit-mask-image` + transform animado en un hijo: rompia en
+//      iOS Safari especificamente (trigger conocido de WebKit). Primero se
+//      congelaba en un frame brillante, despues dejaba de animar del todo.
+//   2) SVG con <mask> nativo y SMIL <animateTransform> sobre un <rect> con
+//      gradiente: el animate SI progresaba (getCTM muestreado a lo largo
+//      del ciclo) y el mask/gradiente renderizaban bien AISLADOS, pero
+//      dentro de esta app el rect nunca pinto un solo pixel distinto en 8s
+//      — muestreado directo sobre la tinta mas oscura del sello, constante
+//      (20,11,0) todo el ciclo, mientras que un rect de color SOLIDO en la
+//      misma posicion animaba bien. Bug de Chromium propio del contexto de
+//      compositing de esta app; se sospecha del `will-change: transform`
+//      que lleva la tira de paginas para el swipe, sin confirmar.
+//   3) CSS plano sin masking de ningun tipo, con `mix-blend-mode: screen`
+//      y un clip-path poligonal trazado del alpha real del PNG. Esta
+//      andaba en Chromium; en iOS Safari nunca se pudo verificar.
+// O sea: cualquier variante que combine mascara + transform animado, o
+// gradiente animado adentro de la tira de paginas, ya se probo y fallo.
+//
+// La sombra: `drop-shadow` sobre el <img> sigue el alpha real del PNG, asi
+// que la sombra sale con la silueta del sello y no con su caja rectangular.
+// Por eso no hace falta ningun mask ni clip-path para esto — es la razon por
+// la que la sombra nunca tuvo los problemas que tuvo el destello.
 function badgeTag() {
   return `
     <div class="jq-badge-wrap">
       <div class="jq-badge-stage">
-        <div class="jq-badge-shine-wrap">
-          <img class="jq-badge-img" src="assets/img/badge/jq-seal.png" alt="Joaquin Lavori — personal seal, Est. 1987" />
-          <div class="jq-badge-shine"><div class="jq-badge-shine-bar"></div></div>
-        </div>
-        <div class="jq-badge-shadow"></div>
+        <img class="jq-badge-img" src="assets/img/badge/jq-seal.png" alt="Joaquin Lavori — personal seal, Est. 1987" />
       </div>
     </div>`;
 }
