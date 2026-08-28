@@ -51,6 +51,39 @@
      hero de Info) le cortaba la pastilla. Las tres cajas toman esta variable. */
   --seal-ar: 2411 / 1647;
 
+  /* ---------- Escala tipografica (2026-08-28) ----------
+     Antes habia 12 tamanios declarados y ningun criterio escrito, asi que cada
+     layout nuevo elegia el suyo. El sintoma que reporto el usuario —"los textos
+     estan en diferente tamanio"— no era un valor suelto mal puesto: era que el
+     MISMO ROL media distinto segun el breakpoint. Los titulos de seccion eran
+     16px en mobile y 14 en desktop; o sea que el texto se hacia mas CHICO en la
+     pantalla mas grande, que es al reves de lo que espera cualquiera.
+
+     Cuatro tamanios, un rol cada uno. La jerarquia de este sitio la hace el
+     PESO, no el tamanio, y eso se deja como esta: es la voz del sitio, no un
+     descuido. Lo que se unifica es que un rol mida lo mismo en todos lados.
+
+       --fs-lead   intros, bajadas, captions de tile, titulos de seccion y de
+                   proyecto. Lo primero que se lee de cada bloque.
+       --fs-base   cuerpo corrido, nav, links, etiquetas. El caballo de batalla.
+       --fs-meta   metadatos del detalle de proyecto (categoria, cliente, ano).
+       --fs-fine   solo el legal del footer.
+
+     Interlineado: habia cinco valores distintos para texto corrido (1.35, 1.38,
+     1.40, 1.45, 1.50) sin ninguna razon detras. Quedan dos, mas uno para lo que
+     nunca pasa de una linea. --lh-lead es un poco mas ajustado que --lh-base a
+     proposito: un lead va en cuerpo mas grande y necesita menos aire relativo.
+
+     ⚠️ La plantilla de proyectos `type: "logos"` NO usa esta escala (ver el
+     comentario sobre .tile h3 mas abajo). */
+  --fs-lead: 16px;
+  --fs-base: 14px;
+  --fs-meta: 12px;
+  --fs-fine: 10px;
+  --lh-lead: 1.38;
+  --lh-base: 1.45;
+  --lh-tight: 1.2;
+
   /* Slide-up de entrada (.reveal). Los cuatro valores juntos aca porque se
      ajustan como un set: subir la duracion sin subir el recorrido hace que la
      pieza flote en el lugar, y al reves queda apurada.
@@ -151,7 +184,7 @@ button{ font-family: inherit; }
 }
 .nav-label{
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--ink);
   transition: color .2s var(--ease-soft);
 }
@@ -176,7 +209,7 @@ button{ font-family: inherit; }
 
 /* ---------- Hero (home) ---------- */
 .hero{ padding: 6px 6px 0; }
-.home-intro{ font-family: var(--font-body); font-size: 16px; line-height:1.35; color: var(--ink); padding: 6px 0 6px; max-width: 420px; }
+.home-intro{ font-family: var(--font-body); font-size: var(--fs-lead); line-height: var(--lh-lead); color: var(--ink); padding: 6px 0 6px; max-width: 420px; }
 .hero-media{
   display:block;
   position:relative;
@@ -292,6 +325,18 @@ button{ font-family: inherit; }
 #grid-work .tile-cover:has(.media-real){ aspect-ratio: unset; }
 #grid-work .tile-cover .media-real{ height:auto; object-fit:unset; }
 .tile .tile-caption{ display:flex; justify-content:space-between; align-items:center; }
+/* ⚠️ DESDE ACA Y HASTA .logo-mark: la plantilla de proyectos `type: "logos"`,
+   que HOY NO SE RENDERIZA EN NINGUN LADO. Ningun proyecto de data.js tiene
+   `type: "logos"` ni `marks:`, asi que todo esto —este caption, .logos-tile-grid,
+   .project-header h1, .project-body y las .logo-mark— es una segunda plantilla
+   completa, dormida, con su propia escala que nunca se reconcilio con la del
+   sitio (48/28/22/20/18/15/13/10.5px).
+   Se deja TAL CUAL a proposito (2026-08-28): no se puede ver renderizada, asi
+   que cambiarle los tamanios seria adivinar, y un error solo aparece el dia que
+   se prenda un proyecto de logos. Reconciliarla cuando exista uno.
+   Ojo con una distincion al hacerlo: las .logo-mark NO son texto de interfaz,
+   son ESPECIMENES —muestran un logo como tipografia—, asi que quedan fuera de
+   la escala aunque el resto entre. */
 .tile h3{ font-family: var(--font-heading); font-size: 13px; font-weight:500; color: var(--ink); }
 .tile p{ font-family: var(--font-body); font-size: 10px; color: var(--ink-secondary); }
 
@@ -311,13 +356,17 @@ button{ font-family: inherit; }
    (2026-08-25, el usuario: "los textos de cada proyecto tienen que respetar el
    formato que tienen en el home"). */
 .tile p.tile-caption-text,
-.page-sidebar-project p.tile-caption-text{ margin:0; font-family: var(--font-body); font-size:16px; line-height:22px; color: var(--ink); }
+.page-sidebar-project p.tile-caption-text{ margin:0; font-family: var(--font-body); font-size: var(--fs-lead); line-height: var(--lh-lead); color: var(--ink); }
 /* ...pero en el sidebar va al tamanio del sidebar, 14px, que es el del bloque
    About y el que usa el resto de esa columna. A 16px cantaba al lado del texto
    de arriba (2026-08-25, el usuario: "en INFO la columna de la izquierda parece
    que tiene texto mas grande"). El peso y el color se mantienen como en el
    Home: eso es lo que hace que se lean igual. */
-.page-sidebar-project p.tile-caption-text{ font-size:14px; line-height:19px; }
+/* Unica excepcion deliberada a la escala: el mismo caption de tile, dentro del
+     sidebar de 360px, baja un escalon. No es un descuido — a --fs-lead los
+     titulos de dos palabras parten en dos lineas en esa columna. Queda escrito
+     aca para que se lea como decision y no como el proximo valor suelto. */
+  .page-sidebar-project p.tile-caption-text{ font-size: var(--fs-base); line-height: var(--lh-lead); }
 .tile .tile-caption-title,
 .page-sidebar-project .tile-caption-title{ font-weight:500; color: var(--ink); }
 .tile .tile-caption-desc,
@@ -413,7 +462,7 @@ button{ font-family: inherit; }
 .info-hero-media .play-badge svg{ width:18px; height:18px; }
 .info-left{ display:flex; flex-direction:column; }
 .info-right{ display:flex; flex-direction:column; padding-top:16px; border-top:1px solid var(--border); margin-top:16px; }
-.info-bio{ font-family: var(--font-body); font-size: 14px; line-height:1.5; color: var(--ink); }
+.info-bio{ font-family: var(--font-body); font-size: var(--fs-base); line-height: var(--lh-base); color: var(--ink); }
 .info-bio + .info-bio{ margin-top:12px; }
 
 .info-divider{ height:1px; background: rgba(0,0,0,0.15); margin: 16px 0; }
@@ -434,8 +483,8 @@ button{ font-family: inherit; }
    in a gap:0 container that needs its own margin to space itself out. */
 .info-sections .info-divider{ margin: 0; }
 .info-section{ display:flex; flex-direction:column; gap:4px; }
-.info-section-heading{ font-family: var(--font-body); font-size: 16px; font-weight:700; color: var(--ink); margin:0; }
-.info-section-body{ font-family: var(--font-body); font-size: 14px; line-height:1.4; color: #626262; margin:0; }
+.info-section-heading{ font-family: var(--font-body); font-size: var(--fs-lead); font-weight:700; color: var(--ink); margin:0; }
+.info-section-body{ font-family: var(--font-body); font-size: var(--fs-base); line-height: var(--lh-base); color: #626262; margin:0; }
 
 /* Two side-by-side column groups (4 + 3 categories), matches Pencil's
    "Grid Column A / B" split — not a single stacked column. */
@@ -452,15 +501,15 @@ button{ font-family: inherit; }
 .info-column-row{ display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start; }
 .info-column{ display:flex; flex-direction:column; gap:8px; padding-top:16px; border-top:1px solid var(--border); }
 .info-column-row:first-child .info-column{ padding-top:0; border-top:none; }
-.info-column-label{ font-family: var(--font-body); font-size: 14px; font-weight:700; color: #000000; margin:0; }
-.info-column-values{ font-family: var(--font-body); font-size: 14px; line-height:1.4; color: #121212B3; }
+.info-column-label{ font-family: var(--font-body); font-size: var(--fs-base); font-weight:700; color: #000000; margin:0; }
+.info-column-values{ font-family: var(--font-body); font-size: var(--fs-base); line-height: var(--lh-base); color: #121212B3; }
 
 /* Cierre de Info Mobile. Hasta el 2026-08-23 el CTA iba centrado y los datos
    de contacto colgaban de un spacer de 110px, asi que ninguno de los dos
    coincidia con el borde de las columnas de arriba y el bloque entero se veia
    corrido. Ahora el CTA arranca a ras del contenido y los datos van pegados al
    otro margen: dos anclas limpias en vez de tres alineaciones distintas. */
-.info-cta{ font-family: var(--font-body); font-size: 16px; line-height:1.4; color: #626262; margin:0; padding: 32px 0; text-align:left; }
+.info-cta{ font-family: var(--font-body); font-size: var(--fs-lead); line-height: var(--lh-lead); color: #626262; margin:0; padding: 32px 0; text-align:left; }
 .info-contact-col{ gap:4px !important; text-align:right; }
 /* La frase de la consulta dentro del CTA. Va en negrita y en el color del
    texto normal (el resto del CTA es gris #626262): una negrita en gris medio
@@ -492,7 +541,7 @@ button{ font-family: inherit; }
 .info-cta-strong,
 .info-cta-link{ font-weight:700; color: var(--ink); }
 .info-cta-link{ text-decoration: underline; text-underline-offset: 3px; }
-.info-contact-col div{ font-family: var(--font-body); font-size: 14px; color: var(--ink); }
+.info-contact-col div{ font-family: var(--font-body); font-size: var(--fs-base); color: var(--ink); }
 
 /* ---------- Side B page ---------- */
 /* The standalone "Side B" title (h1) was removed in Pencil 2026-08-11 —
@@ -500,7 +549,7 @@ button{ font-family: inherit; }
    is applied straight to .sideb-intro instead of a separate title block. */
 .sideb-content{ padding: 0; }
 .sideb-title-wrap{ padding: 16px 6px 0; }
-.sideb-intro{ font-family: var(--font-body); font-size: 16px; line-height:1.4; color: var(--ink); margin:0; }
+.sideb-intro{ font-family: var(--font-body); font-size: var(--fs-lead); line-height: var(--lh-lead); color: var(--ink); margin:0; }
 .sideb-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap: 6px 4px; padding: 12px 6px; }
 .sideb-grid .tile{ gap:0; }
 .sideb-grid .tile-cover{ aspect-ratio: 1; }
@@ -547,19 +596,19 @@ button{ font-family: inherit; }
 
 .project-info{ display:flex; flex-direction:column; gap:6px; padding: 6px 6px; }
 .project-info-header{ display:flex; gap:24px; align-items:flex-start; }
-.project-title{ flex:0 0 140px; width:140px; font-size:16px; font-weight:700; color: var(--ink); }
-.project-overview-label{ flex:1; min-width:0; padding-top:9px; font-family: var(--font-body); font-size:12px; font-weight:700; color: var(--ink); }
+.project-title{ flex:0 0 140px; width:140px; font-size: var(--fs-lead); font-weight:700; color: var(--ink); }
+.project-overview-label{ flex:1; min-width:0; padding-top:9px; font-family: var(--font-body); font-size: var(--fs-meta); font-weight:700; color: var(--ink); }
 .project-info-body{ display:flex; gap:24px; width:100%; }
 .project-meta-col{ flex:0 0 140px; width:140px; display:flex; flex-direction:column; gap:4px; }
-.project-meta-line{ font-family: var(--font-body); font-size:12px; font-weight:500; color:#525252; }
-.project-overview-text{ flex:1; min-width:0; font-family: var(--font-body); font-size:14px; line-height:1.45; color:#626262; }
+.project-meta-line{ font-family: var(--font-body); font-size: var(--fs-meta); font-weight:500; color:#525252; }
+.project-overview-text{ flex:1; min-width:0; font-family: var(--font-body); font-size: var(--fs-base); line-height: var(--lh-base); color:#626262; }
 .project-overview-text p{ margin:0 0 10px; }
 .project-overview-text p:last-of-type{ margin-bottom:0; }
 .project-link{
   display: inline-block;
   margin-top: 6px;
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--ink);
   border-bottom: 1px solid var(--ink-secondary);
 }
@@ -673,7 +722,7 @@ button{ font-family: inherit; }
 /* One flowing sentence, title inline with the description — matches
    Pencil's "Title" + "Prefix"/"Rest" caption (hand-split there for its
    static text tool; here plain CSS word-wrap does the same job). */
-.project-related-caption{ margin:0; padding-top:6px; font-family: var(--font-body); font-size:16px; line-height:22px; }
+.project-related-caption{ margin:0; padding-top:6px; font-family: var(--font-body); font-size: var(--fs-lead); line-height: var(--lh-lead); }
 .project-related-title{ font-weight:500; color: var(--ink); }
 .project-related-desc{ font-weight:300; color: #121212B3; color: color-mix(in srgb, var(--ink) 70%, transparent); }
 
@@ -685,7 +734,7 @@ button{ font-family: inherit; }
 .project-meta{ display:flex; gap:20px; }
 .project-meta-item{ display:flex; flex-direction:column; gap:3px; }
 .project-meta-label{ font-family: var(--font-body); font-size:10px; color: var(--ink-secondary); }
-.project-meta-value{ font-family: var(--font-body); font-size:12px; color: var(--ink); }
+.project-meta-value{ font-family: var(--font-body); font-size: var(--fs-meta); color: var(--ink); }
 .project-body{ padding: 20px 20px 0; }
 .project-body p{ font-family: var(--font-body); font-size: 14px; line-height: 1.5; color: var(--ink); margin-bottom: 12px; }
 .project-body p:last-child{ margin-bottom: 0; }
@@ -723,11 +772,11 @@ button{ font-family: inherit; }
 .page-sidebar-photo{ position:relative; aspect-ratio: var(--seal-ar); border-radius:8px; overflow:hidden; background: #F0ECE4; }
 .page-sidebar-divider{ height:1px; background: rgba(0,0,0,0.15); }
 .page-sidebar-card{ display:flex; flex-direction:column; gap:6px; }
-.page-sidebar-card-header{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; font-family: var(--font-body); font-size:14px; }
+.page-sidebar-card-header{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; font-family: var(--font-body); font-size: var(--fs-base); }
 .page-sidebar-card-header span{ font-weight:700; color:#000000; }
 .page-sidebar-card-header a{ font-weight:400; color:#000000; }
 .page-sidebar-card-header a:hover{ color: var(--ink-secondary); }
-.page-sidebar-card p{ font-family: var(--font-body); font-size:14px; line-height:1.4; color:#000000; margin:0; }
+.page-sidebar-card p{ font-family: var(--font-body); font-size: var(--fs-base); line-height: var(--lh-base); color:#000000; margin:0; }
 .page-sidebar-project{ display:flex; flex-direction:column; gap:6px; }
 .page-sidebar-project .tile-cover{ position:relative; overflow:hidden; border-radius:8px; background: var(--border); }
 /* Cover a la proporcion de su propio hero, sin alto fijo (2026-08-25). El
@@ -749,14 +798,14 @@ button{ font-family: inherit; }
   margin-top: 32px;
 }
 .footer-contact{ display:flex; flex-direction:column; gap:2.5px; width:fit-content; }
-.footer-contact-line{ font-family: var(--font-body); font-size: 14px; color: var(--ink); }
+.footer-contact-line{ font-family: var(--font-body); font-size: var(--fs-base); color: var(--ink); }
 .footer-contact-line:hover{ color: var(--ink-secondary); }
 .footer-divider{ height:1px; background:#C3C3C3; }
 .footer-bottom{ display:flex; justify-content:space-between; align-items:flex-end; }
 .footer-copy{ display:flex; flex-direction:column; gap:2.5px; }
-.footer-copyright{ font-family: var(--font-body); font-size: 10px; color: var(--ink); }
-.footer-rights{ font-family: var(--font-body); font-size: 10px; color: var(--ink-secondary); }
-.back-to-top{ background:none; border:none; font-family: var(--font-body); font-size: 14px; font-weight:700; color: var(--ink); cursor:pointer; padding:0; }
+.footer-copyright{ font-family: var(--font-body); font-size: var(--fs-fine); color: var(--ink); }
+.footer-rights{ font-family: var(--font-body); font-size: var(--fs-fine); color: var(--ink-secondary); }
+.back-to-top{ background:none; border:none; font-family: var(--font-body); font-size: var(--fs-base); font-weight:700; color: var(--ink); cursor:pointer; padding:0; }
 .back-to-top:hover{ color: var(--ink-secondary); }
 .footer-rights{ color:#626262; font-weight:300; }
 
@@ -878,9 +927,12 @@ button{ font-family: inherit; }
   .info-desktop{ display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: var(--gutter); padding:16px 0; }
   .info-desktop-col{ flex:1; min-width:0; display:flex; flex-direction:column; gap:16px; }
   .info-desktop-section{ display:flex; flex-direction:column; gap:6px; }
-  .info-desktop-heading{ font-family: var(--font-body); font-size:14px; font-weight:700; color:#000000; margin:0; }
-  .info-desktop-body{ font-family: var(--font-body); font-size:14px; line-height:1.4; color:#121212B3; margin:0; }
-  .info-desktop-list{ font-family: var(--font-body); font-size:14px; line-height:1.4; color:#121212B3; }
+  /* 14 -> 16. Era un titulo de seccion del mismo tamanio que el parrafo que
+     tiene debajo, y ademas mas chico que su equivalente de mobile
+     (.info-section-heading, 16). */
+  .info-desktop-heading{ font-family: var(--font-body); font-size: var(--fs-lead); font-weight:700; color:#000000; margin:0; }
+  .info-desktop-body{ font-family: var(--font-body); font-size: var(--fs-base); line-height: var(--lh-base); color:#121212B3; margin:0; }
+  .info-desktop-list{ font-family: var(--font-body); font-size: var(--fs-base); line-height: var(--lh-base); color:#121212B3; }
 
   /* Side B Desktop (BI3ZW): NOT the mobile grid widened — a 4-track photo
      masonry (Sidebar track: title+full intro+2 photos, then 3 pure photo
@@ -891,8 +943,9 @@ button{ font-family: inherit; }
   .sideb-desktop-sidebar{ min-width:0; display:flex; flex-direction:column; gap:16px; }
   .sideb-desktop-col{ min-width:0; display:flex; flex-direction:column; gap: var(--gutter); }
   .sideb-desktop-intro{ display:flex; flex-direction:column; gap:8px; }
-  .sideb-desktop-title{ font-family: var(--font-heading); font-size:14px; font-weight:700; color:#000000; margin:0; }
-  .sideb-desktop-body{ font-family: var(--font-body); font-size:14px; line-height:1.4; color:#121212B3; margin:0; }
+  /* 14 -> 16, mismo caso: el titulo de Side B media igual que su bajada. */
+  .sideb-desktop-title{ font-family: var(--font-heading); font-size: var(--fs-lead); font-weight:700; color:#000000; margin:0; }
+  .sideb-desktop-body{ font-family: var(--font-body); font-size: var(--fs-base); line-height: var(--lh-base); color:#121212B3; margin:0; }
   .sideb-desktop-photo{ position:relative; border-radius:8px; overflow:hidden; background: var(--border); }
   .sideb-desktop-photo .play-badge{ background:#121212; }
   .sideb-desktop-photo .play-badge svg{ width:18px; height:18px; }
@@ -915,12 +968,16 @@ button{ font-family: inherit; }
      Antes era un flex con space-between y un max-width de 420px, asi que el
      tagline flotaba contra el borde derecho sin coincidir con ninguna columna. */
   .project-desktop-header-row{ display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: var(--gutter); }
-  .project-desktop-title{ font-family: var(--font-heading); font-size:14px; font-weight:700; color: var(--ink); margin:0; }
-  .project-desktop-tagline{ grid-column: 2; font-family: var(--font-body); font-size:14px; color: var(--ink); text-align:left; margin:0; }
+  /* 14 -> 16. El nombre del proyecto media lo mismo que el texto de al lado;
+     en mobile (.project-title) ya era 16. */
+  .project-desktop-title{ font-family: var(--font-heading); font-size: var(--fs-lead); font-weight:700; color: var(--ink); margin:0; }
+  .project-desktop-tagline{ grid-column: 2; font-family: var(--font-body); font-size: var(--fs-base); color: var(--ink); text-align:left; margin:0; }
   /* Was a single <p>; now wraps one <p> per p.body entry (script.js,
      2026-08-12) so a paragraph break in the source .docx (multiple body[]
      items) shows as a real paragraph break here too, not just on mobile. */
-  .project-desktop-description{ font-family: var(--font-body); font-size:16px; line-height:1.5; color:#121212B3; max-width:560px; margin:0; }
+  /* 16 -> 14, el unico que BAJA. Es cuerpo corrido, no un lead: media 16
+     mientras el cuerpo de Info, de Side B y del overview media 14. */
+  .project-desktop-description{ font-family: var(--font-body); font-size: var(--fs-base); line-height: var(--lh-base); color:#121212B3; max-width:560px; margin:0; }
   .project-desktop-description p{ margin:0 0 10px; }
   .project-desktop-description p:last-of-type{ margin-bottom:0; }
   /* Dos columnas adentro de un proyecto (2026-08-25). El encabezado de arriba
