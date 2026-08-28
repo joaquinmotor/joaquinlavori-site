@@ -44,8 +44,40 @@ const els = {
 let currentPageIndex = 0;
 const isMobile = () => window.innerWidth <= MOBILE_BREAKPOINT;
 
-function mailtoUrl(subject) {
+function mailtoUrl(subject = "Project inquiry") {
   return `mailto:${SITE.email}?subject=${encodeURIComponent(subject)}`;
+}
+
+// El mail se muestra en cuatro lugares y hasta hoy en TODOS era texto muerto:
+// se veia la direccion y no pasaba nada al tocarla. En el celular eso es peor
+// que en desktop —no hay "copiar" comodo, no hay arrastrar y soltar— asi que
+// quien queria escribir tenia que tipearla a mano (2026-08-28, pedido del
+// usuario: que el mail sea un CTA que abra el cliente de correo).
+function mailHTML(texto = SITE.email, subject) {
+  return `<a class="contact-link" href="${mailtoUrl(subject)}">${texto}</a>`;
+}
+
+function telUrl() {
+  // tel: quiere el numero sin espacios ni guiones; el texto visible conserva
+  // el formato legible.
+  return `tel:${SITE.phone.replace(/[^\d+]/g, "")}`;
+}
+
+// Los textos largos de Info traen el mail y el telefono ESCRITOS ADENTRO de la
+// prosa ("...reach out... hello@… or +61…"), no como campos aparte, asi que no
+// hay donde colgar un link sin partir la frase en data.js. Se linkean despues,
+// sobre el HTML ya armado: se busca el mail y el telefono que declara SITE y se
+// los envuelve. Asi el texto sigue siendo texto plano en data.js —que es como
+// el usuario lo escribe y lo edita— y igual termina siendo tocable.
+// Se escapan los metacaracteres del regex porque el telefono trae un "+".
+function linkContactos(html) {
+  const escapar = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return html
+    .replace(new RegExp(escapar(SITE.email), "g"), () => mailHTML())
+    .replace(
+      new RegExp(escapar(SITE.phone), "g"),
+      () => `<a class="contact-link" href="${telUrl()}">${SITE.phone}</a>`
+    );
 }
 
 function chevron(direction) {
@@ -224,7 +256,7 @@ function sidebarCardsHTML() {
   const aboutBody = INFO_CONTENT.bio.replace(/\n\n/g, " ");
   const cards = [
     { title: "About Joaquin", link: "Read more", href: "#/info", body: aboutBody },
-    { title: "Project inquiries", link: "Contact", href: mailtoUrl("Project inquiry / consultation"), body: SITE.email },
+    { title: "Project inquiries", link: "Contact", href: mailtoUrl("Project inquiry / consultation"), body: mailHTML() },
     { title: "Instagram", link: "Follow", href: SITE.instagramUrl, external: true, body: SITE.instagram },
   ];
   return cards
@@ -1013,7 +1045,7 @@ function renderInfo() {
           ${i > 0 ? '<div class="info-divider"></div>' : ""}
           <div class="info-section">
             <p class="info-section-heading">${s.title}</p>
-            <p class="info-section-body">${s.body}</p>
+            <p class="info-section-body">${linkContactos(s.body)}</p>
           </div>`
           )
           .join("")}
@@ -1025,8 +1057,8 @@ function renderInfo() {
       <div class="info-indent-row">
         <div class="info-spacer"></div>
         <div class="info-indent-col info-contact-col">
-          <div>${SITE.email}</div>
-          <div>${SITE.phone}</div>
+          <div>${mailHTML()}</div>
+          <div><a class="contact-link" href="${telUrl()}">${SITE.phone}</a></div>
           <div>Currently living in ${SITE.location}</div>
         </div>
       </div>
@@ -1044,7 +1076,9 @@ function renderInfo() {
 // only). The matching photo+About/Contact/Instagram+5-project sidebar is
 // rendered separately by renderSidebar("info").
 function infoDesktopSectionHTML(s, i) {
-  const body = s.list ? `<div class="info-desktop-list">${s.list.join("<br />")}</div>` : `<p class="info-desktop-body">${s.body}</p>`;
+  const body = s.list
+    ? `<div class="info-desktop-list">${s.list.join("<br />")}</div>`
+    : `<p class="info-desktop-body">${linkContactos(s.body)}</p>`;
   return `
     ${i > 0 ? '<div class="info-divider"></div>' : ""}
     <div class="info-desktop-section">

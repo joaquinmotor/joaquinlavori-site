@@ -467,6 +467,28 @@ button{ font-family: inherit; }
    queda apagada y no destaca nada, con el ink si lee. Cuando se prenda el
    link de Calendly hereda el mismo peso y color y solo suma el subrayado, asi
    que la frase no se mueve ni cambia de aspecto al pasar de una etapa a otra. */
+/* Mail y telefono, donde sea que aparezcan: en las tarjetas del sidebar, en la
+   columna de contacto de Info y adentro de la prosa de "Say Hello".
+   La regla global `a{ text-decoration:none }` de arriba los dejaria
+   indistinguibles del texto, que es exactamente el problema que tenian antes de
+   ser links (2026-08-28): se veia la direccion y no pasaba nada al tocarla.
+   Subrayado y no color: el sitio no tiene un color de link: meter uno solo para
+   esto abriria una convencion nueva por dos datos. El subrayado alcanza para
+   decir "esto se toca" y no pelea con nada.
+   Arranca al 35% y va a lleno en hover: presente sin gritar, y el hover
+   confirma. text-underline-offset lo despega de las descendentes de la j y la
+   q, que en este mail son varias. */
+.contact-link{
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(18,18,18,0.35);
+  text-decoration-color: color-mix(in srgb, var(--ink) 35%, transparent);
+  transition: text-decoration-color .2s var(--ease-soft);
+}
+.contact-link:hover{ text-decoration-color: var(--ink); }
+
 .info-cta-strong,
 .info-cta-link{ font-weight:700; color: var(--ink); }
 .info-cta-link{ text-decoration: underline; text-underline-offset: 3px; }

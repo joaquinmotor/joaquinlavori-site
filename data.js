@@ -15,7 +15,13 @@ const SITE = {
   name: "Joaquin Lavori",
   tagline: "Branding & Illustration",
   eyebrow: "BUENOS AIRES — ILLUSTRATION & DESIGN",
-  email: "hello@joaquin.com",
+  // Fuente unica del mail. Todo lo que lo muestre tiene que leerlo de aca y
+  // NO escribirlo a mano: el 2026-08-28 cambio de hello@joaquin.com a este, y
+  // la unica copia hardcodeada que habia (el body de "Say Hello", mas abajo)
+  // fue justamente la que casi se queda vieja. Si aparece de nuevo en un texto,
+  // linkContactos() en script.js lo detecta y lo convierte en link igual, pero
+  // el texto en si hay que actualizarlo a mano.
+  email: "hello@joaquinlavori.com",
   phone: "+61 499 372 409",
   instagram: "@joaquinlavori",
   instagramUrl: "https://instagram.com/joaquinlavori",
@@ -1106,7 +1112,7 @@ const INFO_DESKTOP = {
         { title: "Awards", list: INFO_CONTENT.columns[7].values },
         {
           title: "Say Hello",
-          body: "For new partnerships and general enquiries, reach out, always happy to hear what people are working on. hello@joaquin.com or +61 499 372 409. Currently living in NSW, Australia. Got a project in mind? Send a short brief with scope, timeline and budget — I'll get back within two business days to see if it's a fit.",
+          body: "For new partnerships and general enquiries, reach out, always happy to hear what people are working on. hello@joaquinlavori.com or +61 499 372 409. Currently living in NSW, Australia. Got a project in mind? Send a short brief with scope, timeline and budget — I'll get back within two business days to see if it's a fit.",
         },
       ],
     },
