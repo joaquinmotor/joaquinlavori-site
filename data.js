@@ -72,22 +72,19 @@ const PROJECTS = [
     brand: "The Movement",
     category: "Branding",
     blurb:
-      "Logo design for The Movement, a new talent and live-show division by Landia, one of the most awarded advertising production companies.",
+      "Logo design for The Movement, a new talent and live-show division by Landia.",
     body: [
-      "Logo design for The Movement, a global creative studio and production company working across the music industry and the brands that work with it. Launched by Landia — one of the most awarded advertising production companies — The Movement needed an identity that could carry its own weight as a new division within the group.",
+      "Logo design for The Movement, a global creative studio and production company working across the music industry and the brands that work with it. Launched by Landia, one of the most awarded advertising production companies, The Movement needed an identity that could carry its own weight as a new division within the group.",
       "I explored several directions before landing on an organic, handwritten mark: loose, human, and unmistakably tied to music and performance rather than to a traditional agency register. The result is a flexible, relaxed logotype built to move across music videos, branded content, and live shows — giving The Movement the push it needed to launch under its own name.",
     ],
     link: "https://themovement.land/",
     linkLabel: "Visit site",
     hero: "assets/img/the-movement/hero.webp",
-    // Home tile cover only (does not affect the Project page hero/gallery
-    // order above): el video de hero del proyecto (hero.mp4, nativo 886x1400).
-    // Era video-04 hasta el 2026-08-22; al re-sincronizar la carpeta ese archivo
-    // dejo de existir, se probo con celu.mp4 y el usuario pidio el del hero.
-    // El tile toma la proporcion nativa del video por la regla generica
-    // .tile-cover:has(.media-real) de styles.css — NO hardcodear un aspect-ratio
-    // por slug, ya paso una vez y dejo el cover recortado a la caja vieja.
-    homeCover: { type: "video", src: "assets/img/the-movement/hero.mp4", poster: "assets/img/the-movement/hero-poster.jpg" },
+    // Sin homeCover desde el 2026-09-01: el hero paso a ser una foto y el
+    // usuario pidio que el tile del Home muestre esa foto, como el resto de
+    // los proyectos. El tile toma la proporcion nativa del archivo por la regla
+    // generica .tile-cover:has(.media-real) de styles.css — NO hardcodear un
+    // aspect-ratio por slug, ya paso una vez y dejo el cover recortado.
     // A plain array entry inside `gallery` (nested, as opposed to a string
     // or {type:"video"} object) is a "carrusel" group: a set of photos
     // meant to render as one auto-scrolling horizontal filmstrip instead of
@@ -99,10 +96,10 @@ const PROJECTS = [
     // desaparecieron los phone-01..08 y video-03/04, entro 11-celu-11.mp4 (sale
     // como celu.mp4) y los dos grupos de carrusel.
     gallery: [
-      { type: "video", src: "assets/img/the-movement/hero.mp4", poster: "assets/img/the-movement/hero-poster.jpg" },
+      "assets/img/the-movement/hero.webp",
       "assets/img/the-movement/logo.webp",
-      "assets/img/the-movement/foto-01.webp",
       { type: "video", src: "assets/img/the-movement/video-01.mp4", poster: "assets/img/the-movement/video-01-poster.jpg" },
+      { type: "video", src: "assets/img/the-movement/video-02.mp4", poster: "assets/img/the-movement/video-02-poster.jpg" },
       {
         type: "carrusel",
         heightDesktop: 300,
@@ -113,7 +110,7 @@ const PROJECTS = [
           "assets/img/the-movement/carrusel1-04.webp",
         ],
       },
-      { type: "video", src: "assets/img/the-movement/video-02.mp4", poster: "assets/img/the-movement/video-02-poster.jpg" },
+      { type: "video", src: "assets/img/the-movement/video-03.mp4", poster: "assets/img/the-movement/video-03-poster.jpg" },
       "assets/img/the-movement/team.webp",
       { type: "video", src: "assets/img/the-movement/celu.mp4", poster: "assets/img/the-movement/celu-poster.jpg" },
       {
@@ -131,9 +128,11 @@ const PROJECTS = [
     slug: "afends",
     brand: "Afends",
     category: "Illustration & Content",
-    blurb: "A tattoo flash-inspired capsule collection and documentary content series for Afends' Spring 2026 range.",
+    blurb:
+      "A tattoo flash-inspired capsule collection.",
     body: [
-      "Afends invited Joaquin Motor — Joaquin Lavori's illustration alter ego, built on his tattoo flash artwork — to design a capsule collection around their Off-Script range, a story about breaking out, staying true, and choosing your own way forward. I pulled directly from the symbolism already running through the work — snakes, chains, roses, flames — and translated it into a range spanning womenswear, menswear, and accessories, from oversized tees to six-panel caps. The collaboration went beyond product into Create Not Destroy, a documentary-style content series built around the artist and his studio, treating his tools and space as part of the story rather than a backdrop. The result plays less like a brand collab and more like a flash sheet stretched onto fabric — freedom, the kind you fight for, worn.",
+      "Afends invited Joaquin Motor, Joaquin Lavori's illustration alter ego, built on his tattoo flash artwork, to design a capsule collection around their Off-Script range, a story about breaking out, staying true, and choosing your own way forward. I pulled directly from the symbolism already running through the work, snakes, chains, roses, flames, and translated it into a range spanning womenswear, menswear, and accessories, from oversized tees to six-panel caps.",
+      "The collaboration went beyond product into Create Not Destroy, a documentary-style content series built around the artist and his studio, treating his tools and space as part of the story rather than a backdrop. The result plays less like a brand collab and more like a flash sheet stretched onto fabric, freedom, the kind you fight for, worn.",
     ],
     link: "https://afends.com/search?q=joaquin+motor&options%5Bprefix%5D=last",
     linkLabel: "View project",
@@ -300,9 +299,10 @@ const PROJECTS = [
     brand: "La Calle Bar",
     category: "Illustration & Environmental Design",
     blurb:
-      "An illustrated cocktail menu, neon mural, and crockery for La Calle Bar, each drink built around a street somewhere in the world.",
+      "An illustrated cocktail menu, neon mural, and crockery for La Calle Bar.",
     body: [
-      "La Calle Bar, a bar in Buenos Aires, asked Joaquin Motor — Joaquin Lavori's illustration alter ego — to give shape to a menu built around a single idea: bars as the last wild pockets left in the city, the places where risk, chance, and freedom still exist. Working alongside the bar's own bartenders, Adrián \"Adre\" González and Eze \"El Tano,\" I illustrated each cocktail as its own destination, matching each street's character to what's in the glass. The concept moved off the page into an on-site neon mural and a set of illustrated crockery, carrying the same cast of characters into the physical space. The result turns ordering a cocktail into picking a destination — a menu you travel through as much as drink from.",
+      "La Calle Bar, a bar in Buenos Aires, asked Joaquin Motor, Joaquin Lavori's illustration alter ego, to give shape to a menu built around a single idea: bars as the last wild pockets left in the city, the places where risk, chance, and freedom still exist. Working alongside the bar's own bartenders, Adrián \"Adre\" González and Eze \"El Tano,\" I illustrated each cocktail as its own destination, matching each street's character to what's in the glass.",
+      "The concept moved off the page into an on-site neon mural and a set of illustrated crockery, carrying the same cast of characters into the physical space. The result turns ordering a cocktail into picking a destination, a menu you travel through as much as drink from.",
     ],
     link: "https://www.instagram.com/lacallebar/",
     linkLabel: "View site",
@@ -322,15 +322,15 @@ const PROJECTS = [
     // OVERRIDES='{"carrusel2":{"speed":45},"slidecut2":{"height":300,"interval":1000}}'
     // y salen ya puestos en el JS — ver carruseles-y-slideshows.md.
     gallery: [
-      { type: "video", src: "assets/img/lacalle/hero.mp4", poster: "assets/img/lacalle/hero-poster.jpg" },
+      "assets/img/lacalle/hero.webp",
       [
         "assets/img/lacalle/carrusel1-01.webp",
         "assets/img/lacalle/carrusel1-02.webp",
         "assets/img/lacalle/carrusel1-03.webp",
       ],
       "assets/img/lacalle/foto-01.webp",
+      { type: "video", src: "assets/img/lacalle/hero.mp4", poster: "assets/img/lacalle/hero-poster.jpg" },
       "assets/img/lacalle/foto-02.webp",
-      "assets/img/lacalle/foto-03.webp",
       {
         type: "carrusel",
         speed: 45,
@@ -342,9 +342,9 @@ const PROJECTS = [
           "assets/img/lacalle/carrusel2-05.webp",
         ],
       },
+      "assets/img/lacalle/foto-03.webp",
       "assets/img/lacalle/foto-04.webp",
       "assets/img/lacalle/foto-05.webp",
-      "assets/img/lacalle/foto-06.webp",
       { type: "video", src: "assets/img/lacalle/video-01.mp4", poster: "assets/img/lacalle/video-01-poster.jpg" },
       {
         type: "slideshow",
@@ -368,15 +368,19 @@ const PROJECTS = [
           "assets/img/lacalle/slidecut2-15.webp",
         ],
       },
-      "assets/img/lacalle/foto-07.webp",
+      "assets/img/lacalle/foto-06.webp",
       [
         "assets/img/lacalle/carrusel3-01.webp",
         "assets/img/lacalle/carrusel3-02.webp",
         "assets/img/lacalle/carrusel3-03.webp",
         "assets/img/lacalle/carrusel3-04.webp",
       ],
+      "assets/img/lacalle/foto-07.webp",
       "assets/img/lacalle/foto-08.webp",
-      "assets/img/lacalle/foto-09.webp",
+      [
+        "assets/img/lacalle/carrusel4-01.webp",
+        "assets/img/lacalle/carrusel4-02.webp",
+      ],
     ],
   },
   {
@@ -402,8 +406,7 @@ const PROJECTS = [
     // carrusel1/2/3 sit at height:30 (narrow strips, the user's own call) and
     // the slide-cut group at height:460 because its 5 photos mix aspect ratios.
     gallery: [
-      { type: "video", src: "assets/img/ceremonia/hero.mp4", poster: "assets/img/ceremonia/hero-poster.jpg" },
-      "assets/img/ceremonia/foto-01.webp",
+      "assets/img/ceremonia/hero.webp",
       {
         type: "carrusel",
         height: 30,
@@ -411,8 +414,8 @@ const PROJECTS = [
           "assets/img/ceremonia/carrusel1-01.webp",
         ],
       },
-      "assets/img/ceremonia/foto-02.webp",
-      "assets/img/ceremonia/foto-03.webp",
+      "assets/img/ceremonia/foto-01.webp",
+      { type: "video", src: "assets/img/ceremonia/hero.mp4", poster: "assets/img/ceremonia/hero-poster.jpg" },
       {
         type: "carrusel",
         height: 30,
@@ -420,8 +423,8 @@ const PROJECTS = [
           "assets/img/ceremonia/carrusel2-01.webp",
         ],
       },
-      "assets/img/ceremonia/foto-04.webp",
-      "assets/img/ceremonia/foto-05.webp",
+      "assets/img/ceremonia/foto-02.webp",
+      "assets/img/ceremonia/foto-03.webp",
       {
         type: "carrusel",
         height: 30,
@@ -444,6 +447,7 @@ const PROJECTS = [
       [
         "assets/img/ceremonia/carrusel4-01.webp",
       ],
+      "assets/img/ceremonia/foto-04.webp",
     ],
   },
   {
@@ -451,9 +455,10 @@ const PROJECTS = [
     brand: "Roark & Zero Skateboards",
     category: "Illustration",
     blurb:
-      "Knife illustrations for a 50-board limited edition skate deck and apparel collab between Roark and Zero Skateboards, hand-signed and numbered by pro skater Jamie Thomas.",
+      "Knife illustrations for a 50-board limited edition skate deck and apparel collab.",
     body: [
-      "Roark met Joaquin Motor — Joaquin Lavori's illustration alter ego — through their Argentine guide Manu Dominguez, on a trip through Buenos Aires with pro skater Jamie Thomas. Roark commissioned a knife illustration built on Motor's own relationship with the tool: not a weapon, but, in his words, \"my best friend and partner when I'm out in the desert or camping.\" The piece became Motor's Blade, paired with Zero's own skull mark on a 50-board limited edition, hand-signed and numbered by Jamie Thomas. From there I designed a series of four knife illustrations that Roark carried onto the Motor's Blade L/S Tee. The boards sold out within hours.",
+      "Roark met Joaquin Motor, Joaquin Lavori's illustration alter ego, through their Argentine guide Manu Dominguez, on a trip through Buenos Aires with pro skater Jamie Thomas. Roark commissioned a knife illustration built on Motor's own relationship with the tool: not a weapon, but, in his words, \"my best friend and partner when I'm out in the desert or camping.\"",
+      "The piece became Motor's Blade, paired with Zero's own skull mark on a 50-board limited edition, hand-signed and numbered by Jamie Thomas. From there I designed a series of four knife illustrations that Roark carried onto the Motor's Blade L/S Tee. The boards sold out within hours.",
     ],
     link: "https://au.roark.com/blogs/the-artifacts-of-adventure/a-new-collaboration-with-zero-skateboards",
     linkLabel: "View project",
@@ -513,9 +518,11 @@ const PROJECTS = [
     slug: "vans",
     brand: "Vans Argentina",
     category: "Illustration & Character Design",
-    blurb: "A series of illustrations and an original mascot for Vans Argentina, built around skate, surf, music, and street culture.",
+    blurb:
+      "A series of illustrations and an original mascot for Vans Argentina.",
     body: [
-      "After two years as Vans Argentina's art director, Joaquin Motor — Joaquin Lavori's illustration alter ego — became the brand's artistic ambassador, building a series of illustrations for their campaigns. Vans has defined itself since 1966 in California through creativity, authenticity, and skate culture, later expanding that identity into art, music, and DIY. Each illustration was built around the brand's core pillars — skateboarding, surf, music, and street life — chasing the same mix of irreverence and belonging Vans has always cultivated. Along the way, I developed an original mascot, a mushroom character that became a recurring face across the work and found an audience of its own.",
+      "After two years as Vans Argentina's art director, Joaquin Motor, Joaquin Lavori's illustration alter ego, became the brand's artistic ambassador, building a series of illustrations for their campaigns. Vans has defined itself since 1966 in California through creativity, authenticity, and skate culture, later expanding that identity into art, music, and DIY.",
+      "Each illustration was built around the brand's core pillars, skateboarding, surf, music, and street life, chasing the same mix of irreverence and belonging Vans has always cultivated. Along the way, I developed an original mascot, a mushroom character that became a recurring face across the work and found an audience of its own.",
     ],
     link: "https://www.instagram.com/vansargentina/",
     linkLabel: "View site",
@@ -700,9 +707,10 @@ const PROJECTS = [
     brand: "Fatima",
     category: "Branding & Illustration",
     blurb:
-      "An alternative logo, t-shirt collection, and limited edition surfboard for Fatima Surfboards, hand-shaped between Byron Bay and Buenos Aires.",
+      "An alternative logo, t-shirt collection and surfboard.",
     body: [
-      "Fatima Surfboards asked Joaquin Motor — Joaquin Lavori's illustration alter ego — to design one of their alternative logos, alongside a t-shirt collection and a limited edition surfboard. Founder Nicolas Fatima hand-shapes boards between Byron Bay, Australia, and Buenos Aires, Argentina, building them around a simple idea: surfboards as instruments of freedom and joy, not objects. Their existing logo was too detailed and rigid to carry that spirit, so I loosened it up, giving the brand a mark closer to what Nicolas actually puts into every board. That same looseness carried through the t-shirt collection and onto a limited edition board, translating the brand's hand-made, unhurried spirit into wearable and rideable pieces.",
+      "Fatima Surfboards asked Joaquin Motor, Joaquin Lavori's illustration alter ego, to design one of their alternative logos, alongside a t-shirt collection and a limited edition surfboard. Founder Nicolas Fatima hand-shapes boards between Byron Bay, Australia, and Buenos Aires, Argentina, building them around a simple idea: surfboards as instruments of freedom and joy, not objects.",
+      "Their existing logo was too detailed and rigid to carry that spirit, so I loosened it up, giving the brand a mark closer to what Nicolas actually puts into every board. That same looseness carried through the t-shirt collection and onto a limited edition board, translating the brand's hand-made, unhurried spirit into wearable and rideable pieces.",
     ],
     link: "https://www.instagram.com/fatimasurfboards",
     linkLabel: "View site",
