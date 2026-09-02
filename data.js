@@ -804,7 +804,7 @@ const PROJECTS = [
     brand: "Lightning Bolt Argentina",
     category: "Illustration & Apparel Design",
     blurb:
-      "An illustrated capsule collection for Lightning Bolt Argentina.",
+      "An illustrated capsule summer collection.",
     body: [
       "Lightning Bolt Argentina commissioned a full illustrated capsule, Underground Corp, built around a single idea: climbing up to the attic and opening a dusty box of memories, going back to the origin. The concept traces the creative potential of Gerry Lopez and Barry Kanaiaupuni, two friends in Hawaii living out their dream before they ever founded Lightning Bolt.",
       "I illustrated a set of tattoo-flash pieces around that world, skulls, snakes, a prowling panther, a co-branded Bolt Motor wordmark, carried across a full run of tees, hangtags, and a mug. The result reads like something pulled out of that same dusty box: old enough to feel found, new enough to wear.",
