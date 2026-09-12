@@ -30,6 +30,7 @@ const els = {
   gridHomeLeft: document.getElementById("grid-home-left"),
   gridHomeRight: document.getElementById("grid-home-right"),
   gridHomeThird: document.getElementById("grid-home-third"),
+  homeMarquee: document.getElementById("homeMarquee"),
   gridWork: document.getElementById("grid-work"),
   gridWorkDesktop: document.getElementById("grid-work-desktop"),
   pageWork: document.getElementById("page-work"),
@@ -138,7 +139,7 @@ const LIVE_PROJECTS = PROJECTS.filter((p) => REAL_MEDIA_PROJECTS.has(p.slug));
 // BUMP THIS whenever media files are overwritten in place. It is applied
 // here, not in data.js, so the paths in data.js stay clean and hasRealMedia()
 // keeps matching them.
-const MEDIA_V = "34";
+const MEDIA_V = "35";
 function withMediaV(url) {
   if (!url) return url;
   return url + (url.includes("?") ? "&" : "?") + "v=" + MEDIA_V;
@@ -313,7 +314,13 @@ function renderSidebar(key, proyectoAbierto) {
     <div class="page-sidebar-divider"></div>
     ${sidebarCardsHTML()}
     ${key === "info" ? `<div class="page-sidebar-divider"></div>${sidebarProjectsHTML()}` : ""}
+    ${key === "home" ? sidebarMarqueeHTML() : ""}
   `;
+  // El carrusel se mide recien cuando esta en el DOM: initMarquees() calcula la
+  // duracion con el scrollWidth real del track. Va aca y no en el boot porque
+  // renderSidebar() rearma el innerHTML en cada goToPage() (incluido el de
+  // resize), asi que el nodo anterior deja de existir.
+  initMarquees(els.sidebar);
 }
 
 // Real media (see coverTag/REAL_MEDIA_PROJECTS above) renders as a real
@@ -823,6 +830,43 @@ function renderHomeGrid(items) {
     initTileCarousels(el);
     initLazyVideos(el);
   });
+}
+
+// Carrusel del Home (2026-09-12, pedido del usuario: "en mobile, abajo de
+// todo, entre el footer y el ultimo proyecto; y en desktop, en la columna de la
+// izquierda abajo de mi instagram").
+//
+// Es la misma filmstrip de la galeria de un proyecto (marqueeHTML: track
+// duplicado, translateX(0 -> -50%), velocidad en px/s), pero el grupo es UNA
+// sola pieza: la tira de logos de clientes que el usuario deja en
+// assets/home/client-logos.png. Un carrusel de un solo item ya es precedente en
+// el sitio (los spreads de afends, carrusel4 de Ceremonia), loopea sobre si
+// mismo en vez de quedar quieto.
+//
+// La pieza procesada vive en assets/img/home/client-logos.webp, 6503x150:
+//  - el blanco del PNG pasa a alpha (los logos son grises puros, negro sobre
+//    blanco), asi que la tira se apoya en el fondo del sitio en vez de traer su
+//    propia banda blanca;
+//  - 150px de alto = 3x el alto de display (50px), igual que el resto de los
+//    carruseles (ver carruseles-y-slideshows.md);
+//  - se recorta el margen blanco sobrante de la derecha y se repone un hueco de
+//    417px, que es exactamente el que hay entre logo y logo, para que el punto
+//    de loop no se note.
+// Si el usuario reemplaza el PNG, hay que rehacer el .webp con ese mismo
+// tratamiento y bumpear MEDIA_V.
+//
+// Vive en dos nodos distintos, uno por viewport: en mobile es #homeMarquee,
+// entre la ultima tile y el footer; en desktop es la ultima fila del sidebar,
+// debajo de la tarjeta de Instagram. Cada uno esta CSS-oculto en el otro.
+const HOME_MARQUEE_SRC = "assets/img/home/client-logos.webp";
+const HOME_MARQUEE_H = 50;
+function renderHomeMarquee() {
+  if (!els.homeMarquee) return;
+  els.homeMarquee.innerHTML = marqueeHTML([HOME_MARQUEE_SRC], HOME_MARQUEE_H);
+  initMarquees(els.homeMarquee);
+}
+function sidebarMarqueeHTML() {
+  return `<div class="page-sidebar-divider"></div><div class="page-sidebar-marquee">${marqueeHTML([HOME_MARQUEE_SRC], HOME_MARQUEE_H)}</div>`;
 }
 
 // Work Desktop unselected (Ghq1t): the full 12-project catalog as a 3-column
@@ -2090,6 +2134,7 @@ window.addEventListener("resize", () => {
     // slide-cut quedan colgados de nodos que estan por desaparecer.
     clearSlideshows();
     renderHomeGrid(PROJECTS);
+    renderHomeMarquee();
     renderGrid(els.gridWork, LIVE_PROJECTS, { carousel: false, fantasyCaption: true });
     renderWorkDesktopGrid(LIVE_PROJECTS);
     renderInfo();
@@ -2106,6 +2151,7 @@ initNavScroll();
 renderHomeIntro();
 renderHero();
 renderHomeGrid(PROJECTS);
+renderHomeMarquee();
 // Work Mobile (z0NKkz) is a single-column list of fantasy-caption cards, same
 // pattern as Home — not the old numbered/carousel 2-col grid. CSS (`.grid`)
 // switches #grid-work to a full-width single column at mobile widths.

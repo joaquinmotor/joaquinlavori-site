@@ -239,6 +239,14 @@ button{ font-family: inherit; }
 
 /* ---------- Home page: two independent tile columns (matches Pencil) ---------- */
 .home-tile-columns{ display:flex; gap:4px; padding: 0 6px 16px; }
+/* Carrusel del Home (ver renderHomeMarquee/sidebarMarqueeHTML en script.js).
+   Dos nodos, uno por viewport: en mobile la tira va entre la ultima tile y el
+   footer, con el mismo padding lateral de 6px que las columnas; en desktop ese
+   contenedor desaparece y la tira es la ultima fila del sidebar. El radio de 8px
+   es el de las tile-cover del Home, no los 4px de la galeria de un proyecto. */
+.home-marquee{ padding: 0 6px 16px; }
+.home-marquee .project-marquee{ border-radius:8px; }
+.page-sidebar-marquee{ display:none; }
 .home-tile-column{ flex:1; min-width:0; display:flex; flex-direction:column; gap:4px; }
 .home-tile-column .tile{ gap:6px; }
 .home-tile-column .tile-cover{ aspect-ratio: unset; }
@@ -885,6 +893,10 @@ button{ font-family: inherit; }
   /* Home Desktop (z2Lknd): no hero/intro at all — straight to the sidebar +
      grid. */
   .hero{ display:none; }
+  /* En desktop el Home no tiene hero ni intro, y el carrusel se muda al
+     sidebar: el contenedor de mobile se apaga y aparece el del sidebar. */
+  .home-marquee{ display:none; }
+  .page-sidebar-marquee{ display:block; overflow:hidden; border-radius:8px; }
   .home-tile-columns{ display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: var(--gutter); padding: 16px 0; }
   .home-tile-column{ gap: var(--gutter); min-width:0; }
   /* 3rd column (9-tile 3x3 grid) is desktop-only; mobile hides it via the
