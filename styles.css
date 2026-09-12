@@ -244,7 +244,14 @@ button{ font-family: inherit; }
    footer, con el mismo padding lateral de 6px que las columnas; en desktop ese
    contenedor desaparece y la tira es la ultima fila del sidebar. El radio de 8px
    es el de las tile-cover del Home, no los 4px de la galeria de un proyecto. */
-.home-marquee{ padding: 0 6px 16px; }
+/* Mobile: divisor, 6px, tira, 6px, divisor, y 12px hasta el footer (2026-09-12,
+   pedido del usuario). Los 12px salen de anular el margin-top de 32px del
+   footer y dejar solo su padding-top, y por eso la regla apunta al footer que
+   viene JUSTO DESPUES del carrusel: el mismo componente se usa en las otras
+   tres secciones, donde ese margen sigue haciendo falta. */
+.home-marquee{ display:flex; flex-direction:column; gap:6px; padding: 0 6px; }
+.home-marquee-divider{ height:1px; background:#C3C3C3; }
+.home-marquee + .site-footer{ margin-top:0; padding-top:12px; }
 .home-marquee .project-marquee{ border-radius:8px; }
 .page-sidebar-marquee{ display:none; }
 .home-tile-column{ flex:1; min-width:0; display:flex; flex-direction:column; gap:4px; }

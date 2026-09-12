@@ -860,9 +860,16 @@ function renderHomeGrid(items) {
 // debajo de la tarjeta de Instagram. Cada uno esta CSS-oculto en el otro.
 const HOME_MARQUEE_SRC = "assets/img/home/client-logos.webp";
 const HOME_MARQUEE_H = 50;
+// Los dos divisores son solo de mobile (2026-09-12): 6px a cada lado de la
+// tira y 12px del de abajo al footer. En desktop el contenedor entero esta en
+// display:none y el rol de separador lo cumple el .page-sidebar-divider que ya
+// arma sidebarMarqueeHTML().
 function renderHomeMarquee() {
   if (!els.homeMarquee) return;
-  els.homeMarquee.innerHTML = marqueeHTML([HOME_MARQUEE_SRC], HOME_MARQUEE_H);
+  els.homeMarquee.innerHTML = `
+    <div class="home-marquee-divider"></div>
+    ${marqueeHTML([HOME_MARQUEE_SRC], HOME_MARQUEE_H)}
+    <div class="home-marquee-divider"></div>`;
   initMarquees(els.homeMarquee);
 }
 function sidebarMarqueeHTML() {
