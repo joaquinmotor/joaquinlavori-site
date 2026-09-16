@@ -31,6 +31,7 @@ const els = {
   gridHomeRight: document.getElementById("grid-home-right"),
   gridHomeThird: document.getElementById("grid-home-third"),
   homeMarquee: document.getElementById("homeMarquee"),
+  homeContact: document.getElementById("homeContact"),
   gridWork: document.getElementById("grid-work"),
   gridWorkDesktop: document.getElementById("grid-work-desktop"),
   pageWork: document.getElementById("page-work"),
@@ -871,6 +872,28 @@ function renderHomeMarquee() {
     ${marqueeHTML([HOME_MARQUEE_SRC], HOME_MARQUEE_H)}
     <div class="home-marquee-divider"></div>`;
   initMarquees(els.homeMarquee);
+  renderHomeContact();
+}
+
+// Tarjeta de contacto del Home Mobile (2026-09-16, pedido del usuario: "abajo
+// del divider del carrusel, ese texto y abajo otro divider"). Es la misma
+// tarjeta "Project inquiries / Contact / hello@" que ya arma sidebarCardsHTML()
+// para el sidebar de desktop, con sus mismas clases para no duplicar estilos.
+// El divisor de arriba es el de cierre del carrusel; este bloque solo agrega el
+// de abajo. En desktop el contenedor esta en display:none: ahi la tarjeta vive
+// en el sidebar. Se llama desde renderHomeMarquee() para que acompanie el
+// re-render por cambio de viewport sin sumar un call site nuevo.
+function renderHomeContact() {
+  if (!els.homeContact) return;
+  els.homeContact.innerHTML = `
+    <div class="page-sidebar-card home-contact-card">
+      <div class="page-sidebar-card-header">
+        <span>Project inquiries</span>
+        <a href="${mailtoUrl("Project inquiry / consultation")}">Contact</a>
+      </div>
+      <p>${mailHTML()}</p>
+    </div>
+    <div class="home-marquee-divider"></div>`;
 }
 function sidebarMarqueeHTML() {
   return `<div class="page-sidebar-divider"></div><div class="page-sidebar-marquee">${marqueeHTML([HOME_MARQUEE_SRC], HOME_MARQUEE_H)}</div>`;

@@ -205,7 +205,10 @@ button{ font-family: inherit; }
 
 /* ---------- Hero (home) ---------- */
 .hero{ padding: 6px 6px 0; }
-.home-intro{ font-family: var(--font-body); font-size: var(--fs); line-height: var(--lh-corrido); color: var(--ink); padding: 6px 0 6px; max-width: 420px; }
+/* 12px arriba y abajo del parrafo del hero (2026-09-16): 12px entre la foto
+   y el texto, y otros 12px hasta donde arrancan los covers de proyectos
+   (.home-tile-columns no lleva padding-top propio). */
+.home-intro{ font-family: var(--font-body); font-size: var(--fs); line-height: var(--lh-corrido); color: var(--ink); padding: 12px 0 12px; max-width: 420px; }
 .hero-media{
   display:block;
   position:relative;
@@ -252,6 +255,13 @@ button{ font-family: inherit; }
 .home-marquee{ display:flex; flex-direction:column; gap:6px; padding: 0 6px; }
 .home-marquee-divider{ height:1px; background:#C3C3C3; }
 .home-marquee + .site-footer{ margin-top:0; padding-top:12px; }
+/* Tarjeta de contacto del Home Mobile (2026-09-16): va pegada abajo del divisor
+   de cierre del carrusel, 12px de aire arriba y abajo del texto, y su propio
+   divisor al final. Desde ahi, los mismos 12px hasta el footer que dejaba el
+   carrusel cuando era el ultimo bloque. */
+.home-contact{ display:flex; flex-direction:column; padding: 0 6px; }
+.home-contact-card{ padding: 12px 0; }
+.home-contact + .site-footer{ margin-top:0; padding-top:12px; }
 .home-marquee .project-marquee{ border-radius:8px; }
 .page-sidebar-marquee{ display:none; }
 .home-tile-column{ flex:1; min-width:0; display:flex; flex-direction:column; gap:4px; }
@@ -903,6 +913,7 @@ button{ font-family: inherit; }
   /* En desktop el Home no tiene hero ni intro, y el carrusel se muda al
      sidebar: el contenedor de mobile se apaga y aparece el del sidebar. */
   .home-marquee{ display:none; }
+  .home-contact{ display:none; }
   .page-sidebar-marquee{ display:block; overflow:hidden; border-radius:8px; }
   .home-tile-columns{ display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: var(--gutter); padding: 16px 0; }
   .home-tile-column{ gap: var(--gutter); min-width:0; }
