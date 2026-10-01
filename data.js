@@ -74,8 +74,8 @@ const PROJECTS = [
     blurb:
       "Logo design for The Movement, a new talent and live-show division by Landia.",
     body: [
-      "Logo design for The Movement, a global creative studio and production company working across the music industry and the brands that work with it. Launched by Landia, one of the most awarded advertising production companies, The Movement needed an identity that could carry its own weight as a new division within the group.",
-      "I explored several directions before landing on an organic, handwritten mark: loose, human, and unmistakably tied to music and performance rather than to a traditional agency register. The result is a flexible, relaxed logotype built to move across music videos, branded content, and live shows — giving The Movement the push it needed to launch under its own name.",
+      "The Movement is a global creative studio and production company working across the music industry. Launched by Landia, one of the most awarded advertising production companies, The Movement needed an identity that could carry its own weight as a new division within the group.",
+      "I explored several directions before landing on an organic, handwritten mark: loose, human, and unmistakably tied to music and. The result is a flexible, relaxed logotype built to move across music videos, branded content, and live shows, giving The Movement the push it needed to launch under its own name.",
     ],
     link: "https://themovement.land/",
     linkLabel: "Visit site",
@@ -131,8 +131,8 @@ const PROJECTS = [
     blurb:
       "A tattoo flash-inspired capsule collection.",
     body: [
-      "Afends invited Joaquin Motor, Joaquin Lavori's illustration alter ego, built on his tattoo flash artwork, to design a capsule collection around their Off-Script range, a story about breaking out, staying true, and choosing your own way forward. I pulled directly from the symbolism already running through the work, snakes, chains, roses, flames, and translated it into a range spanning womenswear, menswear, and accessories, from oversized tees to six-panel caps.",
-      "The collaboration went beyond product into Create Not Destroy, a documentary-style content series built around the artist and his studio, treating his tools and space as part of the story rather than a backdrop. The result plays less like a brand collab and more like a flash sheet stretched onto fabric, freedom, the kind you fight for, worn.",
+      "Afends invited Joaquin Motor, Joaquin Lavori's illustration alter ego, built on his tattoo flash artwork, to design a capsule collection around their Spring range. The concept was a story about breaking out and staying true.",
+      "The collaboration went beyond product into Create Not Destroy, a documentary-style content series built around the artist and his studio, treating his tools and space as part of the story rather than a backdrop.",
     ],
     link: "https://afends.com/search?q=joaquin+motor&options%5Bprefix%5D=last",
     linkLabel: "View project",
@@ -301,7 +301,7 @@ const PROJECTS = [
     blurb:
       "An illustrated cocktail menu, neon mural, and crockery for La Calle Bar.",
     body: [
-      "La Calle Bar, a bar in Buenos Aires, asked Joaquin Motor, Joaquin Lavori's illustration alter ego, to give shape to a menu built around a single idea: bars as the last wild pockets left in the city, the places where risk, chance, and freedom still exist. Working alongside the bar's own bartenders, Adrián \"Adre\" González and Eze \"El Tano,\" I illustrated each cocktail as its own destination, matching each street's character to what's in the glass.",
+      "La Calle Bar, a bar in Buenos Aires, asked Joaquin Motor, Joaquin Lavori's illustration alter ego, to give shape to a menu built around a single idea: bars as the last wild pockets left in the city, the places where risk, chance, and freedom still exist. Working alongside the bar's own bartenders, Adrián \"Adre\" González, I illustrated each cocktail as its own destination, matching each street's character to what's in the glass.",
       "The concept moved off the page into an on-site neon mural and a set of illustrated crockery, carrying the same cast of characters into the physical space. The result turns ordering a cocktail into picking a destination, a menu you travel through as much as drink from.",
     ],
     link: "https://www.instagram.com/lacallebar/",
@@ -387,9 +387,12 @@ const PROJECTS = [
     slug: "ceremonia",
     brand: "Ceremonia",
     category: "Brand Strategy & Identity",
-    blurb: "Brand mentorship and logo design for Ceremonia, a handcrafted luxury jewellery house in Byron Bay, Australia.",
+    blurb:
+      "Brand mentorship and logo design.",
     body: [
-      "Ceremonia came to me before it had a name for what it was building. Through a mentorship process, I helped shape their brand concept, their voice, and the structure that would become their debut collection — the language they still write in today. Ceremonia is a handcrafted luxury jewellery house in Byron Bay built on the tension between rock and roll attitude and Parisian couture discipline: the raw glamour of 70s rock and early punk, filtered through the precision of designers like Westwood, Margiela, and Galliano. Once that foundation was in place, I moved into developing their logo, translating that same tension into a mark built to carry the weight of the jewellery itself. The result is a brand that reads like the pieces it sells: permanence, weight, presence.",
+      "Ceremonia came to me before it had a name for what it was building. Through a mentorship process, I helped shape their brand concept, their voice, and the structure that would become their debut collection.",
+      "Ceremonia is a handcrafted luxury jewellery brand in Byron Bay built on the tension between rock and roll attitude and Parisian couture discipline: the raw glamour of 70s rock and early punk, filtered through the precision of designers like Westwood, Margiela, and Galliano.",
+      "Once that foundation was in place, I moved into developing their logo, translating that same tension into a mark built to carry the weight of the jewellery itself.",
     ],
     link: "https://weareceremonia.com/",
     linkLabel: "View site",
@@ -457,8 +460,8 @@ const PROJECTS = [
     blurb:
       "Knife illustrations for a 50-board limited edition skate deck and apparel collab.",
     body: [
-      "Roark met Joaquin Motor, Joaquin Lavori's illustration alter ego, through their Argentine guide Manu Dominguez, on a trip through Buenos Aires with pro skater Jamie Thomas. Roark commissioned a knife illustration built on Motor's own relationship with the tool: not a weapon, but, in his words, \"my best friend and partner when I'm out in the desert or camping.\"",
-      "The piece became Motor's Blade, paired with Zero's own skull mark on a 50-board limited edition, hand-signed and numbered by Jamie Thomas. From there I designed a series of four knife illustrations that Roark carried onto the Motor's Blade L/S Tee. The boards sold out within hours.",
+      "Roark met Joaquin Motor, Joaquin Lavori's illustration alter ego, through their Argentinian ambassador Manu Dominguez, on a trip through Patagonia with pro skater Jamie Thomas. Roark commissioned a knife illustration built on Motor's own relationship with the tool: not a weapon, but, in his words, \"my best friend and partner when I'm out in the desert or camping.\"",
+      "The piece became Motor's Blade, paired with Zero's own skull mark on a 50-board limited edition, hand-signed and numbered by Jamie Thomas. From there I designed a series of four knife illustrations that Roark carried onto the Motor's Blade tee collection.",
     ],
     link: "https://au.roark.com/blogs/the-artifacts-of-adventure/a-new-collaboration-with-zero-skateboards",
     linkLabel: "View project",
@@ -521,8 +524,8 @@ const PROJECTS = [
     blurb:
       "A series of illustrations and an original mascot for Vans Argentina.",
     body: [
-      "After two years as Vans Argentina's art director, Joaquin Motor, Joaquin Lavori's illustration alter ego, became the brand's artistic ambassador, building a series of illustrations for their campaigns. Vans has defined itself since 1966 in California through creativity, authenticity, and skate culture, later expanding that identity into art, music, and DIY.",
-      "Each illustration was built around the brand's core pillars, skateboarding, surf, music, and street life, chasing the same mix of irreverence and belonging Vans has always cultivated. Along the way, I developed an original mascot, a mushroom character that became a recurring face across the work and found an audience of its own.",
+      "After two years as Vans Argentina's art director I became the brand's artistic ambassador, building a series of illustrations for their campaigns. Vans has defined itself since 1966 in California through creativity, authenticity, and skate culture, later expanding that identity into art, music, and DIY.",
+      "Each illustration was built around the brand's core pillars, skateboarding, surf, music, and street life, chasing the same mix of irreverence and belonging Vans has always cultivated.",
     ],
     link: "https://www.instagram.com/vansargentina/",
     linkLabel: "View site",
@@ -641,9 +644,12 @@ const PROJECTS = [
     slug: "laguitarrita",
     brand: "La Guitarrita",
     category: "Branding & Web Design",
-    blurb: "A logo redesign, 60th-anniversary seal, and full identity refresh for La Guitarrita, Buenos Aires' football-founded pizzeria.",
+    blurb:
+      "Branding re-design for their 60th-anniversary seal.",
     body: [
-      "La Guitarrita asked me to redesign their logo — keeping the identity intact while bringing it up to contemporary standards — and to create a commemorative seal marking their 60th anniversary. Founded in 1963 by two footballers, René Pontoni and Mario Boye, La Guitarrita has carried their spirit across generations and locations throughout Buenos Aires, built around the smell of quebracho colorado wood and the history of football running through the place. The redesign moved beyond the mark itself into their website, printed menu, and pizza box, rebuilding the identity end to end while keeping sixty years of memory intact. The result is a legendary neighborhood pizzeria dressed for its next sixty.",
+      "La Guitarrita asked me to redesign their logo, keeping the identity while bringing it up to contemporary standards, and to create a commemorative seal marking their 60th anniversary.",
+      "Founded in 1963 by two footballers, René Pontoni and Mario Boye, La Guitarrita has carried their spirit across generations and locations throughout Buenos Aires, built around the smell of quebracho colorado wood and the history of football running through the place.",
+      "The redesign moved beyond the mark itself into their website, printed menu, and pizza box, rebuilding the identity end to end while keeping sixty years of memory intact.",
     ],
     link: "https://laguitarrita.com.ar/",
     linkLabel: "View site",
@@ -709,8 +715,8 @@ const PROJECTS = [
     blurb:
       "An alternative logo, t-shirt collection and surfboard.",
     body: [
-      "Fatima Surfboards asked Joaquin Motor, Joaquin Lavori's illustration alter ego, to design one of their alternative logos, alongside a t-shirt collection and a limited edition surfboard. Founder Nicolas Fatima hand-shapes boards between Byron Bay, Australia, and Buenos Aires, Argentina, building them around a simple idea: surfboards as instruments of freedom and joy, not objects.",
-      "Their existing logo was too detailed and rigid to carry that spirit, so I loosened it up, giving the brand a mark closer to what Nicolas actually puts into every board. That same looseness carried through the t-shirt collection and onto a limited edition board, translating the brand's hand-made, unhurried spirit into wearable and rideable pieces.",
+      "Fatima Surfboards asked Joaquin Motor, Joaquin Lavori's illustration alter ego, to design one of their alternative logos, alongside a t-shirt collection and a limited-edition surfboard. Founder Nicolas Freyre hand-shapes boards between Byron Bay, Australia, and Buenos Aires, Argentina, building them around a simple idea: surfboards as instruments of freedom and joy, not objects.",
+      "Their existing logo was too detailed and rigid to carry that spirit, so I loosened it up, giving the brand a mark closer to what Nicolas actually puts into every board. That same looseness carried through the t-shirt collection and onto a limited-edition board, translating the brand's hand-made, unhurried spirit into wearable and rideable pieces.",
     ],
     link: "https://www.instagram.com/fatimasurfboards",
     linkLabel: "View site",
@@ -806,8 +812,9 @@ const PROJECTS = [
     blurb:
       "An illustrated capsule summer collection.",
     body: [
-      "Lightning Bolt Argentina commissioned a full illustrated capsule, Underground Corp, built around a single idea: climbing up to the attic and opening a dusty box of memories, going back to the origin. The concept traces the creative potential of Gerry Lopez and Barry Kanaiaupuni, two friends in Hawaii living out their dream before they ever founded Lightning Bolt.",
-      "I illustrated a set of tattoo-flash pieces around that world, skulls, snakes, a prowling panther, a co-branded Bolt Motor wordmark, carried across a full run of tees, hangtags, and a mug. The result reads like something pulled out of that same dusty box: old enough to feel found, new enough to wear.",
+      "Lightning Bolt Argentina commissioned a full illustrated capsule, Underground Corp, built around a single idea: climbing up to the attic and opening a dusty box of memories, going back to the origin.",
+      "The concept traces the creative potential of Gerry Lopez and Barry Kanaiaupuni, two friends in Hawaii living out their dream before they ever founded Lightning Bolt.",
+      "I illustrated a set pieces around that world, skulls, snakes, a prowling panther, a co-branded Bolt Motor wordmark, carried across a full run of tees, hangtags, and a mug.",
     ],
     link: "https://www.lightningbolt.com.ar/",
     linkLabel: "View site",
@@ -903,7 +910,8 @@ const PROJECTS = [
     blurb:
       "Original illustrations for Forty Spotted Gin, built to run across merchandise and digital.",
     body: [
-      "Forty Spotted is the Tasmanian gin from Lark Distilling Co., a brand with a youthful, playful streak, and they came to me with a brief for a series of original illustrations to carry it. I drew a set of vector artworks around the pieces people already associate with the gin: the bottle, the Gin Sonic serve, and the orange garnish that signs off every pour. The line had to stay loose enough to feel drawn by hand but clean enough to hold at any size, because the same artwork had to live on shirts, hats, towels and cups as much as on screen. I worked alongside the Forty Spotted marketing team through each round and delivered final files prepared for every application. The result is a small illustrated vocabulary the brand can keep pulling from, recognisable as Forty Spotted before you read the name.",
+      "Forty Spotted is the Tasmanian gin from Lark Distilling Co., a brand with a youthful, playful streak, and they came to me with a brief for a series of original illustrations to carry it. I drew a set of artworks around the pieces people already associate with the gin: the bottle, the Gin Sonic serve, and the orange garnish that signs off every pour.",
+      "The line had to stay loose enough to feel drawn by hand but clean enough to hold at any size, because the same artwork had to live on shirts, hats, towels and cups as much as on screen. I worked alongside the Forty Spotted marketing team through each round and delivered final files prepared for every application.",
     ],
     link: "https://fortyspotted.com/",
     linkLabel: "View site",
@@ -981,9 +989,11 @@ const PROJECTS = [
     slug: "aim",
     brand: "AIM Miami",
     category: "Branding & Web Design",
-    blurb: "Brand concept, logo, and web design for AIM Miami, a nonprofit supporting kids through afterschool programs.",
+    blurb:
+      "Brand concept, logo, and web design for AIM Miami, a nonprofit supporting kids through afterschool programs.",
     body: [
-      "As creative director, I developed the brand concept and logo for AIM, a Miami-based nonprofit built around a simple mission: helping kids build the practical skills, confidence, and support they need to manage daily life and work toward their personal, academic, and professional goals through afterschool programming. The identity needed to carry that same sense of momentum — AIM's own language is \"let's level up\" — so I built a mark and system that felt encouraging rather than clinical, closer to the kids they serve than to a typical nonprofit look. From there, I helped shape their website, including a donation button built to make recurring giving as simple as signing up. The result gives AIM an identity that matches the confidence it's trying to build in every kid who walks through the door.",
+      "A Miami-based nonprofit built around a simple mission: helping kids build the practical skills, confidence, and support they need to manage daily life.",
+      "The identity needed to carry that same sense of momentum, AIM's own language is \"let's level up\", so I built a mark and system that felt encouraging rather than clinical, closer to the kids they serve than to a typical nonprofit look. From there, I helped shape their website, including a donation button built to make recurring giving as simple as signing up. The result gives AIM an identity that matches the confidence it's trying to build in every kid who walks through the door.",
     ],
     link: "https://aimmiami.org/",
     linkLabel: "View site",
