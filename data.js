@@ -75,7 +75,7 @@ const PROJECTS = [
       "Logo design for The Movement, a new talent and live-show division by Landia.",
     body: [
       "The Movement is a global creative studio and production company working across the music industry. Launched by Landia, one of the most awarded advertising production companies, The Movement needed an identity that could carry its own weight as a new division within the group.",
-      "I explored several directions before landing on an organic, handwritten mark: loose, human, and unmistakably tied to music and. The result is a flexible, relaxed logotype built to move across music videos, branded content, and live shows, giving The Movement the push it needed to launch under its own name.",
+      "I explored several directions before landing on an organic, handwritten mark: loose, human, and unmistakably tied to music and performance. The result is a flexible, relaxed logotype built to move across music videos, branded content, and live shows, giving The Movement the push it needed to launch under its own name.",
     ],
     link: "https://themovement.land/",
     linkLabel: "Visit site",
@@ -301,7 +301,7 @@ const PROJECTS = [
     blurb:
       "An illustrated cocktail menu, neon mural, and crockery for La Calle Bar.",
     body: [
-      "La Calle Bar, a bar in Buenos Aires, asked Joaquin Motor, Joaquin Lavori's illustration alter ego, to give shape to a menu built around a single idea: bars as the last wild pockets left in the city, the places where risk, chance, and freedom still exist. Working alongside the bar's own bartenders, Adrián \"Adre\" González, I illustrated each cocktail as its own destination, matching each street's character to what's in the glass.",
+      "La Calle Bar, a bar in Buenos Aires, asked Joaquin Motor, Joaquin Lavori's illustration alter ego, to give shape to a menu built around a single idea: bars as the last wild pockets left in the city, the places where risk, chance, and freedom still exist. Working alongside the bar's own bartender, Adrián \"Adre\" González, I illustrated each cocktail as its own destination, matching each street's character to what's in the glass.",
       "The concept moved off the page into an on-site neon mural and a set of illustrated crockery, carrying the same cast of characters into the physical space. The result turns ordering a cocktail into picking a destination, a menu you travel through as much as drink from.",
     ],
     link: "https://www.instagram.com/lacallebar/",
@@ -525,7 +525,7 @@ const PROJECTS = [
       "A series of illustrations and an original mascot for Vans Argentina.",
     body: [
       "After two years as Vans Argentina's art director I became the brand's artistic ambassador, building a series of illustrations for their campaigns. Vans has defined itself since 1966 in California through creativity, authenticity, and skate culture, later expanding that identity into art, music, and DIY.",
-      "Each illustration was built around the brand's core pillars, skateboarding, surf, music, and street life, chasing the same mix of irreverence and belonging Vans has always cultivated.",
+      "Each illustration was built around the brand's core pillars, skateboarding, surf, music, and street life, chasing the same mix of irreverence and belonging Vans has always cultivated. Along the way, I developed an original mascot, a mushroom character that became a recurring face across the work.",
     ],
     link: "https://www.instagram.com/vansargentina/",
     linkLabel: "View site",
@@ -814,7 +814,7 @@ const PROJECTS = [
     body: [
       "Lightning Bolt Argentina commissioned a full illustrated capsule, Underground Corp, built around a single idea: climbing up to the attic and opening a dusty box of memories, going back to the origin.",
       "The concept traces the creative potential of Gerry Lopez and Barry Kanaiaupuni, two friends in Hawaii living out their dream before they ever founded Lightning Bolt.",
-      "I illustrated a set pieces around that world, skulls, snakes, a prowling panther, a co-branded Bolt Motor wordmark, carried across a full run of tees, hangtags, and a mug.",
+      "I illustrated a set of pieces around that world, skulls, snakes, a prowling panther, a co-branded Bolt Motor wordmark, carried across a full run of tees, hangtags, and a mug.",
     ],
     link: "https://www.lightningbolt.com.ar/",
     linkLabel: "View site",
@@ -992,7 +992,7 @@ const PROJECTS = [
     blurb:
       "Brand concept, logo, and web design for AIM Miami, a nonprofit supporting kids through afterschool programs.",
     body: [
-      "A Miami-based nonprofit built around a simple mission: helping kids build the practical skills, confidence, and support they need to manage daily life.",
+      "AIM is a Miami-based nonprofit built around a simple mission: helping kids build the practical skills, confidence, and support they need to manage daily life.",
       "The identity needed to carry that same sense of momentum, AIM's own language is \"let's level up\", so I built a mark and system that felt encouraging rather than clinical, closer to the kids they serve than to a typical nonprofit look. From there, I helped shape their website, including a donation button built to make recurring giving as simple as signing up. The result gives AIM an identity that matches the confidence it's trying to build in every kid who walks through the door.",
     ],
     link: "https://aimmiami.org/",
